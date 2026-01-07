@@ -1,0 +1,1190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="theme-color" content="#F2F2F7">
+    <title>HealthyHabits</title>
+    <style>
+        :root {
+            /* BRANDING COLORS */
+            --primary: #007AFF;
+            --primary-dim: rgba(0, 122, 255, 0.15);
+            --success: #34C759;
+            --danger: #FF3B30;
+            --warning: #FF9500;
+            --water: #5AC8FA;
+            
+            /* LIGHT THEME */
+            --bg: #F2F2F7;
+            --surface: #FFFFFF;
+            --surface-2: #F9F9F9;
+            --text-1: #000000;
+            --text-2: #8E8E93;
+            --border: rgba(0,0,0,0.08);
+            --nav-glass: rgba(255,255,255,0.85);
+            --hero-grad: linear-gradient(135deg, #1C1C1E, #000000);
+            --hero-warn: linear-gradient(135deg, #FF9500, #FF3B30);
+            --shadow: 0 4px 20px rgba(0,0,0,0.05);
+            --island-bg: #000000;
+            --island-text: #FFFFFF;
+        }
+
+        [data-theme="dark"] {
+            /* DARK THEME */
+            --bg: #000000;
+            --surface: #1C1C1E;
+            --surface-2: #2C2C2E;
+            --text-1: #FFFFFF;
+            --text-2: #98989D;
+            --border: rgba(255,255,255,0.15);
+            --nav-glass: rgba(28,28,30,0.85);
+            --hero-grad: linear-gradient(135deg, #2C2C2E, #1C1C1E);
+            --hero-warn: linear-gradient(135deg, #C66900, #881812);
+            --shadow: 0 4px 20px rgba(0,0,0,0.5);
+            --island-bg: #2C2C2E;
+            --island-text: #FFFFFF;
+        }
+
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        
+        body {
+            background-color: var(--bg);
+            color: var(--text-1);
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, sans-serif;
+            margin: 0; padding: 0;
+            padding-bottom: 120px; /* Nav space */
+            transition: background 0.3s ease, color 0.3s ease;
+            overflow-x: hidden;
+        }
+
+        /* --- NEW: FUTURISTIC BRAND GRADIENT --- */
+        .brand-gradient {
+            background: linear-gradient(135deg, var(--primary), var(--water));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 900;
+            letter-spacing: -0.5px;
+        }
+
+        /* --- DYNAMIC ISLAND NOTIFICATION --- */
+        #dynamic-island {
+            position: fixed;
+            top: -100px; /* Hidden initially */
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--island-bg);
+            color: var(--island-text);
+            padding: 12px 24px;
+            border-radius: 30px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+            z-index: 2000;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            white-space: nowrap;
+            transition: top 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border: 1px solid var(--border);
+        }
+        #dynamic-island.active { top: 15px; }
+        .di-icon { font-size: 1.2rem; }
+
+        /* --- GLOBAL UTILS --- */
+        .hidden { display: none !important; }
+        .fade-in { animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* --- MODERN ONBOARDING --- */
+        #onboarding {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--bg); z-index: 9999;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            padding: 30px;
+        }
+        .ob-card {
+            background: var(--surface); width: 100%; max-width: 400px;
+            padding: 40px 30px; border-radius: 30px; box-shadow: var(--shadow);
+            border: 1px solid var(--border); text-align: center;
+        }
+        .ob-icon { font-size: 3rem; margin-bottom: 20px; display: block; animation: pulse 3s infinite; }
+        .ob-title { font-size: 2rem; margin-bottom: 5px; letter-spacing: -1px; }
+        .ob-sub { color: var(--text-2); font-size: 1rem; margin-bottom: 35px; line-height: 1.4; }
+        
+        .input-field {
+            width: 100%; padding: 18px; border-radius: 16px;
+            border: 2px solid var(--border); background: var(--bg);
+            color: var(--text-1); font-size: 1.1rem; text-align: center;
+            outline: none; transition: all 0.2s; font-weight: 600;
+        }
+        .input-field:focus { border-color: var(--primary); background: var(--surface); }
+
+        .unit-switch {
+            display: flex; background: var(--bg); padding: 5px;
+            border-radius: 14px; margin-bottom: 15px; border: 1px solid var(--border);
+        }
+        .unit-opt {
+            flex: 1; text-align: center; padding: 10px; font-size: 0.85rem; font-weight: 700;
+            color: var(--text-2); border-radius: 10px; cursor: pointer; transition: all 0.2s;
+        }
+        .unit-opt.active { background: var(--surface); color: var(--text-1); box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+
+        .btn-primary {
+            width: 100%; padding: 20px; border-radius: 18px;
+            background: var(--text-1); color: var(--bg);
+            font-size: 1.1rem; font-weight: 700; border: none;
+            cursor: pointer; margin-top: 25px; transition: transform 0.1s;
+        }
+        .btn-primary:active { transform: scale(0.98); }
+
+        /* --- APP HEADER --- */
+        header {
+            position: sticky; top: 0; z-index: 100;
+            background: var(--nav-glass); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            padding: 15px 20px; padding-top: max(15px, env(safe-area-inset-top));
+            display: flex; justify-content: space-between; align-items: center;
+            border-bottom: 1px solid var(--border);
+        }
+        .brand h1 { margin: 0; font-size: 1.4rem; font-weight: 800; letter-spacing: -0.5px; }
+        .brand p { margin: 0; font-size: 0.75rem; color: var(--text-2); font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
+        
+        .header-actions { display: flex; align-items: center; gap: 15px; }
+
+        .streak-box {
+            display: flex; align-items: center; gap: 4px;
+            font-size: 0.9rem; font-weight: 800; color: var(--text-1);
+        }
+        .fire-icon { color: var(--text-2); transition: color 0.3s; }
+        .streak-active .fire-icon { color: var(--warning); animation: pulse 2s infinite; }
+
+        .theme-toggle {
+            width: 38px; height: 38px; border-radius: 50%;
+            background: var(--surface); border: 1px solid var(--border);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.1rem; cursor: pointer;
+        }
+
+        /* --- DATE NAVIGATOR --- */
+        .date-nav {
+            display: flex; justify-content: center; align-items: center; gap: 15px;
+            padding: 10px 20px; background: var(--bg);
+        }
+        .date-arrow {
+            font-size: 1.2rem; color: var(--primary); cursor: pointer; padding: 5px 15px;
+            background: var(--primary-dim); border-radius: 10px; font-weight: 800;
+            user-select: none;
+        }
+        .current-date-display {
+            font-size: 0.95rem; font-weight: 700; color: var(--text-2);
+            text-transform: uppercase; letter-spacing: 0.5px;
+        }
+
+        /* --- HERO CARD --- */
+        .section { padding: 10px 20px 0 20px; }
+        .hero-card {
+            background: var(--hero-grad); color: white;
+            border-radius: 26px; padding: 24px;
+            position: relative; overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            transition: background 0.5s ease;
+        }
+        .hero-card.warning { background: var(--hero-warn); }
+        
+        .hero-header-row { display: flex; justify-content: space-between; align-items: flex-start; }
+        
+        .status-pill {
+            display: inline-flex; align-items: center; gap: 8px;
+            background: rgba(255,255,255,0.2); backdrop-filter: blur(10px);
+            padding: 6px 14px; border-radius: 20px; font-size: 0.75rem; font-weight: 800;
+            text-transform: uppercase; margin-bottom: 20px; letter-spacing: 0.5px;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        .status-dot { 
+            width: 8px; height: 8px; background: #34C759; border-radius: 50%; 
+            box-shadow: 0 0 10px #34C759;
+            animation: pulse 2s infinite; 
+        }
+        @keyframes pulse { 0% { opacity: 1; transform: scale(1); } 50% { opacity: 0.5; transform: scale(1.2); } 100% { opacity: 1; transform: scale(1); } }
+
+        .hero-big { font-size: 3.2rem; font-weight: 800; line-height: 1; margin-bottom: 8px; font-variant-numeric: tabular-nums; letter-spacing: -1.5px;}
+        .hero-title { font-size: 1.1rem; font-weight: 700; margin-bottom: 4px; opacity: 1; }
+        .hero-desc { font-size: 0.9rem; opacity: 0.7; line-height: 1.4; font-weight: 500; }
+
+        /* Completion Ring */
+        .progress-ring { width: 50px; height: 50px; position: relative; }
+        .progress-ring circle { transition: stroke-dashoffset 0.35s; transform: rotate(-90deg); transform-origin: 50% 50%; }
+        .progress-text {
+            position: absolute; top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 0.75rem; font-weight: 800; color: white;
+        }
+
+        /* --- WEIGHT INPUTS --- */
+        .weight-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 20px 20px 10px 20px; }
+        .weight-box {
+            background: var(--surface); padding: 16px; border-radius: 20px;
+            text-align: center; border: 1px solid var(--border); box-shadow: var(--shadow);
+        }
+        .wb-label { font-size: 0.7rem; color: var(--text-2); font-weight: 700; text-transform: uppercase; margin-bottom: 5px; }
+        .wb-input {
+            width: 100%; background: transparent; border: none; outline: none;
+            font-size: 1.5rem; font-weight: 800; color: var(--text-1); text-align: center;
+        }
+
+        /* --- HYDRO ENGINE --- */
+        .hydro-section { padding: 0 20px 20px 20px; }
+        .hydro-card {
+            background: linear-gradient(135deg, rgba(90, 200, 250, 0.1), rgba(0, 122, 255, 0.05));
+            border: 1px solid rgba(0, 122, 255, 0.2);
+            border-radius: 22px; padding: 18px 20px;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .hydro-info h3 { margin: 0; font-size: 1.05rem; font-weight: 800; color: var(--primary); display: flex; align-items: center; gap: 5px; }
+        .hydro-info p { margin: 4px 0 0 0; font-size: 0.8rem; color: var(--text-2); font-weight: 600; }
+        .hydro-controls { display: flex; align-items: center; gap: 15px; }
+        .hydro-btn {
+            width: 38px; height: 38px; border-radius: 50%; border: none;
+            background: var(--surface); color: var(--primary);
+            font-size: 1.2rem; font-weight: 700; cursor: pointer;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1); display: flex; align-items: center; justify-content: center;
+        }
+        .hydro-btn:active { transform: scale(0.9); }
+        .hydro-val { font-size: 1.2rem; font-weight: 800; font-variant-numeric: tabular-nums; min-width: 55px; text-align: center; }
+
+        /* --- TABS --- */
+        .tabs {
+            overflow-x: auto; white-space: nowrap; padding: 0 20px 15px;
+            scrollbar-width: none;
+        }
+        .tabs::-webkit-scrollbar { display: none; }
+        .tab-btn {
+            display: inline-block; padding: 10px 18px; margin-right: 8px;
+            background: var(--surface); border: 1px solid var(--border);
+            border-radius: 14px; font-size: 0.9rem; font-weight: 600; color: var(--text-2);
+            transition: all 0.2s;
+        }
+        .tab-btn.active {
+            background: var(--text-1); color: var(--bg); border-color: transparent;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        /* --- TASKS with Smart Actions --- */
+        .task-list { padding: 0 20px; padding-bottom: 20px;}
+        .task-card {
+            background: var(--surface); border-radius: 20px; padding: 18px;
+            margin-bottom: 12px; display: flex; align-items: flex-start;
+            border: 1px solid var(--border); box-shadow: var(--shadow);
+            transition: transform 0.1s; position: relative; overflow: hidden;
+        }
+        .task-card:active { transform: scale(0.98); }
+        
+        .check-circle {
+            width: 24px; height: 24px; border-radius: 50%;
+            border: 2px solid var(--text-2); margin-right: 14px;
+            flex-shrink: 0; display: flex; align-items: center; justify-content: center;
+            margin-top: 3px; transition: all 0.2s; cursor: pointer;
+        }
+        .task-card.done .check-circle { background: var(--success); border-color: var(--success); }
+        .task-card.done .check-circle::after { content: '✓'; color: #fff; font-weight: 800; font-size: 14px; }
+        .task-card.done .task-body { opacity: 0.4; text-decoration: line-through; }
+
+        .task-body { flex: 1; }
+        .time-badge { font-size: 0.75rem; color: var(--primary); font-weight: 800; margin-bottom: 3px; display: block; }
+        .task-title { font-size: 1.05rem; font-weight: 700; margin-bottom: 3px; display: block; }
+        .task-desc { font-size: 0.9rem; color: var(--text-2); display: block; margin-bottom: 6px; }
+        .bio-tag {
+            display: inline-block; background: var(--primary-dim); color: var(--primary);
+            font-size: 0.7rem; font-weight: 700; padding: 4px 10px; border-radius: 8px;
+        }
+
+        /* SMART ACTION BUTTON */
+        .action-btn {
+            background: var(--bg); border: 1px solid var(--border); border-radius: 50%;
+            width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;
+            font-size: 1rem; color: var(--text-1); cursor: pointer; margin-left: 10px;
+            flex-shrink: 0; transition: 0.2s;
+        }
+        .action-btn:active { transform: scale(0.9); background: var(--border); }
+
+        /* --- ANALYTICS --- */
+        .stat-grid { padding: 20px; }
+        .stat-card {
+            background: var(--surface); border-radius: 22px; padding: 20px;
+            margin-bottom: 20px; border: 1px solid var(--border); box-shadow: var(--shadow);
+        }
+        
+        .bmi-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+        .bmi-val { font-size: 2.2rem; font-weight: 800; letter-spacing: -1px; }
+        .bmi-pill {
+            padding: 6px 14px; border-radius: 20px; font-size: 0.75rem; font-weight: 800;
+            text-transform: uppercase; color: #fff; background: var(--text-2);
+        }
+
+        .chart-wrap {
+            display: flex; align-items: flex-end; justify-content: space-between;
+            height: 160px; padding-top: 30px; margin-bottom: 10px;
+        }
+        .chart-col { width: 12%; text-align: center; }
+        .chart-bar {
+            background: var(--primary); opacity: 0.3; border-radius: 6px;
+            width: 100%; transition: height 0.5s ease; min-height: 6px;
+        }
+        .chart-bar.filled { opacity: 1; }
+        .chart-label { font-size: 0.7rem; color: var(--text-2); margin-top: 8px; font-weight: 600; }
+
+        .stat-row {
+            display: flex; justify-content: space-between; margin-bottom: 12px;
+            padding-bottom: 12px; border-bottom: 1px solid var(--border);
+        }
+        .stat-row:last-child { border: none; margin: 0; padding: 0; }
+        .stat-val { font-weight: 700; font-size: 1.1rem; }
+
+        /* --- MODERN SETTINGS STYLES --- */
+        .set-section { padding: 20px; }
+        .set-card {
+            background: var(--surface); border-radius: 24px; padding: 20px;
+            border: 1px solid var(--border); box-shadow: var(--shadow); margin-bottom: 25px;
+        }
+        .set-head { 
+            font-size: 1.1rem; font-weight: 800; margin-bottom: 15px; 
+            display: flex; justify-content: space-between; align-items: center; 
+        }
+        
+        .modern-input {
+            width: 100%; padding: 14px; border-radius: 12px;
+            background: var(--bg); border: 1px solid var(--border);
+            color: var(--text-1); font-size: 1rem; font-weight: 600;
+            outline: none; margin-bottom: 15px; transition: border 0.2s;
+        }
+        .modern-input:focus { border-color: var(--primary); background: var(--surface); }
+        .sm-label { font-size: 0.7rem; font-weight: 700; color: var(--text-2); margin-bottom: 5px; display: block; text-transform: uppercase; }
+
+        .btn-xl {
+            width: 100%; padding: 16px; border-radius: 16px;
+            background: var(--text-1); color: var(--bg);
+            font-size: 1rem; font-weight: 700; border: none;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1); cursor: pointer;
+        }
+        .btn-xl:active { transform: scale(0.98); }
+        
+        .btn-outline {
+            background: transparent; border: 2px solid var(--text-1); color: var(--text-1);
+            width: 100%; padding: 14px; border-radius: 14px; font-weight: 700; cursor: pointer;
+        }
+        .btn-danger {
+            background: transparent; border: 2px solid var(--danger); color: var(--danger);
+            width: 100%; padding: 14px; border-radius: 14px; font-weight: 700; margin-top: 10px; cursor: pointer;
+        }
+        .btn-warning {
+            background: rgba(255, 149, 0, 0.1); border: 2px solid var(--warning); color: var(--warning);
+            width: 100%; padding: 14px; border-radius: 14px; font-weight: 700; margin-top: 10px; cursor: pointer;
+        }
+
+        /* Accordion Editor */
+        .editor-list { display: flex; flex-direction: column; gap: 10px; }
+        .accordion-item {
+            background: var(--bg); border-radius: 16px; overflow: hidden;
+            border: 1px solid var(--border); transition: all 0.3s ease;
+        }
+        .accordion-header {
+            padding: 15px; display: flex; justify-content: space-between; align-items: center;
+            font-weight: 700; font-size: 0.95rem; cursor: pointer;
+        }
+        .accordion-header span:first-child { color: var(--primary); margin-right: 10px; }
+        .accordion-body {
+            max-height: 0; overflow: hidden; transition: max-height 0.3s ease;
+            background: var(--surface-2); padding: 0 15px;
+        }
+        .accordion-item.open .accordion-body { max-height: 350px; padding-bottom: 15px; }
+        .accordion-item.open { border-color: var(--primary); }
+        
+        .sm-input { width: 100%; padding: 10px; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; margin-bottom: 8px; color: var(--text-1); font-family: inherit; font-size: 0.9rem; }
+
+        /* --- FOOTER --- */
+        .footer {
+            text-align: center; padding: 30px 20px; color: var(--text-2);
+            font-size: 0.8rem; font-weight: 600; letter-spacing: 0.5px;
+            opacity: 0.6;
+        }
+
+        /* --- NAVBAR --- */
+        .nav-bar {
+            position: fixed; bottom: 0; left: 0; width: 100%;
+            background: var(--nav-glass); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            border-top: 1px solid var(--border); display: flex; justify-content: space-around;
+            padding: 10px 0 25px; z-index: 500;
+        }
+        .nav-item {
+            background: none; border: none; display: flex; flex-direction: column;
+            align-items: center; opacity: 0.4; transition: 0.2s; flex: 1; cursor: pointer;
+        }
+        .nav-item.active { opacity: 1; color: var(--primary); transform: scale(1.05); }
+        .nav-icon { font-size: 1.6rem; margin-bottom: 4px; }
+        .nav-label { font-size: 0.7rem; font-weight: 700; }
+
+        /* --- DATE PICKER HIDE --- */
+        input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(0.5); }
+
+    </style>
+</head>
+<body>
+
+    <div id="dynamic-island">
+        <span class="di-icon">🔔</span>
+        <span id="di-msg">Notification</span>
+    </div>
+
+    <div id="onboarding" class="hidden">
+        <div class="ob-card">
+            <span class="ob-icon">🧬</span>
+            <div class="ob-title brand-gradient">HealthyHabits</div>
+            <p class="ob-sub">Initialize 2.5 Biometric Protocol</p>
+            <input type="text" id="ob-name" class="input-field" placeholder="First Name" style="margin-bottom:15px;">
+            <div class="unit-switch">
+                <div class="unit-opt active" id="u-cm" onclick="setHeightMode('cm')">CM</div>
+                <div class="unit-opt" id="u-ft" onclick="setHeightMode('ft')">FT / IN</div>
+            </div>
+            <div id="input-cm">
+                <input type="number" id="h-cm" class="input-field" placeholder="Height (cm)">
+            </div>
+            <div id="input-ft" class="dual-inputs hidden" style="display:flex; gap:10px;">
+                <input type="number" id="h-ft" class="input-field" placeholder="Ft">
+                <input type="number" id="h-in" class="input-field" placeholder="In">
+            </div>
+            <input type="number" id="ob-weight" class="input-field" placeholder="Current Weight (kg)" style="margin-top:15px;">
+            <button class="btn-primary" onclick="completeOnboarding()">Initialize System</button>
+        </div>
+    </div>
+
+    <div id="app" class="hidden">
+        <header>
+            <div class="brand">
+                <div class="brand-gradient" style="font-size: 0.85rem; margin-bottom: 2px;">HealthyHabits</div>
+                <h1 id="page-title" style="margin:0; line-height:1.2;">Daily Plan</h1>
+                <p id="greet" style="font-size: 0.7rem; color: var(--text-2); font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-top:2px;">HELLO WARRIOR</p>
+            </div>
+            <div class="header-actions">
+                <div class="streak-box" id="streak-display">
+                    <span class="fire-icon">🔥</span>
+                    <span id="streak-count">0</span>
+                </div>
+                <div class="theme-toggle" onclick="toggleTheme()">🌗</div>
+            </div>
+        </header>
+
+        <main id="view-dashboard" class="fade-in">
+            <div class="date-nav">
+                <div class="date-arrow" onclick="changeDate(-1)">←</div>
+                <div class="current-date-display" id="date-display">--</div>
+                <div class="date-arrow" onclick="changeDate(1)">→</div>
+            </div>
+
+            <div class="section">
+                <div class="hero-card" id="hero-card">
+                    <div class="hero-header-row">
+                        <div>
+                            <div class="status-pill">
+                                <div class="status-dot"></div>
+                                <span id="hero-status">LIVE PROTOCOL</span>
+                            </div>
+                        </div>
+                        <div class="progress-ring">
+                            <svg width="50" height="50">
+                                <circle stroke="rgba(255,255,255,0.2)" stroke-width="4" fill="transparent" r="20" cx="25" cy="25"/>
+                                <circle id="prog-circle" stroke="white" stroke-width="4" fill="transparent" r="20" cx="25" cy="25" stroke-dasharray="125.6" stroke-dashoffset="125.6"/>
+                            </svg>
+                            <span class="progress-text" id="prog-text">0%</span>
+                        </div>
+                    </div>
+                    <div class="hero-big" id="hero-time">--:--</div>
+                    <div class="hero-title" id="hero-title">Syncing...</div>
+                    <div class="hero-desc" id="hero-desc">Calculating metabolic timeline</div>
+                </div>
+            </div>
+
+            <div class="weight-row">
+                <div class="weight-box">
+                    <div class="wb-label">☀️Weight in the morning (kg)</div>
+                    <input type="number" id="w-am" class="wb-input" placeholder="--" onblur="logWeight('am')">
+                </div>
+                <div class="weight-box">
+                    <div class="wb-label">🌙Weight at night(kg)</div>
+                    <input type="number" id="w-pm" class="wb-input" placeholder="--" onblur="logWeight('pm')">
+                </div>
+            </div>
+
+            <div class="hydro-section">
+                <div class="hydro-card">
+                    <div class="hydro-info">
+                        <h3>💧 Hydro-Engine</h3>
+                        <p id="water-status">Target: 3.0 Liters</p>
+                    </div>
+                    <div class="hydro-controls">
+                        <button class="hydro-btn" onclick="updateWater(-250)">-</button>
+                        <span class="hydro-val" id="water-val">0.0</span>
+                        <button class="hydro-btn" onclick="updateWater(250)">+</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tabs">
+                <div class="tab-btn" id="btn-mon" onclick="setTab('mon')">Mon</div>
+                <div class="tab-btn" id="btn-tue" onclick="setTab('tue')">Tue</div>
+                <div class="tab-btn" id="btn-wed" onclick="setTab('wed')">Wed</div>
+                <div class="tab-btn" id="btn-thu" onclick="setTab('thu')">Thu</div>
+                <div class="tab-btn" id="btn-fri" onclick="setTab('fri')">Fri</div>
+                <div class="tab-btn" id="btn-sat" onclick="setTab('sat')">Sat</div>
+                <div class="tab-btn" id="btn-sun" onclick="setTab('sun')">Sun</div>
+            </div>
+
+            <div id="task-container" class="task-list"></div>
+            <div class="footer">HealthyHabits • Built by B.S</div>
+        </main>
+
+        <main id="view-analytics" class="hidden fade-in">
+            <div class="stat-grid">
+                <div class="stat-card">
+                    <div class="wb-label">BODY MASS INDEX</div>
+                    <div class="bmi-row">
+                        <span class="bmi-val" id="bmi-num">--</span>
+                        <span class="bmi-pill" id="bmi-text" style="background:var(--text-2)">CALC</span>
+                    </div>
+                    <p style="font-size:0.85rem; color:var(--text-2)">Status based on height/weight ratio.</p>
+                </div>
+                <div class="stat-card">
+                    <div class="wb-label">7-DAY WEIGHT TREND</div>
+                    <div class="chart-wrap" id="chart-area"></div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-row"><span>Starting</span><span class="stat-val" id="s-start">--</span></div>
+                    <div class="stat-row"><span>Current</span><span class="stat-val" id="s-curr" style="color:var(--primary)">--</span></div>
+                    <div class="stat-row"><span>Change</span><span class="stat-val" id="s-diff">--</span></div>
+                </div>
+                <div class="stat-card">
+                    <div class="wb-label">💾 Time Capsule</div>
+                    <p style="font-size:0.85rem; color:var(--text-2); margin-top:5px;">Backup or restore your protocol data.</p>
+                    <div class="capsule-row">
+                        <button class="btn-outline" onclick="exportData()">Export Data</button>
+                        <button class="btn-outline" onclick="document.getElementById('file-input').click()">Import File</button>
+                        <input type="file" id="file-input" class="hidden" accept=".json" onchange="importData(this)">
+                    </div>
+                </div>
+            </div>
+            <div class="footer">HealthyHabits • Built by B.S</div>
+        </main>
+
+        <main id="view-settings" class="hidden fade-in set-section">
+            <div class="set-card">
+                <div class="set-head">
+                    <span>Biometric Profile</span>
+                    <span style="font-size:1.2rem;">👤</span>
+                </div>
+                <span class="sm-label">DISPLAY NAME</span>
+                <input id="up-name" class="modern-input" placeholder="Name">
+                <div style="display:flex; gap:10px;">
+                    <div style="flex:1">
+                        <span class="sm-label">HEIGHT (CM)</span>
+                        <input id="up-height" type="number" class="modern-input" placeholder="175">
+                    </div>
+                    <div style="flex:1">
+                        <span class="sm-label">START WEIGHT</span>
+                        <input id="up-sw" type="number" class="modern-input" placeholder="70">
+                    </div>
+                </div>
+                <button class="btn-xl" style="margin-top:5px;" onclick="updateProfile()">Update Profile</button>
+            </div>
+
+            <div class="set-card">
+                <div class="set-head">
+                    <span>Schedule Config</span>
+                    <select id="edit-day-select" style="background:var(--bg); border:none; color:var(--primary); font-weight:700; font-size:0.9rem; outline:none;" onchange="renderEditor()">
+                        <option value="mon">Monday</option>
+                        <option value="tue">Tuesday</option>
+                        <option value="wed">Wednesday</option>
+                        <option value="thu">Thursday</option>
+                        <option value="fri">Friday</option>
+                        <option value="sat">Saturday</option>
+                        <option value="sun">Sunday</option>
+                    </select>
+                </div>
+                <p style="font-size:0.8rem; color:var(--text-2); margin-top:-10px; margin-bottom:15px;">Tap an item to expand and edit.</p>
+                <div id="editor-list" class="editor-list"></div>
+                <button class="btn-xl" style="margin-top:20px;" onclick="saveSchedule()">Save Schedule Changes</button>
+            </div>
+
+            <div class="set-card" style="border:1px solid var(--warning);">
+                <div class="set-head" style="color:var(--danger)">Danger Zone ⚠️</div>
+                <button class="btn-warning" style="width:100%; margin-bottom:10px;" onclick="resetCheckboxes()">Reset Weekly Checkboxes</button>
+                <button class="btn-danger" style="width:100%; margin-top:0;" onclick="hardReset()">Factory Reset App</button>
+            </div>
+            <div class="footer">HealthyHabits • Built by B.S</div>
+        </main>
+
+        <nav class="nav-bar">
+            <button class="nav-item active" id="nav-dash" onclick="switchView('dashboard')">
+                <span class="nav-icon">🔥</span>
+                <span class="nav-label">Protocol</span>
+            </button>
+            <button class="nav-item" id="nav-ana" onclick="switchView('analytics')">
+                <span class="nav-icon">📊</span>
+                <span class="nav-label">Reports</span>
+            </button>
+            <button class="nav-item" id="nav-set" onclick="switchView('settings')">
+                <span class="nav-icon">⚙️</span>
+                <span class="nav-label">Settings</span>
+            </button>
+        </nav>
+    </div>
+
+    <script>
+        /* --- USER DATA (Updated with Type for Smart Actions) --- */
+        const defaultSchedule = {
+            mon: [
+                { t:"03:30 AM", act:"Wake Up 1", instr:"500ml Warm Water + ½ Lemon + 1 tsp ACV + Salt", rule:"Prime Metabolism", type:"hack" },
+                { t:"04:00 AM", act:"Cardio 1", instr:"Mandir Visit (Fast Brisk Walk)", rule:"Fasted Fat Burn", type:"workout" },
+                { t:"07:00 AM", act:"Pre-Nap", instr:"5 Soaked Almonds + 1 Walnut", rule:"Brain Repair", type:"meal" },
+                { t:"07:15 AM", act:"Sleep 2", instr:"Sleep in Pitch Black Room", rule:"Hormone Reset", type:"hack" },
+                { t:"10:00 AM", act:"Wake Up 2", instr:"Black Coffee / Green Tea (No Sugar)", rule:"Cortisol Spike", type:"meal" },
+                { t:"10:30 AM", act:"Breakfast", instr:"Veg Poha (60g) + Peas + Peanuts", rule:"+ 1 Multivitamin", type:"meal" },
+                { t:"11:00 AM", act:"Work", instr:"Deep Focus Block (No Phone)", rule:"Drink 1L Water", type:"hack" },
+                { t:"01:30 PM", act:"Lunch", instr:"2 Roti + Rajma (150g) + Cucumber Salad", rule:"Eat Salad First", type:"meal" },
+                { t:"01:50 PM", act:"Movement", instr:"'Shatapavali' Walk (10 Mins)", rule:"DO NOT SIT", type:"workout" },
+                { t:"03:45 PM", act:"Pre-Gym", instr:"1 Banana + Black Coffee + 1 tsp Flaxseeds", rule:"Energy Load", type:"meal" },
+                { t:"04:00 PM", act:"GYM", instr:"Full Body: Squat, Pushup, Lat Pull, Press", rule:"Last Set = DROP SET", type:"workout" },
+                { t:"05:30 PM", act:"Post-Gym", instr:"1 Scoop Whey Protein + Water", rule:"Drink at Gym", type:"meal" },
+                { t:"06:00 PM", act:"Work", instr:"Course Completion / Study", rule:"Active Brain", type:"hack" },
+                { t:"08:00 PM", act:"Dinner", instr:"Paneer Bhurji (100g) + Spinach", rule:"NO ROTI", type:"meal" },
+                { t:"08:20 PM", act:"Movement", instr:"'Shatapavali' Walk (10 Mins)", rule:"DO NOT SIT", type:"workout" },
+                { t:"10:00 PM", act:"Sleep", instr:"Lights Out", rule:"8 Hours Target", type:"hack" }
+            ],
+            tue: [
+                { t:"03:30 AM", act:"Wake Up 1", instr:"500ml Warm Water + ½ Lemon + 1 tsp ACV + Salt", rule:"Prime Metabolism", type:"hack" },
+                { t:"04:00 AM", act:"Cardio 1", instr:"Mandir Visit (Fast Brisk Walk)", rule:"Fasted Fat Burn", type:"workout" },
+                { t:"07:00 AM", act:"Pre-Nap", instr:"5 Soaked Almonds + 1 Walnut", rule:"Brain Repair", type:"meal" },
+                { t:"07:15 AM", act:"Sleep 2", instr:"Sleep in Pitch Black Room", rule:"Hormone Reset", type:"hack" },
+                { t:"10:00 AM", act:"Wake Up 2", instr:"Black Coffee / Green Tea (No Sugar)", rule:"Cortisol Spike", type:"meal" },
+                { t:"10:30 AM", act:"Breakfast", instr:"Oats Chilla (2) + Mint Chutney", rule:"+ 1 Multivitamin", type:"meal" },
+                { t:"11:00 AM", act:"Work", instr:"Deep Focus Block (No Phone)", rule:"Drink 1L Water", type:"hack" },
+                { t:"01:30 PM", act:"Lunch", instr:"1 Roti + Chole + 1 Bowl Curd", rule:"Probiotics", type:"meal" },
+                { t:"01:50 PM", act:"Movement", instr:"'Shatapavali' Walk (10 Mins)", rule:"DO NOT SIT", type:"workout" },
+                { t:"03:45 PM", act:"Pre-Gym", instr:"1 Apple + Green Tea + 1 tsp Flaxseeds", rule:"Light Energy", type:"meal" },
+                { t:"04:00 PM", act:"GYM", instr:"Cardio: Cycle (20m) + Planks + Leg Raise", rule:"Sweat Mandatory", type:"workout" },
+                { t:"05:30 PM", act:"Post-Gym", instr:"1 Scoop Whey Protein + Water", rule:"Muscle Protection", type:"meal" },
+                { t:"06:00 PM", act:"Work", instr:"Course Completion / Study", rule:"Active Brain", type:"hack" },
+                { t:"08:00 PM", act:"Dinner", instr:"Bhindi Fry + Yellow Dal", rule:"Easy Digestion", type:"meal" },
+                { t:"08:20 PM", act:"Movement", instr:"'Shatapavali' Walk (10 Mins)", rule:"DO NOT SIT", type:"workout" },
+                { t:"10:00 PM", act:"Sleep", instr:"Lights Out", rule:"8 Hours Target", type:"hack" }
+            ],
+            wed: [
+                { t:"03:30 AM", act:"Wake Up 1", instr:"500ml Warm Water + ½ Lemon + 1 tsp ACV + Salt", rule:"Prime Metabolism", type:"hack" },
+                { t:"04:00 AM", act:"Cardio 1", instr:"Mandir Visit (Fast Brisk Walk)", rule:"Fasted Fat Burn", type:"workout" },
+                { t:"07:00 AM", act:"Pre-Nap", instr:"5 Soaked Almonds + 1 Walnut", rule:"Brain Repair", type:"meal" },
+                { t:"07:15 AM", act:"Sleep 2", instr:"Sleep in Pitch Black Room", rule:"Hormone Reset", type:"hack" },
+                { t:"10:00 AM", act:"Wake Up 2", instr:"Black Coffee / Green Tea (No Sugar)", rule:"Cortisol Spike", type:"meal" },
+                { t:"10:30 AM", act:"Breakfast", instr:"2 Idli + Sambhar (Less Potato)", rule:"+ 1 Multivitamin", type:"meal" },
+                { t:"11:00 AM", act:"Work", instr:"Deep Focus Block (No Phone)", rule:"Drink 1L Water", type:"hack" },
+                { t:"01:30 PM", act:"Lunch", instr:"1 Cup Rice + Dal Tadka + Salad", rule:"Carb Load for Gym", type:"meal" },
+                { t:"01:50 PM", act:"Movement", instr:"'Shatapavali' Walk (10 Mins)", rule:"DO NOT SIT", type:"workout" },
+                { t:"03:45 PM", act:"Pre-Gym", instr:"Black Coffee + 2 Marie Biscuits + Flaxseeds", rule:"Caffeine Kick", type:"meal" },
+                { t:"04:00 PM", act:"GYM", instr:"Push-Pull-Legs: Deadlift, Bench, Rows", rule:"Last Set = DROP SET", type:"workout" },
+                { t:"05:30 PM", act:"Post-Gym", instr:"1 Scoop Whey Protein + Water", rule:"Immediate Repair", type:"meal" },
+                { t:"06:00 PM", act:"Work", instr:"Course Completion / Study", rule:"Active Brain", type:"hack" },
+                { t:"08:00 PM", act:"Dinner", instr:"Grilled Paneer (100g) + Soup", rule:"High Protein", type:"meal" },
+                { t:"08:20 PM", act:"Movement", instr:"'Shatapavali' Walk (10 Mins)", rule:"DO NOT SIT", type:"workout" },
+                { t:"10:00 PM", act:"Sleep", instr:"Lights Out", rule:"8 Hours Target", type:"hack" }
+            ],
+            thu: [
+                { t:"03:30 AM", act:"Wake Up 1", instr:"500ml Warm Water + ½ Lemon + 1 tsp ACV + Salt", rule:"Prime Metabolism", type:"hack" },
+                { t:"04:00 AM", act:"Cardio 1", instr:"Mandir Visit (Fast Brisk Walk)", rule:"Fasted Fat Burn", type:"workout" },
+                { t:"07:00 AM", act:"Pre-Nap", instr:"5 Soaked Almonds + 1 Walnut", rule:"Brain Repair", type:"meal" },
+                { t:"07:15 AM", act:"Sleep 2", instr:"Sleep in Pitch Black Room", rule:"Hormone Reset", type:"hack" },
+                { t:"10:00 AM", act:"Wake Up 2", instr:"Black Coffee / Green Tea (No Sugar)", rule:"Cortisol Spike", type:"meal" },
+                { t:"10:30 AM", act:"Breakfast", instr:"Paneer Sandwich (Brown Bread)", rule:"+ 1 Multivitamin", type:"meal" },
+                { t:"11:00 AM", act:"Work", instr:"Deep Focus Block (No Phone)", rule:"Drink 1L Water", type:"hack" },
+                { t:"01:30 PM", act:"Lunch", instr:"2 Roti + Soya Chunks Sabzi", rule:"High Protein", type:"meal" },
+                { t:"01:50 PM", act:"Movement", instr:"'Shatapavali' Walk (10 Mins)", rule:"DO NOT SIT", type:"workout" },
+                { t:"03:45 PM", act:"Pre-Gym", instr:"1 Banana + Black Coffee", rule:"Mandatory Potassium", type:"meal" },
+                { t:"04:00 PM", act:"GYM", instr:"LEGS: Squats, Leg Press, Lunges", rule:"DO NOT SKIP", type:"workout" },
+                { t:"05:30 PM", act:"Post-Gym", instr:"1 Scoop Whey Protein + Water", rule:"Immediate Repair", type:"meal" },
+                { t:"06:00 PM", act:"Work", instr:"Passive Learning (Videos)", rule:"Body is tired", type:"hack" },
+                { t:"08:00 PM", act:"Dinner", instr:"Besan Chilla (2) + Salad", rule:"Light Digestion", type:"meal" },
+                { t:"08:20 PM", act:"Movement", instr:"'Shatapavali' Walk (10 Mins)", rule:"DO NOT SIT", type:"workout" },
+                { t:"10:00 PM", act:"Sleep", instr:"Lights Out", rule:"8 Hours Target", type:"hack" }
+            ],
+            fri: [
+                { t:"03:30 AM", act:"Wake Up 1", instr:"500ml Warm Water + ½ Lemon + 1 tsp ACV + Salt", rule:"Prime Metabolism", type:"hack" },
+                { t:"04:00 AM", act:"Cardio 1", instr:"Mandir Visit (Fast Brisk Walk)", rule:"Fasted Fat Burn", type:"workout" },
+                { t:"07:00 AM", act:"Pre-Nap", instr:"5 Soaked Almonds + 1 Walnut", rule:"Brain Repair", type:"meal" },
+                { t:"07:15 AM", act:"Sleep 2", instr:"Sleep in Pitch Black Room", rule:"Hormone Reset", type:"hack" },
+                { t:"10:00 AM", act:"Wake Up 2", instr:"Black Coffee / Green Tea (No Sugar)", rule:"Cortisol Spike", type:"meal" },
+                { t:"10:30 AM", act:"Breakfast", instr:"Moong Dal Chilla", rule:"+ 1 Multivitamin", type:"meal" },
+                { t:"11:00 AM", act:"Work", instr:"Deep Focus Block (No Phone)", rule:"Drink 1L Water", type:"hack" },
+                { t:"01:30 PM", act:"Lunch", instr:"1 Roti + Mix Veg Sabzi + Dal", rule:"Fiber Load", type:"meal" },
+                { t:"01:50 PM", act:"Movement", instr:"'Shatapavali' Walk (10 Mins)", rule:"DO NOT SIT", type:"workout" },
+                { t:"03:45 PM", act:"Pre-Gym", instr:"1 Apple + Black Coffee + Flaxseeds", rule:"Energy Load", type:"meal" },
+                { t:"04:00 PM", act:"GYM", instr:"Arms/Shoulders: Curls, Extensions, Raises", rule:"Last Set = DROP SET", type:"workout" },
+                { t:"05:30 PM", act:"Post-Gym", instr:"1 Scoop Whey Protein + Water", rule:"Drink at Gym", type:"meal" },
+                { t:"06:00 PM", act:"Work", instr:"Course Completion / Study", rule:"Active Brain", type:"hack" },
+                { t:"08:00 PM", act:"Dinner", instr:"Stir Fry Veggies + Paneer (80g)", rule:"High Heat Cooking", type:"meal" },
+                { t:"08:20 PM", act:"Movement", instr:"'Shatapavali' Walk (10 Mins)", rule:"DO NOT SIT", type:"workout" },
+                { t:"10:00 PM", act:"Sleep", instr:"Lights Out", rule:"8 Hours Target", type:"hack" }
+            ],
+            sat: [
+                { t:"03:30 AM", act:"Wake Up 1", instr:"500ml Warm Water + ½ Lemon + 1 tsp ACV", rule:"Prime Metabolism", type:"hack" },
+                { t:"04:00 AM", act:"Cardio 1", instr:"Mandir Visit (Fast Brisk Walk)", rule:"Fasted Fat Burn", type:"workout" },
+                { t:"10:30 AM", act:"Breakfast", instr:"Veg Dalia (Porridge)", rule:"Gut Reset", type:"meal" },
+                { t:"01:30 PM", act:"Lunch", instr:"Khichdi + 1 tsp Ghee", rule:"Joint Lubrication", type:"meal" },
+                { t:"01:50 PM", act:"Movement", instr:"'Shatapavali' Walk (10 Mins)", rule:"DO NOT SIT", type:"workout" },
+                { t:"03:45 PM", act:"Snack", instr:"Coconut Water", rule:"Electrolytes", type:"meal" },
+                { t:"04:00 PM", act:"ACTIVITY", instr:"45 Min Outdoor Nature Walk", rule:"NO GYM / NO WHEY", type:"workout" },
+                { t:"08:00 PM", act:"Dinner", instr:"Papaya Bowl + Soup", rule:"Digestion Enzyme", type:"meal" },
+                { t:"08:20 PM", act:"Movement", instr:"'Shatapavali' Walk (10 Mins)", rule:"DO NOT SIT", type:"workout" },
+                { t:"10:00 PM", act:"Sleep", instr:"Lights Out", rule:"8 Hours Target", type:"hack" }
+            ],
+            sun: [
+                { t:"03:30 AM", act:"Wake Up 1", instr:"500ml Warm Water + ½ Lemon", rule:"No ACV today", type:"hack" },
+                { t:"04:00 AM", act:"Cardio 1", instr:"Mandir Visit (Gentle Walk)", rule:"Mental Peace", type:"workout" },
+                { t:"10:30 AM", act:"Breakfast", instr:"Besan Chilla", rule:"Light Protein", type:"meal" },
+                { t:"01:30 PM", act:"Lunch", instr:"Lauki Dal + 1 Roti", rule:"Stomach Rest", type:"meal" },
+                { t:"04:00 PM", act:"ACTIVITY", instr:"Yoga / Stretching (20 mins)", rule:"Muscle Release", type:"workout" },
+                { t:"06:00 PM", act:"Prep", instr:"Grocery Shopping for Next Week", rule:"Plan Ahead", type:"hack" },
+                { t:"08:00 PM", act:"Dinner", instr:"Salad + 1 Bowl Curd", rule:"Probiotics", type:"meal" },
+                { t:"10:00 PM", act:"Sleep", instr:"Lights Out", rule:"Ready for Monday", type:"hack" }
+            ]
+        };
+
+        // GLOBAL STATE
+        let appData = {
+            user: "Warrior",
+            height: 170,
+            startW: 0,
+            weights: {}, 
+            schedule: null, 
+            history: {}
+        };
+        
+        let viewedDateObj = new Date(); 
+        let currentTabDay = 'mon'; 
+
+        // --- INIT ---
+        window.onload = () => {
+            initTheme();
+            const stored = localStorage.getItem('metabolic_os_v11');
+            if(!stored) {
+                document.getElementById('onboarding').classList.remove('hidden');
+            } else {
+                appData = JSON.parse(stored);
+                // Backwards compatibility check
+                if(!appData.schedule) appData.schedule = JSON.parse(JSON.stringify(defaultSchedule));
+                // If old schedule lacks 'type', we should ideally re-merge, but for now we keep user edits.
+                // You can force update by uncommenting: appData.schedule = defaultSchedule; 
+                if(!appData.history) appData.history = {};
+                document.getElementById('app').classList.remove('hidden');
+                initApp();
+            }
+        };
+
+        // --- APP LOGIC ---
+        function initApp() {
+            document.getElementById('greet').innerText = `HELLO ${appData.user.toUpperCase()}`;
+            document.getElementById('up-name').value = appData.user;
+            document.getElementById('up-height').value = appData.height;
+            document.getElementById('up-sw').value = appData.startW;
+
+            viewedDateObj = new Date();
+            updateDateDisplay();
+            
+            const days = ['sun','mon','tue','wed','thu','fri','sat'];
+            setTab(days[viewedDateObj.getDay()]); 
+
+            updateDashboardInputs();
+            updateHero();
+            setInterval(updateHero, 10000); 
+            updateAnalytics();
+            renderEditor();
+        }
+
+        function saveData() {
+            localStorage.setItem('metabolic_os_v11', JSON.stringify(appData));
+        }
+
+        // --- CORE FUNCTIONS ---
+        function getKey(d) { return d.toISOString().split('T')[0]; }
+        function getFormattedDate(d) { return d.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' }); }
+
+        function changeDate(offset) {
+            viewedDateObj.setDate(viewedDateObj.getDate() + offset);
+            updateDateDisplay();
+            updateDashboardInputs();
+            const days = ['sun','mon','tue','wed','thu','fri','sat'];
+            setTab(days[viewedDateObj.getDay()]);
+        }
+
+        function updateDateDisplay() {
+            const dateStr = getFormattedDate(viewedDateObj);
+            const todayStr = getFormattedDate(new Date());
+            const el = document.getElementById('date-display');
+            el.innerText = (dateStr === todayStr) ? "TODAY • " + dateStr : dateStr;
+            el.style.color = (dateStr === todayStr) ? "var(--primary)" : "var(--text-1)";
+        }
+
+        function updateDashboardInputs() {
+            const k = getKey(viewedDateObj);
+            if(!appData.weights[k]) appData.weights[k] = { am: '', pm: '', water: 0 };
+            const data = appData.weights[k];
+            document.getElementById('w-am').value = data.am || '';
+            document.getElementById('w-pm').value = data.pm || '';
+            updateWaterUI(data.water);
+        }
+
+        function setTab(day) {
+            currentTabDay = day;
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById(`btn-${day}`).classList.add('active');
+
+            const list = document.getElementById('task-container');
+            list.innerHTML = '';
+
+            appData.schedule[day].forEach((item, i) => {
+                const k = getKey(viewedDateObj);
+                const uid = `${k}-${i}`; 
+                const isDone = appData.history[uid] === true;
+
+                // Smart Link Logic
+                let actionBtn = '';
+                let link = '';
+                let icon = '';
+                const query = encodeURIComponent(item.instr + " " + item.act);
+
+                if(item.type === 'workout') {
+                    link = `https://www.youtube.com/results?search_query=${query}`;
+                    icon = '▶';
+                } else if(item.type === 'meal') {
+                    link = `https://www.google.com/search?q=${query}+recipe`;
+                    icon = '📖';
+                } else {
+                    link = `https://www.google.com/search?q=${query}+benefits`;
+                    icon = '🔍';
+                }
+
+                if(item.url) link = item.url; // Override if specific link exists
+
+                const div = document.createElement('div');
+                div.className = `task-card ${isDone ? 'done' : ''}`;
+                
+                div.innerHTML = `
+                    <div class="check-circle" onclick="toggleTask('${uid}', this.parentElement)"></div>
+                    <div class="task-body" onclick="toggleTask('${uid}', this.parentElement)">
+                        <span class="time-badge">${item.t}</span>
+                        <span class="task-title">${item.act}</span>
+                        <span class="task-desc">${item.instr}</span>
+                        <span class="bio-tag">${item.rule}</span>
+                    </div>
+                    <a href="${link}" target="_blank" class="action-btn">${icon}</a>
+                `;
+                list.appendChild(div);
+            });
+            updateHero();
+        }
+
+        function toggleTask(uid, el) {
+            const isDone = el.classList.toggle('done');
+            appData.history[uid] = isDone;
+            saveData();
+            updateHero();
+            if(isDone) showNotification("Task Completed", "success");
+        }
+
+        // --- SETTINGS / EDITOR ---
+        function updateProfile() {
+            const name = document.getElementById('up-name').value;
+            const h = parseFloat(document.getElementById('up-height').value);
+            const w = parseFloat(document.getElementById('up-sw').value);
+            if(name) appData.user = name;
+            if(h) appData.height = h;
+            if(w) appData.startW = w;
+            saveData();
+            showNotification("Profile Updated", "success");
+            initApp();
+        }
+
+        function renderEditor() {
+            const day = document.getElementById('edit-day-select').value;
+            const container = document.getElementById('editor-list');
+            container.innerHTML = '';
+            
+            appData.schedule[day].forEach((item, index) => {
+                const el = document.createElement('div');
+                el.className = 'accordion-item';
+                el.innerHTML = `
+                    <div class="accordion-header" onclick="this.parentElement.classList.toggle('open')">
+                        <div><span>${item.t}</span> ${item.act}</div>
+                        <div>▼</div>
+                    </div>
+                    <div class="accordion-body">
+                        <span class="sm-label">TIME</span>
+                        <input class="sm-input" id="ed-${index}-t" value="${item.t}">
+                        <span class="sm-label">ACTIVITY</span>
+                        <input class="sm-input" id="ed-${index}-act" value="${item.act}">
+                        <span class="sm-label">INSTRUCTION</span>
+                        <input class="sm-input" id="ed-${index}-instr" value="${item.instr}">
+                        <span class="sm-label">TYPE (meal/workout/hack)</span>
+                        <input class="sm-input" id="ed-${index}-type" value="${item.type || 'hack'}">
+                    </div>
+                `;
+                container.appendChild(el);
+            });
+        }
+
+        function saveSchedule() {
+            const day = document.getElementById('edit-day-select').value;
+            appData.schedule[day].forEach((_, index) => {
+                appData.schedule[day][index].t = document.getElementById(`ed-${index}-t`).value;
+                appData.schedule[day][index].act = document.getElementById(`ed-${index}-act`).value;
+                appData.schedule[day][index].instr = document.getElementById(`ed-${index}-instr`).value;
+                appData.schedule[day][index].type = document.getElementById(`ed-${index}-type`).value;
+            });
+            saveData();
+            setTab(currentTabDay);
+            showNotification("Schedule Saved", "success");
+        }
+
+        // --- SHARED UTILS ---
+        function updateWater(amount) {
+            const k = getKey(viewedDateObj);
+            let current = appData.weights[k].water || 0;
+            current += amount;
+            if(current < 0) current = 0;
+            appData.weights[k].water = current;
+            saveData();
+            updateWaterUI(current);
+            updateHero();
+            if(amount > 0) showNotification(`Water Added (+${amount}ml)`, "water");
+        }
+        function updateWaterUI(ml) {
+            const liters = (ml / 1000).toFixed(1);
+            document.getElementById('water-val').innerText = liters + "L";
+            const statusEl = document.getElementById('water-status');
+            statusEl.innerText = (ml >= 3000) ? "Goal Reached! 💧" : "Target: 3.0 Liters";
+            statusEl.style.color = (ml >= 3000) ? "var(--success)" : "var(--text-2)";
+        }
+        function logWeight(type) {
+            const val = document.getElementById(`w-${type}`).value;
+            const k = getKey(viewedDateObj);
+            appData.weights[k][type] = val;
+            saveData();
+            updateAnalytics();
+            if(val) showNotification("Weight Logged", "success");
+        }
+        function updateHero() {
+            // ... (Same logic as 2.3, ensures heat map and streak work) ...
+            const now = new Date();
+            const viewingNow = getKey(viewedDateObj) === getKey(now);
+            const card = document.getElementById('hero-card');
+            const statusEl = document.getElementById('hero-status');
+            const timeEl = document.getElementById('hero-time');
+            const titleEl = document.getElementById('hero-title');
+            const descEl = document.getElementById('hero-desc');
+            const progCircle = document.getElementById('prog-circle');
+            const progText = document.getElementById('prog-text');
+
+            const tasks = appData.schedule[currentTabDay];
+            const k = getKey(viewedDateObj);
+            let doneCount = 0;
+            tasks.forEach((_, i) => { if(appData.history[`${k}-${i}`]) doneCount++; });
+            const pct = Math.round((doneCount / tasks.length) * 100);
+            const offset = 125.6 - (125.6 * pct) / 100;
+            progCircle.style.strokeDashoffset = offset;
+            progText.innerText = pct + "%";
+            calculateStreak();
+
+            if(!viewingNow) {
+                card.classList.remove('warning');
+                statusEl.innerText = "VIEWING LOG";
+                timeEl.innerText = "HIST";
+                titleEl.innerText = "Past/Future";
+                descEl.innerText = "Reviewing Data";
+                return;
+            }
+
+            const nowMins = now.getHours() * 60 + now.getMinutes();
+            const currentWater = appData.weights[getKey(now)]?.water || 0;
+            if(now.getHours() >= 18 && currentWater < 3000) {
+                card.classList.add('warning');
+                statusEl.innerText = "DEHYDRATED";
+                timeEl.innerText = "3.0L";
+                titleEl.innerText = "Hydration Alert";
+                descEl.innerText = "Water intake low.";
+                return;
+            } else {
+                card.classList.remove('warning');
+                statusEl.innerText = "LIVE PROTOCOL";
+            }
+
+            let activeTask = null;
+            for(let i=0; i<tasks.length; i++) {
+                const [timeStr, period] = tasks[i].t.split(' ');
+                let [h, m] = timeStr.split(':');
+                h = parseInt(h); m = parseInt(m);
+                if(period === 'PM' && h !== 12) h += 12;
+                if(period === 'AM' && h === 12) h = 0;
+                if((h * 60 + m) > nowMins) { activeTask = tasks[i]; break; }
+            }
+
+            if(activeTask) {
+                timeEl.innerText = activeTask.t;
+                titleEl.innerText = "Up Next: " + activeTask.act;
+                descEl.innerText = activeTask.instr;
+            } else {
+                timeEl.innerText = "REST";
+                titleEl.innerText = "Day Complete";
+                descEl.innerText = "Sleep protocols active.";
+            }
+        }
+        function calculateStreak() {
+            let streak = 0;
+            let checkDate = new Date();
+            let safeGuard = 0;
+            while(safeGuard < 365) {
+                const k = getKey(checkDate);
+                const dayName = ['sun','mon','tue','wed','thu','fri','sat'][checkDate.getDay()];
+                const dayTasks = appData.schedule[dayName].length;
+                let dayDone = 0;
+                for(let i=0; i<dayTasks; i++) { if(appData.history[`${k}-${i}`]) dayDone++; }
+                const score = (dayDone/dayTasks) * 100;
+                if(score >= 80) { streak++; checkDate.setDate(checkDate.getDate() - 1); }
+                else {
+                    if (k === getKey(new Date()) && score < 80) checkDate.setDate(checkDate.getDate() - 1);
+                    else break;
+                }
+                safeGuard++;
+            }
+            const el = document.getElementById('streak-display');
+            document.getElementById('streak-count').innerText = streak;
+            if(streak > 0) el.classList.add('streak-active'); else el.classList.remove('streak-active');
+        }
+        function updateAnalytics() {
+            // (Same as before)
+            const currentW = parseFloat(appData.weights[getKey(new Date())]?.am || appData.startW);
+            const hM = appData.height / 100;
+            const bmi = (currentW / (hM * hM)).toFixed(1);
+            document.getElementById('bmi-num').innerText = bmi;
+            document.getElementById('s-start').innerText = appData.startW + " kg";
+            document.getElementById('s-curr').innerText = currentW + " kg";
+            const diff = (currentW - parseFloat(appData.startW)).toFixed(1);
+            document.getElementById('s-diff').innerText = (diff > 0 ? "+" : "") + diff + " kg";
+            
+            const chart = document.getElementById('chart-area');
+            chart.innerHTML = '';
+            const dates = [];
+            for(let i=6; i>=0; i--) { const d = new Date(); d.setDate(d.getDate() - i); dates.push(getKey(d)); }
+            let vals = dates.map(d => appData.weights[d]?.am ? parseFloat(appData.weights[d].am) : 0).filter(v => v > 0);
+            if(vals.length === 0) vals = [parseFloat(appData.startW)];
+            const min = Math.min(...vals) - 1; const max = Math.max(...vals) + 1;
+            dates.forEach(d => {
+                const w = appData.weights[d]?.am || 0;
+                const col = document.createElement('div');
+                col.className = 'chart-col';
+                const dayLabel = new Date(d).toLocaleDateString('en-US', {weekday:'narrow'});
+                if(w > 0) {
+                    const heightPct = ((w - min) / (max - min)) * 80 + 20;
+                    col.innerHTML = `<div class="chart-bar filled" style="height:${heightPct}%;"></div><div class="chart-label">${dayLabel}</div>`;
+                } else {
+                    col.innerHTML = `<div class="chart-bar" style="height:6px;"></div><div class="chart-label">${dayLabel}</div>`;
+                }
+                chart.appendChild(col);
+            });
+        }
+        function showNotification(msg, type) {
+            const island = document.getElementById('dynamic-island');
+            document.getElementById('di-msg').innerText = msg;
+            island.classList.add('active');
+            setTimeout(() => island.classList.remove('active'), 2500);
+        }
+        function switchView(view) {
+            document.querySelectorAll('main').forEach(m => m.classList.add('hidden'));
+            document.getElementById(`view-${view}`).classList.remove('hidden');
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            if(view === 'dashboard') document.getElementById('nav-dash').classList.add('active');
+            if(view === 'analytics') document.getElementById('nav-ana').classList.add('active');
+            if(view === 'settings') document.getElementById('nav-set').classList.add('active');
+            const titles = { 'dashboard': 'Daily Plan', 'analytics': 'Analytics', 'settings': 'Editor & Tools' };
+            document.getElementById('page-title').innerText = titles[view];
+        }
+        function completeOnboarding() {
+            // (Same Onboarding Logic)
+            const name = document.getElementById('ob-name').value;
+            const w = document.getElementById('ob-weight').value;
+            let h = 0;
+            if(!document.getElementById('input-cm').classList.contains('hidden')) h = parseFloat(document.getElementById('h-cm').value);
+            else {
+                const ft = parseFloat(document.getElementById('h-ft').value) || 0;
+                const in_ = parseFloat(document.getElementById('h-in').value) || 0;
+                h = (ft * 30.48) + (in_ * 2.54);
+            }
+            if(!name || !w || !h) return showNotification("Please fill all fields", "error");
+            appData.user = name; appData.height = h; appData.startW = w;
+            appData.schedule = JSON.parse(JSON.stringify(defaultSchedule));
+            appData.history = {};
+            saveData();
+            location.reload();
+        }
+        function setHeightMode(mode) {
+            document.querySelectorAll('.unit-opt').forEach(e => e.classList.remove('active'));
+            document.getElementById(`u-${mode}`).classList.add('active');
+            if(mode === 'cm') {
+                document.getElementById('input-cm').classList.remove('hidden');
+                document.getElementById('input-ft').classList.add('hidden');
+            } else {
+                document.getElementById('input-cm').classList.add('hidden');
+                document.getElementById('input-ft').classList.remove('hidden');
+            }
+        }
+        function exportData() {
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(appData));
+            const dlAnchorElem = document.createElement('a');
+            dlAnchorElem.setAttribute("href", dataStr);
+            dlAnchorElem.setAttribute("download", `MetabolicOS_Backup_${getKey(new Date())}.json`);
+            document.body.appendChild(dlAnchorElem);
+            dlAnchorElem.click();
+            dlAnchorElem.remove();
+        }
+        function importData(input) {
+            const file = input.files[0];
+            if(!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const json = JSON.parse(e.target.result);
+                    if(!json.user) throw new Error();
+                    if(confirm("Overwrite data?")) { appData = json; saveData(); location.reload(); }
+                } catch(err) { showNotification("Invalid File", "error"); }
+            };
+            reader.readAsText(file);
+        }
+        function resetCheckboxes() {
+            if(confirm("Reset checkboxes for the week?")) {
+                Object.keys(appData.history).forEach(k => appData.history[k] = false);
+                saveData(); setTab(currentTabDay); showNotification("Reset Done", "success");
+            }
+        }
+        function hardReset() {
+            if(confirm("Factory Reset? Deletes all data.")) { localStorage.clear(); location.reload(); }
+        }
+        function toggleTheme() {
+            const current = document.documentElement.getAttribute('data-theme');
+            const target = current === 'dark' ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-theme', target);
+            localStorage.setItem('meta_theme_v10', target);
+        }
+        function initTheme() {
+            const saved = localStorage.getItem('meta_theme_v10');
+            if(saved) document.documentElement.setAttribute('data-theme', saved);
+            else if(window.matchMedia('(prefers-color-scheme: dark)').matches) document.documentElement.setAttribute('data-theme', 'dark');
+        }
+    </script>
+</body>
+</html>
