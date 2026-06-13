@@ -63,7 +63,7 @@
         @keyframes pulse { 0% { opacity: 1; transform: scale(1); } 50% { opacity: 0.5; transform: scale(1.2); } 100% { opacity: 1; transform: scale(1); } }
         .theme-toggle { width: 38px; height: 38px; border-radius: 50%; background: var(--surface); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 1.1rem; cursor: pointer; margin-left: 10px;}
 
-        /* Dashboard specific */
+        /* Dashboard */
         .date-nav { display: flex; justify-content: center; align-items: center; gap: 15px; padding: 10px 20px; background: var(--bg); }
         .date-arrow { color: #007AFF; cursor: pointer; padding: 5px 15px; background: rgba(0, 122, 255, 0.15); border-radius: 10px; font-weight: 800; user-select: none; }
         .current-date-display { font-size: 0.95rem; font-weight: 700; color: var(--text-2); text-transform: uppercase; display: flex; align-items: center; gap: 6px; letter-spacing: 0.5px; }
@@ -82,7 +82,7 @@
         .reason-chip.active { background: var(--text-1); color: var(--bg); }
         .apply-week-btn { font-size: 0.7rem; font-weight: 800; background: rgba(0, 122, 255, 0.15); color: #007AFF; border: none; border-radius: 8px; padding: 6px 10px; cursor: pointer; white-space: nowrap; }
 
-        /* Cinematic Hero & Progress Ring */
+        /* Cinematic Hero */
         .hero-card { background: var(--hero-grad); color: white; border-radius: 26px; padding: 24px; margin: 10px 20px 0; position: relative; overflow: hidden; z-index: 1; box-shadow: 0 10px 30px rgba(0,0,0,0.2); transition: background 0.5s ease;}
         .hero-card::before { content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: radial-gradient(circle at center, rgba(255,255,255,0.15) 0%, transparent 60%); animation: breathe 8s infinite alternate ease-in-out; z-index: -1; pointer-events: none; }
         @keyframes breathe { 0% { transform: scale(0.9) translate(2%,2%); opacity: 0.6; } 100% { transform: scale(1.1) translate(-2%,-2%); opacity: 1; } }
@@ -103,7 +103,7 @@
         .hydro-card { background: linear-gradient(135deg, rgba(90, 200, 250, 0.1), rgba(0, 122, 255, 0.05)); border: 1px solid rgba(0, 122, 255, 0.2); border-radius: 22px; padding: 18px 20px; margin: 0 20px 20px; display: flex; justify-content: space-between; align-items: center; }
         .hydro-btn { width: 38px; height: 38px; border-radius: 50%; border: none; background: var(--surface); color: #007AFF; font-size: 1.2rem; font-weight: 700; cursor: pointer; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
         
-        /* Frosted Tasks */
+        /* Tasks */
         .tabs { overflow-x: auto; white-space: nowrap; padding: 0 20px 15px; scrollbar-width: none; }
         .tabs::-webkit-scrollbar { display: none; }
         .tab-btn { display: inline-block; padding: 10px 18px; margin-right: 8px; background: var(--surface); border: 1px solid var(--border); border-radius: 14px; font-size: 0.9rem; font-weight: 600; color: var(--text-2); cursor: pointer; }
@@ -135,14 +135,33 @@
         .cal-partial { background: rgba(0, 122, 255, 0.15); color: #007AFF; border-color: #007AFF; }
         .cal-today { border: 2px solid var(--text-1); font-weight: 900; }
 
-        /* Settings */
+        /* Settings & Accordion */
         .btn-xl { width: 100%; padding: 16px; border-radius: 16px; background: var(--text-1); color: var(--bg); font-size: 1rem; font-weight: 700; border: none; cursor: pointer; }
+        .btn-success { background: transparent; border: 2px solid var(--success); color: var(--success); width: 100%; padding: 14px; border-radius: 14px; font-weight: 700; cursor: pointer; }
+        .btn-danger { background: transparent; border: 2px solid var(--danger); color: var(--danger); width: 100%; padding: 14px; border-radius: 14px; font-weight: 700; cursor: pointer; }
+        
         .bulk-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
         .bulk-btn { padding: 12px; border-radius: 12px; background: var(--surface-2); border: 1px solid var(--border); color: var(--text-1); font-weight: 700; font-size: 0.8rem; cursor: pointer; }
         .queue-box { background: var(--bg); border: 1px solid var(--border); border-radius: 12px; padding: 12px; margin-top: 10px; }
         .queue-item { font-size: 0.8rem; font-weight: 600; display: flex; justify-content: space-between; border-bottom: 1px solid var(--border); padding: 8px 0; }
         .queue-item:last-child { border-bottom: none; }
         .checkbox-group label { display: flex; align-items: center; gap: 8px; font-size: 0.85rem; font-weight: 600; margin-bottom: 8px; }
+
+        .editor-list { display: flex; flex-direction: column; gap: 10px; }
+        .accordion-item { background: var(--bg); border-radius: 16px; overflow: hidden; border: 1px solid var(--border); transition: all 0.3s ease; }
+        .accordion-header { padding: 15px; display: flex; justify-content: space-between; align-items: center; font-weight: 700; font-size: 0.95rem; cursor: pointer; }
+        .accordion-body { max-height: 0; overflow: hidden; transition: max-height 0.3s ease; background: var(--surface-2); padding: 0 15px; }
+        .accordion-item.open .accordion-body { max-height: 600px; padding-bottom: 15px; overflow-y: auto; }
+        .accordion-item.open { border-color: var(--primary); }
+        
+        .sm-input { width: 100%; padding: 10px; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; margin-bottom: 12px; color: var(--text-1); font-family: inherit; font-size: 0.9rem; outline: none; }
+        .sm-input:focus { border-color: var(--primary); }
+        .sm-label { font-size: 0.7rem; font-weight: 700; color: var(--text-2); margin-bottom: 5px; display: block; text-transform: uppercase; }
+        
+        .mini-switch { display: flex; background: var(--surface); padding: 3px; border-radius: 10px; border: 1px solid var(--border); margin-bottom: 8px; }
+        .mini-opt { flex: 1; text-align: center; padding: 8px; font-size: 0.8rem; font-weight: 800; color: var(--text-2); border-radius: 7px; cursor: pointer; transition: all 0.2s; }
+        .mini-opt.active.on { background: var(--success); color: #fff; }
+        .mini-opt.active.off { background: var(--silent); color: #fff; }
 
         /* Navbar */
         .nav-bar { position: fixed; bottom: 0; width: 100%; background: var(--nav-glass); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-top: 1px solid var(--border); display: flex; justify-content: space-around; padding: 10px 0 25px; z-index: 500; }
@@ -269,7 +288,6 @@
         </main>
 
         <main id="view-analytics" class="hidden fade-in" style="padding-top:20px;">
-            
             <div class="set-card" id="calendar-card">
                 <div class="cal-header">
                     <button onclick="changeCalMonth(-1)">←</button>
@@ -303,12 +321,83 @@
         <main id="view-settings" class="hidden fade-in" style="padding-top:20px;">
             <div class="set-card">
                 <h3 style="margin-top:0;">Biometrics</h3>
-                <input id="up-name" style="width: 100%; padding: 14px; border-radius: 12px; background: var(--bg); border: 1px solid var(--border); color: var(--text-1); outline: none; margin-bottom: 10px; font-weight: 600;" placeholder="Display Name">
-                <div style="display:flex; gap:10px; margin-bottom: 15px;">
-                    <input id="up-height" type="number" style="flex:1; padding: 14px; border-radius: 12px; background: var(--bg); border: 1px solid var(--border); color: var(--text-1); outline: none; font-weight: 600;" placeholder="Height (cm)">
-                    <input id="up-sw" type="number" style="flex:1; padding: 14px; border-radius: 12px; background: var(--bg); border: 1px solid var(--border); color: var(--text-1); outline: none; font-weight: 600;" placeholder="Start Weight">
+                <input id="up-name" class="sm-input" placeholder="Display Name">
+                <div style="display:flex; gap:10px; margin-bottom: 10px;">
+                    <input id="up-height" type="number" class="sm-input" placeholder="Height (cm)">
+                    <input id="up-sw" type="number" class="sm-input" placeholder="Start Weight">
                 </div>
                 <button class="btn-xl" onclick="updateProfile()">Save Profile</button>
+            </div>
+
+            <div class="set-card">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">
+                    <h3 style="margin:0;">Schedule Config</h3>
+                    <select id="edit-day-select" style="background:var(--bg); border:none; color:var(--primary); font-weight:700; font-size:0.9rem; outline:none; border-radius: 8px; padding: 5px;" onchange="renderEditor()">
+                        <option value="mon">Monday</option>
+                        <option value="tue">Tuesday</option>
+                        <option value="wed">Wednesday</option>
+                        <option value="thu">Thursday</option>
+                        <option value="fri">Friday</option>
+                        <option value="sat">Saturday</option>
+                        <option value="sun">Sunday</option>
+                    </select>
+                </div>
+                <p style="font-size:0.8rem; color:var(--text-2); margin-bottom:15px;">Tap an item to expand. <strong>Food suggestions automatically change based on the Activity Name!</strong> (Try typing "Breakfast", "Lunch", "Snack", or "Gym").</p>
+                
+                <datalist id="list-breakfast">
+                    <option value="Oats Chilla (2) + Mint Chutney">
+                    <option value="Veg Poha (60g) + Peas + Peanuts">
+                    <option value="2 Idli + Sambhar">
+                    <option value="Besan Chilla + Mint Chutney">
+                    <option value="Paneer Sandwich (Brown Bread)">
+                    <option value="Veg Dalia (Porridge)">
+                </datalist>
+
+                <datalist id="list-lunch">
+                    <option value="2 Roti + Rajma (150g) + Salad">
+                    <option value="1 Roti + Chole + 1 Bowl Curd">
+                    <option value="1 Cup Rice + Dal Tadka + Salad">
+                    <option value="2 Roti + Soya Chunks Sabzi">
+                    <option value="1 Roti + Mix Veg Sabzi + Dal">
+                </datalist>
+
+                <datalist id="list-dinner">
+                    <option value="Paneer Bhurji (100g) + Spinach">
+                    <option value="Bhindi Fry + Yellow Dal">
+                    <option value="Grilled Paneer (100g) + Soup">
+                    <option value="Stir Fry Veggies + Paneer (80g)">
+                    <option value="Salad + 1 Bowl Curd">
+                </datalist>
+
+                <datalist id="list-snack">
+                    <option value="1 Banana + Black Coffee">
+                    <option value="1 Apple + Green Tea">
+                    <option value="1 Scoop Whey Protein + Water">
+                    <option value="Coconut Water">
+                    <option value="5 Almonds + 1 Walnut">
+                </datalist>
+
+                <datalist id="list-workout">
+                    <option value="Full Body: Squat, Pushup, Lat Pull, Press">
+                    <option value="Cardio: Cycle (20m) + Planks">
+                    <option value="Push-Pull-Legs: Deadlift, Bench">
+                    <option value="LEGS: Squats, Leg Press, Lunges">
+                    <option value="Yoga / Stretching (20 mins)">
+                    <option value="Mandir Visit (Fast Brisk Walk)">
+                </datalist>
+
+                <datalist id="list-general">
+                    <option value="500ml Warm Water + ½ Lemon + ACV">
+                    <option value="Sleep in Pitch Black Room">
+                    <option value="Deep Focus Block (No Phone)">
+                    <option value="Course Completion / Study">
+                    <option value="Lights Out">
+                </datalist>
+
+                <div id="editor-list" class="editor-list"></div>
+                
+                <button class="btn-success" style="margin-top:15px;" onclick="addNewTask()">+ Add New Task Slot</button>
+                <button class="btn-xl" style="margin-top:15px;" onclick="saveSchedule()">Save Schedule Changes</button>
             </div>
 
             <div class="set-card">
@@ -319,16 +408,6 @@
                     <button class="bulk-btn" onclick="bulkToggleType('meal', true)">Unmute Meals</button>
                     <button class="bulk-btn" onclick="bulkToggleType('hack', false)">Mute All Hacks</button>
                     <button class="bulk-btn" onclick="bulkToggleType('workout', false)">Mute Workouts</button>
-                </div>
-            </div>
-
-            <div class="set-card">
-                <h3 style="margin-top:0;">Light Day Configuration</h3>
-                <p style="font-size:0.8rem; color:var(--text-2);">Select which task types generate notifications on a Light Day.</p>
-                <div class="checkbox-group">
-                    <label><input type="checkbox" id="ld-workout" onchange="updateLightDayConfig()"> Workouts (Default)</label>
-                    <label><input type="checkbox" id="ld-meal" onchange="updateLightDayConfig()"> Meals</label>
-                    <label><input type="checkbox" id="ld-hack" onchange="updateLightDayConfig()"> Bio-Hacks</label>
                 </div>
             </div>
 
@@ -361,7 +440,6 @@
     </div>
 
     <script>
-        // --- 1. PWA REGISTRATION & INIT ---
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => { navigator.serviceWorker.register('./sw.js').catch(()=>{}); });
         }
@@ -458,7 +536,6 @@
                 document.getElementById('onboarding').classList.remove('hidden');
             } else {
                 appData = JSON.parse(stored);
-                // Safety checks for older versions
                 if(!appData.schedule) appData.schedule = JSON.parse(JSON.stringify(defaultSchedule));
                 if(!appData.dayModes) appData.dayModes = {};
                 if(!appData.dayReasons) appData.dayReasons = {};
@@ -473,7 +550,6 @@
         function saveData() { localStorage.setItem('metabolic_os_v13', JSON.stringify(appData)); }
         function getKey(d) { return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); }
 
-        // --- 2. CORE LOGIC ---
         function initApp() {
             document.getElementById('up-name').value = appData.user;
             document.getElementById('up-height').value = appData.height;
@@ -488,6 +564,7 @@
             
             updateDashboardInputs();
             updateSettingsUI();
+            renderEditor(); 
             rebuildNotificationQueue();
             updateWeeklySummary();
             
@@ -570,7 +647,6 @@
             if(isDone) showIsland("Task Completed");
         }
 
-        // --- 3. DAY MODES & STREAKS ---
         function setDayMode(mode) {
             const key = getKey(viewedDateObj);
             appData.dayModes[key] = mode;
@@ -663,7 +739,6 @@
             display.classList.toggle('streak-active', streak > 0);
         }
 
-        // --- 4. HERO & MINDFULNESS ---
         function toggleBreathing() {
             const ring = document.querySelector('.progress-ring');
             const circle = document.getElementById('prog-circle');
@@ -738,7 +813,6 @@
             else { timeEl.innerText = "REST"; titleEl.innerText = "Day Complete"; descEl.innerText = "Sleep protocols active."; }
         }
 
-        // --- 5. DATA (HYDRO/WEIGHT) ---
         function updateDashboardInputs() {
             const k = getKey(viewedDateObj);
             if(!appData.weights[k]) appData.weights[k] = { am: '', pm: '', water: 0 };
@@ -770,7 +844,6 @@
             saveData(); if(val) showIsland("Weight Logged");
         }
 
-        // --- 6. CALENDAR & REPORTS ---
         function renderCalendar() {
             const grid = document.getElementById('cal-days-container');
             if(!grid) return;
@@ -819,7 +892,6 @@
             document.getElementById('weekly-summary').innerHTML = `<span style="color:#007AFF">🔔 ${counts.active} Active</span><span style="color:#FF9500">🔅 ${counts.light} Light</span><span style="color:#8E8E93">🌙 ${counts.silent} Silent</span>`;
         }
 
-        // --- 7. SETTINGS & NOTIFICATIONS ---
         function bulkToggleType(type, state) {
             let changed = 0;
             Object.keys(appData.schedule).forEach(day => {
@@ -850,7 +922,134 @@
             const target = new Date(); target.setHours(h, m, 0, 0); return target.getTime() - Date.now();
         }
 
-        // --- NOTIFICATION UPDATE: 1 HOUR ADVANCE & STICKY ALARMS ---
+        /* --- THE SMART SCHEDULE EDITOR --- */
+        function getListId(activityName) {
+            const n = activityName.toLowerCase();
+            if(n.includes('breakfast')) return 'list-breakfast';
+            if(n.includes('lunch')) return 'list-lunch';
+            if(n.includes('dinner')) return 'list-dinner';
+            if(n.includes('snack') || n.includes('pre') || n.includes('post')) return 'list-snack';
+            if(n.includes('gym') || n.includes('cardio') || n.includes('workout')) return 'list-workout';
+            return 'list-general';
+        }
+
+        function updateSuggestionList(index) {
+            const actVal = document.getElementById(`ed-${index}-act`).value;
+            const instrInput = document.getElementById(`ed-${index}-instr`);
+            instrInput.setAttribute('list', getListId(actVal));
+        }
+
+        function renderEditor() {
+            const day = document.getElementById('edit-day-select').value;
+            const container = document.getElementById('editor-list');
+            container.innerHTML = '';
+            
+            appData.schedule[day].forEach((item, index) => {
+                const reminderOn = item.reminder !== false;
+                const el = document.createElement('div');
+                el.className = 'accordion-item';
+                
+                const initialListId = getListId(item.act);
+                
+                el.innerHTML = `
+                    <div class="accordion-header" onclick="this.parentElement.classList.toggle('open')">
+                        <div><span style="color:#007AFF; margin-right:10px;">${item.t}</span> ${item.act}</div>
+                        <div>▼</div>
+                    </div>
+                    <div class="accordion-body">
+                        <span class="sm-label">TIME (e.g. 08:00 AM)</span>
+                        <input class="sm-input" id="ed-${index}-t" value="${item.t}">
+                        
+                        <span class="sm-label">ACTIVITY NAME</span>
+                        <input class="sm-input" id="ed-${index}-act" value="${item.act}" onkeyup="updateSuggestionList(${index})">
+                        
+                        <span class="sm-label">INSTRUCTION / MEAL</span>
+                        <input class="sm-input" id="ed-${index}-instr" value="${item.instr}" list="${initialListId}" placeholder="What to do or eat?">
+                        
+                        <span class="sm-label">RULE / MOTIVATION</span>
+                        <input class="sm-input" id="ed-${index}-rule" value="${item.rule || ''}">
+                        
+                        <span class="sm-label">TYPE</span>
+                        <select class="sm-input" id="ed-${index}-type" style="padding:10px;">
+                            <option value="hack" ${item.type === 'hack' ? 'selected' : ''}>Bio-Hack</option>
+                            <option value="meal" ${item.type === 'meal' ? 'selected' : ''}>Meal</option>
+                            <option value="workout" ${item.type === 'workout' ? 'selected' : ''}>Workout</option>
+                        </select>
+                        
+                        <span class="sm-label">REMINDER</span>
+                        <div class="mini-switch">
+                            <div class="mini-opt ${reminderOn ? 'active on' : ''}" id="ed-${index}-rem-on" onclick="setReminderToggle(${index}, true)">ON</div>
+                            <div class="mini-opt ${!reminderOn ? 'active off' : ''}" id="ed-${index}-rem-off" onclick="setReminderToggle(${index}, false)">OFF</div>
+                        </div>
+                        <input type="hidden" id="ed-${index}-reminder" value="${reminderOn}">
+                        
+                        <button class="btn-danger" style="margin-top: 10px;" onclick="deleteTask(${index})">Delete Task</button>
+                    </div>
+                `;
+                container.appendChild(el);
+            });
+        }
+
+        function setReminderToggle(index, val) {
+            document.getElementById(`ed-${index}-reminder`).value = val;
+            const onBtn = document.getElementById(`ed-${index}-rem-on`);
+            const offBtn = document.getElementById(`ed-${index}-rem-off`);
+            if(val) {
+                onBtn.classList.add('active', 'on'); offBtn.classList.remove('active', 'off');
+            } else {
+                offBtn.classList.add('active', 'off'); onBtn.classList.remove('active', 'on');
+            }
+        }
+
+        function addNewTask() {
+            const day = document.getElementById('edit-day-select').value;
+            appData.schedule[day].push({
+                t: "12:00 PM",
+                act: "New Activity",
+                instr: "Details here",
+                rule: "Why do this?",
+                type: "hack",
+                reminder: true
+            });
+            saveData();
+            renderEditor();
+            showIsland("New Slot Added at Bottom!");
+        }
+
+        function deleteTask(index) {
+            if(confirm("Permanently delete this task slot?")) {
+                const day = document.getElementById('edit-day-select').value;
+                appData.schedule[day].splice(index, 1);
+                saveData();
+                renderEditor();
+                showIsland("Task Deleted");
+            }
+        }
+
+        function saveSchedule() {
+            const day = document.getElementById('edit-day-select').value;
+            appData.schedule[day].forEach((_, index) => {
+                appData.schedule[day][index].t = document.getElementById(`ed-${index}-t`).value;
+                appData.schedule[day][index].act = document.getElementById(`ed-${index}-act`).value;
+                appData.schedule[day][index].instr = document.getElementById(`ed-${index}-instr`).value;
+                appData.schedule[day][index].rule = document.getElementById(`ed-${index}-rule`).value; 
+                appData.schedule[day][index].type = document.getElementById(`ed-${index}-type`).value;
+                
+                const remVal = document.getElementById(`ed-${index}-reminder`).value;
+                appData.schedule[day][index].reminder = (remVal === 'true' || remVal === true);
+            });
+            
+            // Re-sort schedule chronologically
+            appData.schedule[day].sort((a,b) => msUntil(b.t) - msUntil(a.t));
+            
+            saveData();
+            setTab(currentTabDay);
+            renderEditor(); 
+            rebuildNotificationQueue(); 
+            showIsland("Schedule Saved & Sorted!");
+        }
+
+        /* --- NOTIFICATION QUEUE --- */
         function rebuildNotificationQueue() {
             activeTimers.forEach(t => clearTimeout(t.id));
             activeTimers = [];
@@ -890,7 +1089,7 @@
                 box.innerHTML = `<div class="queue-item" style="color: var(--text-2); justify-content: center;">No reminders left for today.</div>`; return;
             }
             activeTimers.slice(0, 3).forEach(t => {
-                box.innerHTML += `<div class="queue-item"><span>${t.task.act} (Alerts 1hr early)</span> <span style="color:#007AFF">${t.time}</span></div>`;
+                box.innerHTML += `<div class="queue-item"><span>${t.task.act}</span> <span style="color:#007AFF">${t.time}</span></div>`;
             });
         }
 
@@ -899,15 +1098,14 @@
                 const notif = new Notification(`⏳ Starts in 1 Hour: ${task.act}`, { 
                     body: task.instr, 
                     tag: uid, 
-                    icon: './icon.png',
-                    requireInteraction: true // THIS MAKES IT A "PROPER" STICKY ALARM
+                    icon: './icon.png'
                 });
             }
             showIsland(task.act + " in 1 hour");
             rebuildNotificationQueue();
         }
 
-        // --- 8. UTILS ---
+        /* --- UTILS --- */
         function showIsland(msg) {
             const di = document.getElementById('dynamic-island');
             document.getElementById('di-msg').innerText = msg;
@@ -920,6 +1118,7 @@
             document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
             document.getElementById(`nav-${view.substring(0,3)}`).classList.add('active');
             if(view === 'analytics') renderCalendar();
+            if(view === 'settings') renderEditor();
         }
 
         function completeOnboarding() {
