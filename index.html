@@ -39,12 +39,10 @@
         .fade-in { animation: fadeIn 0.4s forwards; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* Dynamic Island */
         #dynamic-island { position: fixed; top: -100px; left: 50%; transform: translateX(-50%); background: var(--island-bg); color: var(--island-text); padding: 12px 24px; border-radius: 30px; z-index: 2000; display: flex; align-items: center; gap: 12px; font-size: 0.9rem; font-weight: 600; transition: top 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); border: 1px solid var(--border); box-shadow: 0 8px 25px rgba(0,0,0,0.2); }
         #dynamic-island.active { top: 15px; }
         .di-icon { font-size: 1.2rem; }
 
-        /* Onboarding */
         #onboarding { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg); z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 30px; }
         .ob-card { background: var(--surface); width: 100%; max-width: 400px; padding: 40px 30px; border-radius: 30px; box-shadow: var(--shadow); border: 1px solid var(--border); text-align: center; }
         .input-field { width: 100%; padding: 18px; border-radius: 16px; border: 2px solid var(--border); background: var(--bg); color: var(--text-1); font-size: 1.1rem; text-align: center; outline: none; margin-bottom: 15px; font-weight: 600; }
@@ -55,7 +53,6 @@
         .btn-primary { width: 100%; padding: 20px; border-radius: 18px; background: var(--text-1); color: var(--bg); font-size: 1.1rem; font-weight: 700; border: none; cursor: pointer; margin-top: 25px; transition: transform 0.1s; }
         .btn-primary:active { transform: scale(0.98); }
 
-        /* Header & Nav */
         header { position: sticky; top: 0; z-index: 100; background: var(--nav-glass); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); padding: max(15px, env(safe-area-inset-top)) 20px 15px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); }
         .brand-gradient { background: linear-gradient(135deg, #007AFF, #5AC8FA); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 900; letter-spacing: -0.5px; }
         .streak-box { display: flex; align-items: center; gap: 4px; font-weight: 800; font-size: 0.9rem; }
@@ -63,7 +60,6 @@
         @keyframes pulse { 0% { opacity: 1; transform: scale(1); } 50% { opacity: 0.5; transform: scale(1.2); } 100% { opacity: 1; transform: scale(1); } }
         .theme-toggle { width: 38px; height: 38px; border-radius: 50%; background: var(--surface); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 1.1rem; cursor: pointer; margin-left: 10px;}
 
-        /* Dashboard */
         .date-nav { display: flex; justify-content: center; align-items: center; gap: 15px; padding: 10px 20px; background: var(--bg); }
         .date-arrow { color: #007AFF; cursor: pointer; padding: 5px 15px; background: rgba(0, 122, 255, 0.15); border-radius: 10px; font-weight: 800; user-select: none; }
         .current-date-display { font-size: 0.95rem; font-weight: 700; color: var(--text-2); text-transform: uppercase; display: flex; align-items: center; gap: 6px; letter-spacing: 0.5px; }
@@ -82,7 +78,6 @@
         .reason-chip.active { background: var(--text-1); color: var(--bg); }
         .apply-week-btn { font-size: 0.7rem; font-weight: 800; background: rgba(0, 122, 255, 0.15); color: #007AFF; border: none; border-radius: 8px; padding: 6px 10px; cursor: pointer; white-space: nowrap; }
 
-        /* Cinematic Hero */
         .hero-card { background: var(--hero-grad); color: white; border-radius: 26px; padding: 24px; margin: 10px 20px 0; position: relative; overflow: hidden; z-index: 1; box-shadow: 0 10px 30px rgba(0,0,0,0.2); transition: background 0.5s ease;}
         .hero-card::before { content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: radial-gradient(circle at center, rgba(255,255,255,0.15) 0%, transparent 60%); animation: breathe 8s infinite alternate ease-in-out; z-index: -1; pointer-events: none; }
         @keyframes breathe { 0% { transform: scale(0.9) translate(2%,2%); opacity: 0.6; } 100% { transform: scale(1.1) translate(-2%,-2%); opacity: 1; } }
@@ -94,7 +89,6 @@
         .breathe-active #prog-circle { animation: mindfulPacer 8s infinite ease-in-out; stroke: #5AC8FA; }
         @keyframes mindfulPacer { 0% { stroke-dashoffset: 125.6; } 45% { stroke-dashoffset: 0; } 55% { stroke-dashoffset: 0; } 100% { stroke-dashoffset: 125.6; } }
 
-        /* Weight & Hydro */
         .weight-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 20px 20px 10px 20px; }
         .weight-box { background: var(--surface); padding: 16px; border-radius: 20px; text-align: center; border: 1px solid var(--border); box-shadow: var(--shadow); }
         .wb-input { width: 100%; background: transparent; border: none; outline: none; font-size: 1.5rem; font-weight: 800; color: var(--text-1); text-align: center; }
@@ -103,15 +97,19 @@
         .hydro-card { background: linear-gradient(135deg, rgba(90, 200, 250, 0.1), rgba(0, 122, 255, 0.05)); border: 1px solid rgba(0, 122, 255, 0.2); border-radius: 22px; padding: 18px 20px; margin: 0 20px 20px; display: flex; justify-content: space-between; align-items: center; }
         .hydro-btn { width: 38px; height: 38px; border-radius: 50%; border: none; background: var(--surface); color: #007AFF; font-size: 1.2rem; font-weight: 700; cursor: pointer; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
         
-        /* Tasks */
         .tabs { overflow-x: auto; white-space: nowrap; padding: 0 20px 15px; scrollbar-width: none; }
         .tabs::-webkit-scrollbar { display: none; }
         .tab-btn { display: inline-block; padding: 10px 18px; margin-right: 8px; background: var(--surface); border: 1px solid var(--border); border-radius: 14px; font-size: 0.9rem; font-weight: 600; color: var(--text-2); cursor: pointer; }
         .tab-btn.active { background: var(--text-1); color: var(--bg); border-color: transparent; box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
 
         .task-list { padding: 0 20px 20px; }
-        .task-card { background: rgba(255, 255, 255, 0.65); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border-radius: 20px; padding: 18px; margin-bottom: 12px; display: flex; align-items: flex-start; border: 1px solid rgba(255, 255, 255, 0.4); box-shadow: 0 4px 15px rgba(0,0,0,0.03); transition: transform 0.2s; position: relative; overflow: hidden; }
+        
+        /* NEW: The Active Glow Class for "You Are Here" */
+        .task-card { background: rgba(255, 255, 255, 0.65); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border-radius: 20px; padding: 18px; margin-bottom: 12px; display: flex; align-items: flex-start; border: 1px solid rgba(255, 255, 255, 0.4); box-shadow: 0 4px 15px rgba(0,0,0,0.03); transition: transform 0.2s, border-color 0.4s, box-shadow 0.4s; position: relative; overflow: hidden; }
         [data-theme="dark"] .task-card { background: rgba(28, 28, 30, 0.4); border-color: rgba(255,255,255,0.08); box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
+        
+        .live-task-glow { border-color: #007AFF !important; box-shadow: 0 0 15px rgba(0, 122, 255, 0.3) !important; }
+
         .task-card:active { transform: scale(0.98); }
         .task-card.muted { opacity: 0.7; }
         .check-circle { width: 24px; height: 24px; border-radius: 50%; border: 2px solid var(--text-2); margin-right: 14px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; margin-top: 3px; cursor: pointer;}
@@ -122,7 +120,6 @@
         .time-badge { font-size: 0.75rem; color: #007AFF; font-weight: 800; margin-bottom: 3px; display: block; }
         .action-btn { background: var(--bg); border: 1px solid var(--border); border-radius: 50%; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; font-size: 1rem; color: var(--text-1); cursor: pointer; margin-left: 10px; flex-shrink: 0; text-decoration: none; }
 
-        /* Analytics & Calendar */
         .set-card { background: var(--surface); border-radius: 24px; padding: 20px; border: 1px solid var(--border); margin: 0 20px 25px; box-shadow: var(--shadow); }
         
         .cal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; font-weight: 800; }
@@ -135,7 +132,20 @@
         .cal-partial { background: rgba(0, 122, 255, 0.15); color: #007AFF; border-color: #007AFF; }
         .cal-today { border: 2px solid var(--text-1); font-weight: 900; }
 
-        /* Settings & Accordion */
+        .bmi-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+        .bmi-val { font-size: 2.2rem; font-weight: 800; letter-spacing: -1px; }
+        .bmi-pill { padding: 6px 14px; border-radius: 20px; font-size: 0.75rem; font-weight: 800; text-transform: uppercase; color: #fff; background: var(--text-2); }
+
+        .chart-wrap { display: flex; align-items: flex-end; justify-content: space-between; height: 160px; padding-top: 30px; margin-bottom: 10px; }
+        .chart-col { width: 12%; text-align: center; }
+        .chart-bar { background: #007AFF; opacity: 0.3; border-radius: 6px; width: 100%; transition: height 0.5s ease; min-height: 6px; }
+        .chart-bar.filled { opacity: 1; }
+        .chart-label { font-size: 0.7rem; color: var(--text-2); margin-top: 8px; font-weight: 600; }
+        
+        .stat-row { display: flex; justify-content: space-between; margin-bottom: 12px; padding-bottom: 12px; border-bottom: 1px solid var(--border); }
+        .stat-row:last-child { border: none; margin: 0; padding: 0; }
+        .stat-val { font-weight: 700; font-size: 1.1rem; }
+
         .btn-xl { width: 100%; padding: 16px; border-radius: 16px; background: var(--text-1); color: var(--bg); font-size: 1rem; font-weight: 700; border: none; cursor: pointer; }
         .btn-success { background: transparent; border: 2px solid var(--success); color: var(--success); width: 100%; padding: 14px; border-radius: 14px; font-weight: 700; cursor: pointer; }
         .btn-danger { background: transparent; border: 2px solid var(--danger); color: var(--danger); width: 100%; padding: 14px; border-radius: 14px; font-weight: 700; cursor: pointer; }
@@ -154,7 +164,10 @@
         .accordion-item.open .accordion-body { max-height: 600px; padding-bottom: 15px; overflow-y: auto; }
         .accordion-item.open { border-color: var(--primary); }
         
-        .sm-input { width: 100%; padding: 10px; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; margin-bottom: 12px; color: var(--text-1); font-family: inherit; font-size: 0.9rem; outline: none; }
+        .bio-inputs { display: flex; flex-direction: column; gap: 10px; margin-bottom: 15px; }
+        @media (min-width: 400px) { .bio-inputs { flex-direction: row; } }
+
+        .sm-input { width: 100%; padding: 14px; background: var(--bg); border: 1px solid var(--border); border-radius: 12px; margin-bottom: 12px; color: var(--text-1); font-family: inherit; font-size: 1rem; outline: none; font-weight: 600;}
         .sm-input:focus { border-color: var(--primary); }
         .sm-label { font-size: 0.7rem; font-weight: 700; color: var(--text-2); margin-bottom: 5px; display: block; text-transform: uppercase; }
         
@@ -163,7 +176,6 @@
         .mini-opt.active.on { background: var(--success); color: #fff; }
         .mini-opt.active.off { background: var(--silent); color: #fff; }
 
-        /* Navbar */
         .nav-bar { position: fixed; bottom: 0; width: 100%; background: var(--nav-glass); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-top: 1px solid var(--border); display: flex; justify-content: space-around; padding: 10px 0 25px; z-index: 500; }
         .nav-item { background: none; border: none; display: flex; flex-direction: column; align-items: center; opacity: 0.4; transition: 0.2s; font-size: 1.6rem; cursor: pointer; padding-top: 5px; }
         .nav-item.active { opacity: 1; transform: scale(1.05); color: #007AFF; }
@@ -275,13 +287,13 @@
             </div>
 
             <div class="tabs">
-                <div class="tab-btn" id="btn-mon" onclick="setTab('mon')">Mon</div>
-                <div class="tab-btn" id="btn-tue" onclick="setTab('tue')">Tue</div>
-                <div class="tab-btn" id="btn-wed" onclick="setTab('wed')">Wed</div>
-                <div class="tab-btn" id="btn-thu" onclick="setTab('thu')">Thu</div>
-                <div class="tab-btn" id="btn-fri" onclick="setTab('fri')">Fri</div>
-                <div class="tab-btn" id="btn-sat" onclick="setTab('sat')">Sat</div>
-                <div class="tab-btn" id="btn-sun" onclick="setTab('sun')">Sun</div>
+                <div class="tab-btn" id="btn-mon" onclick="changeDateToDay('mon')">Mon</div>
+                <div class="tab-btn" id="btn-tue" onclick="changeDateToDay('tue')">Tue</div>
+                <div class="tab-btn" id="btn-wed" onclick="changeDateToDay('wed')">Wed</div>
+                <div class="tab-btn" id="btn-thu" onclick="changeDateToDay('thu')">Thu</div>
+                <div class="tab-btn" id="btn-fri" onclick="changeDateToDay('fri')">Fri</div>
+                <div class="tab-btn" id="btn-sat" onclick="changeDateToDay('sat')">Sat</div>
+                <div class="tab-btn" id="btn-sun" onclick="changeDateToDay('sun')">Sun</div>
             </div>
 
             <div id="task-container" class="task-list"></div>
@@ -299,6 +311,31 @@
                     <span style="display:flex; align-items:center; gap:5px;"><div style="width:10px;height:10px;border-radius:3px;background:#34C759;"></div> Perfect</span>
                     <span style="display:flex; align-items:center; gap:5px;"><div style="width:10px;height:10px;border-radius:3px;background:rgba(0,122,255,0.15); border:1px solid #007AFF;"></div> Partial</span>
                 </div>
+            </div>
+
+            <div class="set-card">
+                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px;">
+                    <span style="font-size: 0.7rem; font-weight: 800; color: var(--text-2); text-transform: uppercase;">Body Mass Index</span>
+                    <span style="font-size: 1.2rem;">🩺</span>
+                </div>
+                <div class="bmi-row">
+                    <span class="bmi-val" id="bmi-num">--</span>
+                    <span class="bmi-pill" id="bmi-text" style="background:var(--text-2)">CALC</span>
+                </div>
+                <p id="bmi-advice" style="font-size: 0.85rem; color: var(--text-2); margin-top: 10px; line-height: 1.45; font-weight: 500;">
+                    Please log your height and weight to receive personalized biometric feedback.
+                </p>
+            </div>
+
+            <div class="set-card">
+                <div class="wb-label">7-DAY WEIGHT TREND</div>
+                <div class="chart-wrap" id="chart-area"></div>
+            </div>
+
+            <div class="set-card">
+                <div class="stat-row"><span>Starting</span><span class="stat-val" id="s-start">--</span></div>
+                <div class="stat-row"><span>Current</span><span class="stat-val" id="s-curr" style="color:#007AFF">--</span></div>
+                <div class="stat-row"><span>Change</span><span class="stat-val" id="s-diff">--</span></div>
             </div>
 
             <div class="set-card">
@@ -322,9 +359,9 @@
             <div class="set-card">
                 <h3 style="margin-top:0;">Biometrics</h3>
                 <input id="up-name" class="sm-input" placeholder="Display Name">
-                <div style="display:flex; gap:10px; margin-bottom: 10px;">
-                    <input id="up-height" type="number" class="sm-input" placeholder="Height (cm)">
-                    <input id="up-sw" type="number" class="sm-input" placeholder="Start Weight">
+                <div class="bio-inputs">
+                    <input id="up-height" type="number" class="sm-input" placeholder="Height (cm)" style="margin-bottom: 0;">
+                    <input id="up-sw" type="number" class="sm-input" placeholder="Start Weight (kg)" style="margin-bottom: 0;">
                 </div>
                 <button class="btn-xl" onclick="updateProfile()">Save Profile</button>
             </div>
@@ -412,6 +449,16 @@
             </div>
 
             <div class="set-card">
+                <h3 style="margin-top:0;">Light Day Configuration</h3>
+                <p style="font-size:0.8rem; color:var(--text-2);">Select which task types generate notifications on a Light Day.</p>
+                <div class="checkbox-group">
+                    <label><input type="checkbox" id="ld-workout" onchange="updateLightDayConfig()"> Workouts (Default)</label>
+                    <label><input type="checkbox" id="ld-meal" onchange="updateLightDayConfig()"> Meals</label>
+                    <label><input type="checkbox" id="ld-hack" onchange="updateLightDayConfig()"> Bio-Hacks</label>
+                </div>
+            </div>
+
+            <div class="set-card">
                 <h3 style="margin-top:0;">Upcoming Notification Queue</h3>
                 <p style="font-size:0.8rem; color:var(--text-2);">The next 3 reminders queued in memory for today.</p>
                 <div class="queue-box" id="upcoming-queue">
@@ -443,6 +490,9 @@
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => { navigator.serviceWorker.register('./sw.js').catch(()=>{}); });
         }
+
+        // --- NEW: MICRO-INTERACTION HELPERS ---
+        const vibrate = (ms) => { if(navigator.vibrate) navigator.vibrate(ms); };
 
         const defaultSchedule = {
             mon: [
@@ -528,6 +578,7 @@
         let activeTimers = [];
         let isBreathing = false;
         let originalOffset = 0;
+        let lastPct = 0; // NEW: track percentage to trigger celebration
 
         window.onload = () => {
             initTheme();
@@ -573,7 +624,20 @@
             }
         }
 
+        function changeDateToDay(dayName) {
+            vibrate(15); // Haptic
+            const days = ['sun','mon','tue','wed','thu','fri','sat'];
+            const targetIdx = days.indexOf(dayName);
+            const currentIdx = viewedDateObj.getDay();
+            const offset = targetIdx - currentIdx;
+            
+            if(offset !== 0) {
+                changeDate(offset);
+            }
+        }
+
         function changeDate(offset) {
+            vibrate(15); // Haptic
             viewedDateObj.setDate(viewedDateObj.getDate() + offset);
             updateDateDisplay();
             updateDashboardInputs();
@@ -622,7 +686,10 @@
                 if(item.type === 'workout') link = `https://www.youtube.com/results?search_query=${query}`;
 
                 const div = document.createElement('div');
+                // Added data-index so updateHero can highlight the live task
                 div.className = `task-card ${isDone ? 'done' : ''} ${muted ? 'muted' : ''}`;
+                div.setAttribute('data-index', i);
+                
                 div.innerHTML = `
                     <div class="check-circle" onclick="toggleTask('${uid}', this.parentElement)"></div>
                     <div class="task-body" onclick="toggleTask('${uid}', this.parentElement)">
@@ -642,12 +709,17 @@
             const isDone = el.classList.toggle('done');
             appData.history[uid] = isDone;
             saveData();
+            
+            // Haptic Feedback based on state
+            if(isDone) vibrate([30, 50, 30]); // Satisfying success pulse
+            else vibrate(30);                 // Short cancel pulse
+            
             updateHero();
             calculateStreak();
-            if(isDone) showIsland("Task Completed");
         }
 
         function setDayMode(mode) {
+            vibrate(15);
             const key = getKey(viewedDateObj);
             appData.dayModes[key] = mode;
             if (mode === 'active') delete appData.dayReasons[key]; 
@@ -680,6 +752,7 @@
         }
 
         function setReason(reason) {
+            vibrate(15);
             const key = getKey(viewedDateObj);
             if(appData.dayModes[key] === 'active') return;
             appData.dayReasons[key] = reason;
@@ -688,6 +761,7 @@
         }
 
         function applyModeToWeek() {
+            vibrate([20, 30, 20]);
             const key = getKey(viewedDateObj);
             const modeToApply = appData.dayModes[key] || 'active';
             const reasonToApply = appData.dayReasons[key];
@@ -740,6 +814,7 @@
         }
 
         function toggleBreathing() {
+            vibrate(15);
             const ring = document.querySelector('.progress-ring');
             const circle = document.getElementById('prog-circle');
             const text = document.getElementById('prog-text');
@@ -782,9 +857,20 @@
             const offset = 125.6 - (125.6 * pct) / 100;
             progCircle.style.strokeDashoffset = offset;
             progText.innerText = pct + "%";
+            
+            // NEW: 100% Celebration
+            if(pct === 100 && lastPct !== 100) {
+                showIsland("🎉 Protocol Complete!");
+                vibrate([50, 100, 50, 100, 50]); // Celebration vibration
+            }
+            lastPct = pct;
+
             calculateStreak();
 
             const mode = appData.dayModes[k] || 'active'; 
+
+            // RESET LIVE TASK HIGHLIGHTS
+            document.querySelectorAll('.task-card').forEach(t => t.classList.remove('live-task-glow'));
 
             if(!viewingNow) {
                 card.style.background = mode === 'silent' ? 'var(--hero-silent)' : 'var(--hero-grad)';
@@ -803,13 +889,25 @@
 
             const nowMins = now.getHours() * 60 + now.getMinutes();
             let activeTask = null;
+            let activeIdx = -1;
+            
             for(let i=0; i<tasks.length; i++) {
                 const [timeStr, period] = tasks[i].t.split(' '); let [h, m] = timeStr.split(':');
                 h = parseInt(h); m = parseInt(m); if(period === 'PM' && h !== 12) h += 12; if(period === 'AM' && h === 12) h = 0;
-                if((h * 60 + m) > nowMins) { activeTask = tasks[i]; break; }
+                if((h * 60 + m) > nowMins) { activeTask = tasks[i]; activeIdx = i; break; }
             }
 
-            if(activeTask) { timeEl.innerText = activeTask.t; titleEl.innerText = "Up Next: " + activeTask.act; descEl.innerText = activeTask.instr; } 
+            if(activeTask) { 
+                timeEl.innerText = activeTask.t; 
+                titleEl.innerText = "Up Next: " + activeTask.act; 
+                descEl.innerText = activeTask.instr; 
+                
+                // HIGHLIGHT LIVE TASK
+                const targetCard = document.querySelector(`.task-card[data-index="${activeIdx}"]`);
+                if(targetCard && !targetCard.classList.contains('done')) {
+                    targetCard.classList.add('live-task-glow');
+                }
+            } 
             else { timeEl.innerText = "REST"; titleEl.innerText = "Day Complete"; descEl.innerText = "Sleep protocols active."; }
         }
 
@@ -821,7 +919,9 @@
             document.getElementById('w-pm').value = data.pm || '';
             updateWaterUI(data.water);
         }
+
         function updateWater(amount) {
+            vibrate(20);
             const k = getKey(viewedDateObj); let current = appData.weights[k]?.water || 0;
             current += amount; if(current < 0) current = 0;
             if(!appData.weights[k]) appData.weights[k] = {};
@@ -829,6 +929,7 @@
             saveData(); updateWaterUI(current);
             if(amount > 0) showIsland(`Water Added (+${amount}ml)`);
         }
+
         function updateWaterUI(ml) {
             const liters = (ml / 1000).toFixed(1);
             document.getElementById('water-val').innerText = liters + "L";
@@ -836,12 +937,77 @@
             statusEl.innerText = (ml >= 3000) ? "Goal Reached! 💧" : "Target: 3.0 Liters";
             statusEl.style.color = (ml >= 3000) ? "#34C759" : "var(--text-2)";
         }
+        
         function logWeight(type) {
             const val = document.getElementById(`w-${type}`).value;
             const k = getKey(viewedDateObj);
             if(!appData.weights[k]) appData.weights[k] = {};
             appData.weights[k][type] = val;
-            saveData(); if(val) showIsland("Weight Logged");
+            saveData(); 
+            updateAnalytics(); 
+            if(val) showIsland("Weight Logged");
+        }
+
+        function updateAnalytics() {
+            const currentW = parseFloat(appData.weights[getKey(new Date())]?.am || appData.startW);
+            const hM = appData.height / 100;
+            const bmi = (currentW / (hM * hM)).toFixed(1);
+            
+            document.getElementById('bmi-num').innerText = isFinite(bmi) ? bmi : "--";
+            
+            let bmiStatus = "CALC";
+            let bmiColor = "var(--text-2)";
+            let bmiAdvice = "Please log your height and weight to receive personalized biometric feedback.";
+
+            if(bmi > 0 && isFinite(bmi)) {
+                if(bmi < 18.5) {
+                    bmiStatus = "UNDERWEIGHT";
+                    bmiColor = "#5AC8FA"; 
+                    bmiAdvice = "You are currently underweight. Focus on nutrient-dense meals, complex carbs (like Oats or Sweet Potatoes), and steady strength training to build lean muscle mass safely.";
+                } else if(bmi >= 18.5 && bmi <= 24.9) {
+                    bmiStatus = "NORMAL";
+                    bmiColor = "#34C759"; 
+                    bmiAdvice = "Great job! You are in an optimal, healthy weight range. Maintain your current protocol of balanced nutrition and consistent cardiovascular activity.";
+                } else if(bmi >= 25 && bmi <= 29.9) {
+                    bmiStatus = "OVERWEIGHT";
+                    bmiColor = "#FF9500"; 
+                    bmiAdvice = "You are in the overweight range. Consider adopting a slight caloric deficit and increasing your daily steps (Zone 2 cardio) to sustainably lower body fat while protecting joints.";
+                } else {
+                    bmiStatus = "OBESE";
+                    bmiColor = "#FF3B30"; 
+                    bmiAdvice = "Your BMI indicates obesity, which can increase long-term health risks. Prioritize a doctor-approved caloric deficit, highly joint-friendly movement (like walking or cycling), and strict sleep hygiene for recovery.";
+                }
+            }
+            
+            document.getElementById('bmi-text').innerText = bmiStatus;
+            document.getElementById('bmi-text').style.background = bmiColor;
+            document.getElementById('bmi-advice').innerText = bmiAdvice;
+
+            document.getElementById('s-start').innerText = appData.startW + " kg";
+            document.getElementById('s-curr').innerText = currentW + " kg";
+            const diff = (currentW - parseFloat(appData.startW)).toFixed(1);
+            document.getElementById('s-diff').innerText = (diff > 0 ? "+" : "") + diff + " kg";
+
+            const chart = document.getElementById('chart-area');
+            chart.innerHTML = '';
+            const dates = [];
+            for(let i=6; i>=0; i--) { const d = new Date(); d.setDate(d.getDate() - i); dates.push(getKey(d)); }
+            let vals = dates.map(d => appData.weights[d]?.am ? parseFloat(appData.weights[d].am) : 0).filter(v => v > 0);
+            if(vals.length === 0) vals = [parseFloat(appData.startW)];
+            const min = Math.min(...vals) - 1; const max = Math.max(...vals) + 1;
+            dates.forEach(d => {
+                const w = appData.weights[d]?.am || 0;
+                const col = document.createElement('div');
+                col.className = 'chart-col';
+                const dayLabel = new Date(d).toLocaleDateString('en-US', {weekday:'narrow'});
+                if(w > 0) {
+                    const heightPct = ((w - min) / (max - min)) * 80 + 20;
+                    col.innerHTML = `<div class="chart-bar filled" style="height:${heightPct}%;"></div><div class="chart-label">${dayLabel}</div>`;
+                } else {
+                    col.innerHTML = `<div class="chart-bar" style="height:6px;"></div><div class="chart-label">${dayLabel}</div>`;
+                }
+                chart.appendChild(col);
+            });
         }
 
         function renderCalendar() {
@@ -877,9 +1043,15 @@
             }
         }
         function changeCalMonth(offset) { calDate.setMonth(calDate.getMonth() + offset); renderCalendar(); }
+        
         function jumpToDate(dateStr) {
+            vibrate(15);
             const parts = dateStr.split('-'); viewedDateObj = new Date(parts[0], parts[1]-1, parts[2]);
-            switchView('dashboard'); updateDateDisplay(); updateDashboardInputs(); setTab();
+            switchView('dashboard'); 
+            updateDateDisplay(); 
+            updateDashboardInputs(); 
+            const days = ['sun','mon','tue','wed','thu','fri','sat'];
+            setTab(days[viewedDateObj.getDay()]);
         }
 
         function updateWeeklySummary() {
@@ -893,6 +1065,7 @@
         }
 
         function bulkToggleType(type, state) {
+            vibrate(20);
             let changed = 0;
             Object.keys(appData.schedule).forEach(day => {
                 appData.schedule[day].forEach(task => { if (task.type === type && task.reminder !== state) { task.reminder = state; changed++; } });
@@ -901,6 +1074,7 @@
         }
 
         function updateLightDayConfig() {
+            vibrate(10);
             const types = [];
             if(document.getElementById('ld-workout').checked) types.push('workout');
             if(document.getElementById('ld-meal').checked) types.push('meal');
@@ -922,7 +1096,6 @@
             const target = new Date(); target.setHours(h, m, 0, 0); return target.getTime() - Date.now();
         }
 
-        /* --- THE SMART SCHEDULE EDITOR --- */
         function getListId(activityName) {
             const n = activityName.toLowerCase();
             if(n.includes('breakfast')) return 'list-breakfast';
@@ -952,7 +1125,7 @@
                 const initialListId = getListId(item.act);
                 
                 el.innerHTML = `
-                    <div class="accordion-header" onclick="this.parentElement.classList.toggle('open')">
+                    <div class="accordion-header" onclick="this.parentElement.classList.toggle('open'); vibrate(15);">
                         <div><span style="color:#007AFF; margin-right:10px;">${item.t}</span> ${item.act}</div>
                         <div>▼</div>
                     </div>
@@ -991,6 +1164,7 @@
         }
 
         function setReminderToggle(index, val) {
+            vibrate(15);
             document.getElementById(`ed-${index}-reminder`).value = val;
             const onBtn = document.getElementById(`ed-${index}-rem-on`);
             const offBtn = document.getElementById(`ed-${index}-rem-off`);
@@ -1002,6 +1176,7 @@
         }
 
         function addNewTask() {
+            vibrate(20);
             const day = document.getElementById('edit-day-select').value;
             appData.schedule[day].push({
                 t: "12:00 PM",
@@ -1017,6 +1192,7 @@
         }
 
         function deleteTask(index) {
+            vibrate([30, 30]);
             if(confirm("Permanently delete this task slot?")) {
                 const day = document.getElementById('edit-day-select').value;
                 appData.schedule[day].splice(index, 1);
@@ -1027,6 +1203,7 @@
         }
 
         function saveSchedule() {
+            vibrate(30);
             const day = document.getElementById('edit-day-select').value;
             appData.schedule[day].forEach((_, index) => {
                 appData.schedule[day][index].t = document.getElementById(`ed-${index}-t`).value;
@@ -1039,7 +1216,6 @@
                 appData.schedule[day][index].reminder = (remVal === 'true' || remVal === true);
             });
             
-            // Re-sort schedule chronologically
             appData.schedule[day].sort((a,b) => msUntil(b.t) - msUntil(a.t));
             
             saveData();
@@ -1049,7 +1225,6 @@
             showIsland("Schedule Saved & Sorted!");
         }
 
-        /* --- NOTIFICATION QUEUE --- */
         function rebuildNotificationQueue() {
             activeTimers.forEach(t => clearTimeout(t.id));
             activeTimers = [];
@@ -1068,8 +1243,6 @@
                 if (mode === 'light' && !appData.lightDayTypes.includes(task.type)) return;
 
                 const exactTimeMs = msUntil(task.t);
-                
-                // Subtract 1 hour (3,600,000 milliseconds) to notify you 1 hour early
                 const notifyTimeMs = exactTimeMs - (60 * 60 * 1000); 
 
                 if (notifyTimeMs > 0 && notifyTimeMs < 86400000) {
@@ -1089,7 +1262,7 @@
                 box.innerHTML = `<div class="queue-item" style="color: var(--text-2); justify-content: center;">No reminders left for today.</div>`; return;
             }
             activeTimers.slice(0, 3).forEach(t => {
-                box.innerHTML += `<div class="queue-item"><span>${t.task.act}</span> <span style="color:#007AFF">${t.time}</span></div>`;
+                box.innerHTML += `<div class="queue-item"><span>${t.task.act} (Alerts 1hr early)</span> <span style="color:#007AFF">${t.time}</span></div>`;
             });
         }
 
@@ -1098,14 +1271,15 @@
                 const notif = new Notification(`⏳ Starts in 1 Hour: ${task.act}`, { 
                     body: task.instr, 
                     tag: uid, 
-                    icon: './icon.png'
+                    icon: './icon.png',
+                    requireInteraction: true 
                 });
             }
             showIsland(task.act + " in 1 hour");
+            vibrate([50, 100, 50]); // Alert vibration
             rebuildNotificationQueue();
         }
 
-        /* --- UTILS --- */
         function showIsland(msg) {
             const di = document.getElementById('dynamic-island');
             document.getElementById('di-msg').innerText = msg;
@@ -1113,15 +1287,20 @@
         }
 
         function switchView(view) {
+            vibrate(10);
             document.querySelectorAll('main').forEach(m => m.classList.add('hidden'));
             document.getElementById(`view-${view}`).classList.remove('hidden');
             document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
             document.getElementById(`nav-${view.substring(0,3)}`).classList.add('active');
-            if(view === 'analytics') renderCalendar();
+            if(view === 'analytics') {
+                updateAnalytics(); 
+                renderCalendar();
+            }
             if(view === 'settings') renderEditor();
         }
 
         function completeOnboarding() {
+            vibrate(30);
             const name = document.getElementById('ob-name').value; const w = document.getElementById('ob-weight').value; let h = 0;
             if(!document.getElementById('input-cm').classList.contains('hidden')) h = parseFloat(document.getElementById('h-cm').value);
             else { const ft = parseFloat(document.getElementById('h-ft').value) || 0; const in_ = parseFloat(document.getElementById('h-in').value) || 0; h = (ft * 30.48) + (in_ * 2.54); }
@@ -1133,6 +1312,7 @@
         }
 
         function setHeightMode(mode) {
+            vibrate(10);
             document.querySelectorAll('.unit-opt').forEach(e => e.classList.remove('active'));
             document.getElementById(`u-${mode}`).classList.add('active');
             if(mode === 'cm') { document.getElementById('input-cm').classList.remove('hidden'); document.getElementById('input-ft').classList.add('hidden'); } 
@@ -1140,19 +1320,23 @@
         }
 
         function updateProfile() {
+            vibrate(20);
             appData.user = document.getElementById('up-name').value || appData.user;
             appData.height = document.getElementById('up-height').value || appData.height;
             appData.startW = document.getElementById('up-sw').value || appData.startW;
             saveData(); showIsland("Profile Saved");
+            updateAnalytics();
         }
 
         function exportData() {
+            vibrate(20);
             const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(appData));
             const dlAnchorElem = document.createElement('a'); dlAnchorElem.setAttribute("href", dataStr); dlAnchorElem.setAttribute("download", `Protocol_Backup_${getKey(new Date())}.json`);
             document.body.appendChild(dlAnchorElem); dlAnchorElem.click(); dlAnchorElem.remove();
         }
 
         function importData(input) {
+            vibrate(20);
             const file = input.files[0]; if(!file) return; const reader = new FileReader();
             reader.onload = function(e) {
                 try {
@@ -1163,14 +1347,19 @@
         }
 
         function resetCheckboxes() {
+            vibrate([30, 30]);
             if(confirm("Reset all checkboxes for this week?")) {
                 Object.keys(appData.history).forEach(k => appData.history[k] = false);
                 saveData(); setTab(); rebuildNotificationQueue(); showIsland("Reset Done");
             }
         }
-        function hardReset() { if(confirm("Factory Reset? This deletes ALL data permanently.")) { localStorage.clear(); location.reload(); } }
+        function hardReset() { 
+            vibrate([50, 50, 50]);
+            if(confirm("Factory Reset? This deletes ALL data permanently.")) { localStorage.clear(); location.reload(); } 
+        }
 
         function toggleTheme() {
+            vibrate(15);
             const current = document.documentElement.getAttribute('data-theme'); const target = current === 'dark' ? 'light' : 'dark';
             document.documentElement.setAttribute('data-theme', target); localStorage.setItem('meta_theme_v13', target);
         }
