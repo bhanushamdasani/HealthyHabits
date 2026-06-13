@@ -850,6 +850,7 @@
             const target = new Date(); target.setHours(h, m, 0, 0); return target.getTime() - Date.now();
         }
 
+        // --- NOTIFICATION UPDATE: 1 HOUR ADVANCE & STICKY ALARMS ---
         function rebuildNotificationQueue() {
             activeTimers.forEach(t => clearTimeout(t.id));
             activeTimers = [];
@@ -867,9 +868,13 @@
                 if (!task.reminder) return;
                 if (mode === 'light' && !appData.lightDayTypes.includes(task.type)) return;
 
-                const ms = msUntil(task.t);
-                if (ms > 0 && ms < 86400000) {
-                    const id = setTimeout(() => fireNotification(task, uid), ms);
+                const exactTimeMs = msUntil(task.t);
+                
+                // Subtract 1 hour (3,600,000 milliseconds) to notify you 1 hour early
+                const notifyTimeMs = exactTimeMs - (60 * 60 * 1000); 
+
+                if (notifyTimeMs > 0 && notifyTimeMs < 86400000) {
+                    const id = setTimeout(() => fireNotification(task, uid), notifyTimeMs);
                     activeTimers.push({ id, task, time: task.t });
                 }
             });
@@ -885,15 +890,20 @@
                 box.innerHTML = `<div class="queue-item" style="color: var(--text-2); justify-content: center;">No reminders left for today.</div>`; return;
             }
             activeTimers.slice(0, 3).forEach(t => {
-                box.innerHTML += `<div class="queue-item"><span>${t.task.act}</span> <span style="color:#007AFF">${t.time}</span></div>`;
+                box.innerHTML += `<div class="queue-item"><span>${t.task.act} (Alerts 1hr early)</span> <span style="color:#007AFF">${t.time}</span></div>`;
             });
         }
 
         function fireNotification(task, uid) {
             if (Notification.permission === 'granted') {
-                const notif = new Notification(`⏰ ${task.act}`, { body: task.instr, tag: uid, icon: './icon.png' });
+                const notif = new Notification(`⏳ Starts in 1 Hour: ${task.act}`, { 
+                    body: task.instr, 
+                    tag: uid, 
+                    icon: './icon.png',
+                    requireInteraction: true // THIS MAKES IT A "PROPER" STICKY ALARM
+                });
             }
-            showIsland(task.act);
+            showIsland(task.act + " in 1 hour");
             rebuildNotificationQueue();
         }
 
