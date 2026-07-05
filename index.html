@@ -2184,33 +2184,57 @@ if ('serviceWorker' in navigator) {
             showIsland("Schedule Saved & Sorted!");
         }
 
+        // Track which notification UIDs have already been fired this session
+        const firedNotifications = new Set();
+
         function rebuildNotificationQueue() {
+            // Clear old timers
             activeTimers.forEach(t => clearTimeout(t.id));
             activeTimers = [];
 
+            if (Notification.permission !== 'granted') return renderQueuePreview();
+
             const now = new Date();
+            const nowMins = now.getHours() * 60 + now.getMinutes();
             const key = getKey(now);
             const dayName = ['sun','mon','tue','wed','thu','fri','sat'][now.getDay()];
             const mode = appData.dayModes[key] || 'active';
 
             if (mode === 'silent') return renderQueuePreview();
 
-            appData.schedule[dayName].forEach((task) => {
+            const tasks = [...(appData.schedule[dayName] || [])];
+            // Include one-off tasks
+            (appData.oneOffTasks?.[key] || []).forEach(t => tasks.push(t));
+
+            tasks.forEach((task) => {
                 const uid = `${key}-${task.id}`;
+                
+                // Skip already completed tasks
                 if (appData.history[uid] === true) return;
+                // Skip if reminder is off
                 if (!task.reminder) return;
+                // Skip if light day and task type not included
                 if (mode === 'light' && !appData.lightDayTypes.includes(task.type)) return;
+                // Skip if already fired this session
+                if (firedNotifications.has(uid)) return;
 
-                const exactTimeMs = msUntil(task.t);
-                if (exactTimeMs > 0) {
-                    // Schedule alert 30 minutes before task time
-                    let notifyTimeMs = exactTimeMs - (30 * 60 * 1000);
-                    if (notifyTimeMs < 0) {
-                        notifyTimeMs = 0; // If task is less than 30 mins away, alert immediately
+                const taskMins = timeToMins(task.t);
+                const alertMins = taskMins - 30; // alert 30 minutes before
+
+                // Only schedule if alert time is still in the future (strictly > nowMins)
+                if (alertMins > nowMins) {
+                    const exactTimeMs = msUntil(task.t);
+                    const notifyTimeMs = exactTimeMs - (30 * 60 * 1000);
+
+                    if (notifyTimeMs > 0) {
+                        const id = setTimeout(() => fireNotification(task, uid), notifyTimeMs);
+                        activeTimers.push({ id, task, time: task.t });
                     }
-
-                    const id = setTimeout(() => fireNotification(task, uid), notifyTimeMs);
-                    activeTimers.push({ id, task, time: task.t });
+                }
+                // If task starts within the next 30 mins and alert hasn't fired yet — fire once immediately
+                else if (alertMins <= nowMins && taskMins > nowMins && !firedNotifications.has(uid)) {
+                    firedNotifications.add(uid);
+                    setTimeout(() => fireNotification(task, uid), 500);
                 }
             });
 
@@ -2318,7 +2342,11 @@ if ('serviceWorker' in navigator) {
         }
 
         function fireNotification(task, uid) {
+            // Guard: never fire the same notification twice in one session
+            if (firedNotifications.has(uid)) return;
             if (appData.history[uid] === true) return;
+            
+            firedNotifications.add(uid);
             const alertData = getMotivationalAlert(task);
             
             if (navigator.serviceWorker && navigator.serviceWorker.controller) {
@@ -2338,8 +2366,10 @@ if ('serviceWorker' in navigator) {
                 });
             }
             showIsland("🔥 " + task.act + " in 30 min");
-            vibrate([50, 100, 50]); 
-            rebuildNotificationQueue();
+            vibrate([50, 100, 50]);
+            // Remove from active timers (cleanup only — no re-schedule)
+            activeTimers = activeTimers.filter(t => t.task.id !== task.id);
+            renderQueuePreview();
         }
 
         function requestNotificationPermission() {
