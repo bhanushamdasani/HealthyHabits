@@ -408,20 +408,24 @@
 
         .nav-bar {
             position: absolute;
-            bottom: calc(16px + env(safe-area-inset-bottom));
-            left: 16px;
-            right: 16px;
-            width: calc(100% - 32px);
-            background: var(--surface);
-            backdrop-filter: blur(24px) saturate(180%);
-            -webkit-backdrop-filter: blur(24px) saturate(180%);
+            bottom: calc(12px + env(safe-area-inset-bottom));
+            left: 20px;
+            right: 20px;
+            width: calc(100% - 40px);
+            background: var(--nav-glass);
+            backdrop-filter: blur(40px) saturate(200%);
+            -webkit-backdrop-filter: blur(40px) saturate(200%);
             border: 1px solid var(--border-glass);
-            border-radius: 24px;
+            border-radius: 28px;
             display: flex;
             justify-content: space-around;
-            padding: 8px 0;
+            align-items: center;
+            padding: 10px 8px;
             z-index: 1000;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.12), 0 1px 0 rgba(255,255,255,0.05) inset;
+        }
+        [data-theme="dark"] .nav-bar {
+            box-shadow: 0 8px 32px rgba(0,0,0,0.35), 0 1px 0 rgba(255,255,255,0.04) inset;
         }
         .nav-item {
             background: none;
@@ -429,21 +433,28 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            opacity: 0.45;
-            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-            font-size: 1.4rem;
+            gap: 3px;
             cursor: pointer;
-            padding: 6px 12px;
-            border-radius: 16px;
+            padding: 8px 18px;
+            border-radius: 18px;
             color: var(--text-2);
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            position: relative;
+        }
+        .nav-item .nav-icon {
+            font-size: 1.3rem;
+            transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            display: block;
         }
         .nav-item.active {
-            opacity: 1;
-            transform: translateY(-2px);
-            color: var(--primary);
             background: var(--primary-dim);
+            color: var(--primary);
         }
-        .nav-label { font-size: 0.65rem; font-weight: 700; margin-top: 4px; }
+        .nav-item.active .nav-icon {
+            transform: scale(1.15) translateY(-1px);
+        }
+        .nav-label { font-size: 0.6rem; font-weight: 800; letter-spacing: 0.3px; opacity: 0.7; }
+        .nav-item.active .nav-label { opacity: 1; color: var(--primary); }
  
         /* Bottom Sheet Styles */
         .bottom-sheet {
@@ -676,7 +687,7 @@
                     <div>
                         <div style="display: inline-flex; align-items: center; gap: 8px; background: rgba(255,255,255,0.2); backdrop-filter: blur(10px); padding: 6px 14px; border-radius: 20px; font-size: 0.75rem; font-weight: 800; text-transform: uppercase; margin-bottom: 20px; border: 1px solid rgba(255,255,255,0.1);">
                             <div style="width: 8px; height: 8px; background: #34C759; border-radius: 50%;" id="hero-status-dot"></div>
-                            <span id="hero-status">LIVE PROTOCOL</span>
+                            <span id="hero-status">LIVE RITUAL</span>
                         </div>
                     </div>
                     <div class="progress-ring" onclick="toggleBreathing()">
@@ -745,7 +756,7 @@
             </div>
 
             <div style="display: flex; justify-content: space-between; align-items: center; margin: 10px 20px 5px;">
-                <h3 style="margin: 0; font-size: 1.05rem; font-weight: 800; color: var(--text-1);">Protocol Slots</h3>
+                <h3 style="margin: 0; font-size: 1.05rem; font-weight: 800; color: var(--text-1);">Today's Rituals</h3>
                 <button class="apply-week-btn" onclick="openOneOffSheet()">+ Add Today's Task</button>
             </div>
 
@@ -756,14 +767,39 @@
             <div class="set-card" id="calendar-card">
                 <div class="cal-header">
                     <button onclick="changeCalMonth(-1)">←</button>
-                    <span id="cal-month-label">Month 2026</span>
+                    <div style="text-align:center;">
+                        <div style="font-weight:800; font-size:1rem;" id="cal-month-label">Month 2026</div>
+                        <div style="font-size:0.7rem; color:var(--text-2); font-weight:600;" id="cal-month-stats">Loading...</div>
+                    </div>
                     <button onclick="changeCalMonth(1)">→</button>
                 </div>
                 <div class="cal-grid" id="cal-days-container"></div>
-                <div style="display:flex; justify-content:center; gap:15px; margin-top:15px; font-size:0.7rem; color:var(--text-2); font-weight:700;">
-                    <span style="display:flex; align-items:center; gap:5px;"><div style="width:10px;height:10px;border-radius:3px;background:#34C759;"></div> Perfect</span>
-                    <span style="display:flex; align-items:center; gap:5px;"><div style="width:10px;height:10px;border-radius:3px;background:rgba(0,122,255,0.15); border:1px solid #007AFF;"></div> Partial</span>
+                <div style="display:flex; justify-content:space-around; margin-top:14px; padding-top:12px; border-top:1px solid var(--border);">
+                    <div style="text-align:center;">
+                        <div style="font-size:1.3rem; font-weight:900; color:#34C759;" id="cal-stat-perfect">0</div>
+                        <div style="font-size:0.65rem; color:var(--text-2); font-weight:700;">PERFECT</div>
+                    </div>
+                    <div style="text-align:center;">
+                        <div style="font-size:1.3rem; font-weight:900; color:var(--primary);" id="cal-stat-partial">0</div>
+                        <div style="font-size:0.65rem; color:var(--text-2); font-weight:700;">PARTIAL</div>
+                    </div>
+                    <div style="text-align:center;">
+                        <div style="font-size:1.3rem; font-weight:900; color:#FF9500;" id="cal-stat-streak">0</div>
+                        <div style="font-size:0.65rem; color:var(--text-2); font-weight:700;">DAY STREAK 🔥</div>
+                    </div>
+                    <div style="text-align:center;">
+                        <div style="font-size:1.3rem; font-weight:900;" id="cal-stat-rate">0%</div>
+                        <div style="font-size:0.65rem; color:var(--text-2); font-weight:700;">COMPLETION</div>
+                    </div>
                 </div>
+            </div>
+            <!-- Cal Day Detail Panel (hidden by default) -->
+            <div class="set-card" id="cal-detail-panel" style="display:none; padding:16px 20px;">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+                    <span style="font-size:0.85rem; font-weight:800;" id="cal-detail-title">--</span>
+                    <button onclick="document.getElementById('cal-detail-panel').style.display='none'" style="background:var(--border); border:none; border-radius:8px; padding:4px 10px; font-size:0.75rem; font-weight:700; color:var(--text-2); cursor:pointer;">✕</button>
+                </div>
+                <div id="cal-detail-tasks" style="font-size:0.82rem; color:var(--text-2); line-height:1.8;"></div>
             </div>
 
             <div class="set-card">
@@ -792,46 +828,12 @@
                 </p>
             </div>
 
-            <!-- Metabolic Energy TDEE Card (Fully Visualized) -->
-            <div class="set-card">
-                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px;">
-                    <span style="font-size: 0.7rem; font-weight: 800; color: var(--text-2); text-transform: uppercase;">Metabolic Energy (TDEE)</span>
-                    <span style="font-size: 1.1rem;">⚡</span>
-                </div>
-                
-                <!-- BMR Section -->
-                <div style="margin-bottom: 15px;">
-                    <div style="display:flex; justify-content:space-between; font-size:0.85rem; font-weight:700; margin-bottom:4px;">
-                        <span>🔋 Idle Fuel (BMR)</span>
-                        <span class="stat-val" id="bmr-val">--</span>
-                    </div>
-                    <div style="height: 8px; background: rgba(255,149,0,0.1); border-radius: 4px; overflow:hidden;">
-                        <div id="bmr-bar" style="width: 0%; height: 100%; background: #FF9500; border-radius: 4px; transition: width 0.5s ease;"></div>
-                    </div>
-                    <span style="font-size: 0.7rem; color: var(--text-2); font-weight: 600; display: block; margin-top: 3px;">Energy required just to stay alive at complete rest (organs, breathing).</span>
-                </div>
-
-                <!-- TDEE Section -->
-                <div style="margin-bottom: 15px;">
-                    <div style="display:flex; justify-content:space-between; font-size:0.85rem; font-weight:700; margin-bottom:4px;">
-                        <span>🏃 Active Fuel (TDEE)</span>
-                        <span class="stat-val" id="tdee-val" style="color:var(--primary)">--</span>
-                    </div>
-                    <div style="height: 8px; background: rgba(0,122,255,0.1); border-radius: 4px; overflow:hidden;">
-                        <div id="tdee-bar" style="width: 0%; height: 100%; background: var(--primary); border-radius: 4px; transition: width 0.5s ease;"></div>
-                    </div>
-                    <span style="font-size: 0.7rem; color: var(--text-2); font-weight: 600; display: block; margin-top: 3px;">Your total daily burn, including all movement, walking, and exercises.</span>
-                </div>
-
-                <!-- Fat Loss Zone Section -->
-                <div style="border-top: 1px solid var(--border); padding-top: 12px; margin-top: 10px;">
-                    <div style="display:flex; justify-content:space-between; font-size:0.85rem; font-weight:700; margin-bottom:4px;">
-                        <span>🔥 Fat Burn Zone (Caloric Deficit)</span>
-                        <span class="stat-val" id="deficit-val" style="color:#34C759">--</span>
-                    </div>
-                    <span style="font-size: 0.7rem; color: var(--text-2); font-weight: 600; display: block;">Eat in this zone daily to force your body to burn fat for fuel (TDEE minus 300 to 500 kcal).</span>
-                </div>
-            </div>
+            <!-- hidden placeholders to avoid JS errors -->
+            <span id="bmr-val" style="display:none"></span>
+            <span id="tdee-val" style="display:none"></span>
+            <span id="bmr-bar" style="display:none"></span>
+            <span id="tdee-bar" style="display:none"></span>
+            <span id="deficit-val" style="display:none"></span>
 
             <div class="set-card">
                 <div class="wb-label">7-DAY WEIGHT TREND</div>
@@ -875,7 +877,7 @@
             </div>
 
             <div class="set-card">
-                <h3 style="margin-top:0;">Weekly Protocol Status</h3>
+                <h3 style="margin-top:0;">Weekly Ritual Status</h3>
                 <p style="font-size: 0.85rem; color: var(--text-2);">Overview of the last 7 days mode distribution.</p>
                 <div id="weekly-summary" style="display: flex; justify-content: space-between; font-weight: 800; font-size: 1.1rem; margin-top: 15px;">
                     <span style="color: #007AFF">🔔 0 Active</span>
@@ -1057,13 +1059,16 @@
 
         <nav class="nav-bar">
             <button class="nav-item active" id="nav-dash" onclick="switchView('dashboard')">
-                🔥 <span class="nav-label">Protocol</span>
+                <span class="nav-icon">🔥</span>
+                <span class="nav-label">Rituals</span>
             </button>
             <button class="nav-item" id="nav-ana" onclick="switchView('analytics')">
-                📊 <span class="nav-label">Reports</span>
+                <span class="nav-icon">📈</span>
+                <span class="nav-label">Insights</span>
             </button>
             <button class="nav-item" id="nav-set" onclick="switchView('settings')">
-                ⚙️ <span class="nav-label">Settings</span>
+                <span class="nav-icon">⚙️</span>
+                <span class="nav-label">Settings</span>
             </button>
         </nav>
         
@@ -1607,7 +1612,7 @@ if ('serviceWorker' in navigator) {
 
             card.style.background = mode === 'light' ? 'var(--hero-warn)' : 'var(--hero-grad)';
             dot.style.background = '#34C759'; dot.style.boxShadow = '0 0 10px #34C759';
-            statusEl.innerText = mode === 'light' ? "LIGHT DAY" : "LIVE PROTOCOL";
+            statusEl.innerText = mode === 'light' ? "LIGHT DAY" : "LIVE RITUAL";
 
             const nowMins = now.getHours() * 60 + now.getMinutes();
             let activeTask = null;
@@ -1630,7 +1635,7 @@ if ('serviceWorker' in navigator) {
                     targetCard.classList.add('live-task-glow');
                 }
             } 
-            else { timeEl.innerText = "REST"; titleEl.innerText = "Day Complete"; descEl.innerText = "Sleep protocols active."; }
+            else { timeEl.innerText = "REST"; titleEl.innerText = "Day Complete"; descEl.innerText = "All rituals done. Sleep well."; }
         }
 
         function triggerConfetti() {
@@ -1829,10 +1834,11 @@ if ('serviceWorker' in navigator) {
             labelEl.style.background = circadian.color;
             document.getElementById('sleep-advice').innerText = circadian.advice;
 
-            // Hydration Efficiency calculations
-            const k = getKey(viewedDateObj);
-            const waterLogs = appData.weights[k]?.waterLogs || [];
-            const hydro = calculateHydrationEfficiency(waterLogs);
+            // Hydration Efficiency calculations — always use TODAY's water data
+            const todayHydroKey = getKey(new Date());
+            const waterLogs = appData.weights[todayHydroKey]?.waterLogs || [];
+            const waterTotal = appData.weights[todayHydroKey]?.water || 0;
+            const hydro = calculateHydrationEfficiency(waterLogs, waterTotal);
             document.getElementById('hydro-efficiency-num').innerText = hydro.score;
             const hydroLabelEl = document.getElementById('hydro-efficiency-label');
             hydroLabelEl.innerText = hydro.label;
@@ -1880,12 +1886,15 @@ if ('serviceWorker' in navigator) {
             if(!grid) return;
             grid.innerHTML = '';
             
-            document.getElementById('cal-month-label').innerText = calDate.toLocaleDateString('en-GB', { month: 'long', year: 'numeric' });
+            document.getElementById('cal-month-label').innerText = calDate.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
 
             const year = calDate.getFullYear(); const month = calDate.getMonth();
             const firstDay = new Date(year, month, 1).getDay();
             const daysInMonth = new Date(year, month + 1, 0).getDate();
             const todayKey = getKey(new Date());
+            const today = new Date();
+
+            let perfectDays = 0, partialDays = 0, totalCompleted = 0, totalTasks = 0;
 
             ['Su','Mo','Tu','We','Th','Fr','Sa'].forEach(d => grid.innerHTML += `<div class="cal-day-name">${d}</div>`);
             for(let i=0; i<firstDay; i++) grid.innerHTML += `<div class="cal-cell cal-empty"></div>`;
@@ -1894,18 +1903,82 @@ if ('serviceWorker' in navigator) {
                 const iterDate = new Date(year, month, i);
                 const k = getKey(iterDate);
                 const dayName = ['sun','mon','tue','wed','thu','fri','sat'][iterDate.getDay()];
-                const tasks = appData.schedule[dayName];
+                const tasks = appData.schedule[dayName] || [];
+                const isPast = iterDate <= today;
                 
                 let doneCount = 0;
                 tasks.forEach(task => { if(appData.history[`${k}-${task.id}`]) doneCount++; });
 
+                if(isPast && tasks.length > 0) {
+                    totalTasks += tasks.length;
+                    totalCompleted += doneCount;
+                }
+
                 let statusClass = '';
-                if(doneCount === tasks.length && tasks.length > 0) statusClass = 'cal-perfect';
-                else if(doneCount > 0) statusClass = 'cal-partial';
+                if(doneCount === tasks.length && tasks.length > 0) { statusClass = 'cal-perfect'; perfectDays++; }
+                else if(doneCount > 0) { statusClass = 'cal-partial'; partialDays++; }
                 const isToday = (k === todayKey) ? 'cal-today' : '';
 
-                grid.innerHTML += `<div class="cal-cell ${statusClass} ${isToday}" onclick="jumpToDate('${k}')">${i}</div>`;
+                // dot indicator for water logged
+                const hasWater = (appData.weights[k]?.water || 0) >= 2000;
+                const waterDot = hasWater ? `<div style="position:absolute;bottom:2px;left:50%;transform:translateX(-50%);width:4px;height:4px;border-radius:50%;background:#5AC8FA;"></div>` : '';
+
+                grid.innerHTML += `<div class="cal-cell ${statusClass} ${isToday}" style="position:relative;" onclick="showCalDayDetail('${k}', '${dayName}', ${i})">${i}${waterDot}</div>`;
             }
+
+            // Month stats
+            const rate = totalTasks > 0 ? Math.round((totalCompleted / totalTasks) * 100) : 0;
+            const elP = document.getElementById('cal-stat-perfect');
+            const elPa = document.getElementById('cal-stat-partial');
+            const elR = document.getElementById('cal-stat-rate');
+            if(elP) elP.innerText = perfectDays;
+            if(elPa) elPa.innerText = partialDays;
+            if(elR) elR.innerText = rate + '%';
+
+            // Streak calculation (looking backwards from today)
+            let streak = 0;
+            let checkDate = new Date(today);
+            while(true) {
+                const ck = getKey(checkDate);
+                const dn = ['sun','mon','tue','wed','thu','fri','sat'][checkDate.getDay()];
+                const ts = appData.schedule[dn] || [];
+                if(ts.length === 0) { checkDate.setDate(checkDate.getDate()-1); if(streak > 90) break; continue; }
+                const done = ts.filter(t => appData.history[`${ck}-${t.id}`]).length;
+                if(done === ts.length && ts.length > 0) { streak++; checkDate.setDate(checkDate.getDate()-1); }
+                else break;
+                if(streak > 365) break;
+            }
+            const elS = document.getElementById('cal-stat-streak');
+            if(elS) elS.innerText = streak;
+        }
+
+        function showCalDayDetail(k, dayName, dayNum) {
+            vibrate(10);
+            const tasks = appData.schedule[dayName] || [];
+            const panel = document.getElementById('cal-detail-panel');
+            const titleEl = document.getElementById('cal-detail-title');
+            const tasksEl = document.getElementById('cal-detail-tasks');
+            if(!panel || !titleEl || !tasksEl) return;
+
+            const dateLabel = calDate.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+            titleEl.innerText = `${dayName.charAt(0).toUpperCase()+dayName.slice(1)}, ${dateLabel.split(' ')[0]} ${dayNum} — ${dateLabel.split(' ')[1]}`;
+
+            if(tasks.length === 0) {
+                tasksEl.innerHTML = `<span style="color:var(--text-2);">No rituals scheduled.</span>`;
+            } else {
+                const waterLogged = appData.weights[k]?.water || 0;
+                let html = tasks.map(t => {
+                    const done = appData.history[`${k}-${t.id}`];
+                    const icon = done ? '✅' : '⬜';
+                    const typeEmoji = t.type === 'workout' ? '🏋️' : t.type === 'meal' ? '🍽️' : '⚡';
+                    return `<div style="display:flex;align-items:flex-start;gap:6px;padding:4px 0;border-bottom:1px solid var(--border);">${icon} ${typeEmoji} <span style="color:var(--text-1);font-weight:700;">${t.t} — ${t.act}</span></div>`;
+                }).join('');
+                html += `<div style="margin-top:8px;font-size:0.75rem;color:var(--text-2);font-weight:700;">💧 Water: ${(waterLogged/1000).toFixed(1)}L</div>`;
+                tasksEl.innerHTML = html;
+            }
+
+            panel.style.display = 'block';
+            panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         }
         function changeCalMonth(offset) { calDate.setMonth(calDate.getMonth() + offset); renderCalendar(); }
         
@@ -2157,62 +2230,91 @@ if ('serviceWorker' in navigator) {
         }
 
         function getMotivationalAlert(task) {
-            const act = task.act.toLowerCase();
-            const type = task.type;
-            const food = task.instr;
-            const rule = task.rule;
-            
-            // Get today's day name (e.g., "Sunday", "Monday")
-            const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+            const act = (task.act || '').toLowerCase();
+            const food = task.instr || '';
+            const rule = task.rule || '';
+            const type = task.type || '';
+            const days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
             const todayDay = days[new Date().getDay()];
-            
-            let title = `🔔 Protocol Slot Active!`;
-            let body = `Time for ${task.act}: ${task.instr} (${task.rule})`;
-            
-            if (act.includes('wake')) {
-                const quotes = [
-                    `🌅 Rise & Shine! It's ${todayDay} morning. Time to jumpstart your engine with "${food}". Let's win today!`,
-                    `🌅 First light of ${todayDay}! Flush out toxins with your morning protocol: "${food}". Baseline rule: ${rule}.`,
-                    `🌅 Wake up, Champion! It's a fresh ${todayDay}. Prime your gut with "${food}" right away!`
+            const hour = new Date().getHours();
+            const timeGreet = hour < 12 ? 'morning' : hour < 17 ? 'afternoon' : 'evening';
+
+            let title, body;
+
+            if (act.includes('wake') || act.includes('alarm')) {
+                title = `🌅 Rise up, it's ${todayDay}!`;
+                const opts = [
+                    `Your body just spent 8 hours repairing. Now move it. Start with: ${food}.`,
+                    `Morning cortisol peak = maximum fat burn. Get up and seize it! ${food} awaits.`,
+                    `Every champion wakes before their excuses do. Your ${todayDay} starts NOW.`
                 ];
-                title = `🌅 Morning Protocol Alert`;
-                body = quotes[Math.floor(Math.random() * quotes.length)];
-            } else if (act.includes('sleep') || act.includes('lights out')) {
-                const quotes = [
-                    `🌙 It's ${todayDay} night. Initiating deep recovery sleep. Protocol: "${food}". Rule: ${rule}.`,
-                    `🌙 Shutting down core processors. Ready for tomorrow. Setup your sleep protocol: "${food}".`,
-                    `🌙 Circadian alignment check! End your ${todayDay} with lights out. Target rule: ${rule}.`
+                body = opts[Math.floor(Math.random() * opts.length)];
+
+            } else if (act.includes('sleep') || act.includes('bed') || act.includes('lights')) {
+                title = `🌙 ${todayDay} Wind-Down`;
+                const opts = [
+                    `Growth hormone releases when you sleep — don't skip recovery. Lights out: ${food}.`,
+                    `Your ${todayDay} was earned. Now let your muscles repair. Sleep tight.`,
+                    `Tomorrow's performance is built tonight. Follow: ${food}. Sleep is the real gain.`
                 ];
-                title = `🌙 Sleep Protocol Activated`;
-                body = quotes[Math.floor(Math.random() * quotes.length)];
-            } else if (type === 'meal' || act.includes('breakfast') || act.includes('lunch') || act.includes('dinner') || act.includes('snack')) {
-                // Swiggy / Zomato style quotes!
-                const quotes = [
-                    `🛎️ Swiggy / Zomato can't deliver this level of gainz! It's ${todayDay} meal time: "${food}" is scheduled. Eat clean! 🥞`,
-                    `🥞 Warm, fresh, and high-protein. Your kitchen is serving "${food}" in 30 mins! Skip the junk delivery today! 🥗`,
-                    `🍲 Chef Self is preparing "${food}" for your ${todayDay} fuel block. Rated 5 stars for high metabolism. ⭐⭐⭐⭐⭐`,
-                    `🔥 Swiggy is jealous of your healthy plate! Time to refuel with "${food}". Rule: ${rule}. Eat up!`
+                body = opts[Math.floor(Math.random() * opts.length)];
+
+            } else if (type === 'meal' || act.includes('breakfast') || act.includes('lunch') || act.includes('dinner') || act.includes('snack') || act.includes('meal')) {
+                // Hyper-specific food mention, Swiggy/Zomato style
+                title = `🍽️ ${todayDay}'s Fuel Block`;
+                const opts = [
+                    `Your kitchen > Zomato 🔥 Chef you is plating "${food}" right now. No delivery fee. No junk oils. Pure gains.`,
+                    `"${food}" loading in 30 mins. Rated ⭐⭐⭐⭐⭐ by your metabolism. Swiggy can't touch this.`,
+                    `Skip the delivery app today. "${food}" is the real high-performance meal for this ${timeGreet}. Fuel up! 🥗`
                 ];
-                title = `🍽️ Zomato/Swiggy Fuel Alert`;
-                body = quotes[Math.floor(Math.random() * quotes.length)];
-            } else if (type === 'workout' || act.includes('gym') || act.includes('cardio') || act.includes('activity')) {
-                const quotes = [
-                    `🏋️ Discipline beats motivation on this ${todayDay}! Prepare for "${food}" in 30 mins. Let's work! 💪`,
-                    `💪 Sweat is just fat crying! Get ready for your ${todayDay} session: "${task.act}" (${food}). Rule: ${rule}.`,
-                    `🏃 Cardio/Strength engine is preheating! "${task.act}" is starting soon. Protocol: ${food}. Let's crush it!`
+                body = opts[Math.floor(Math.random() * opts.length)];
+
+            } else if (type === 'workout' || act.includes('gym') || act.includes('cardio') || act.includes('run') || act.includes('walk') || act.includes('yoga')) {
+                title = `💪 ${todayDay} Sweat Block`;
+                const opts = [
+                    `"${food}" — the only ${todayDay} rep that counts. No shortcuts. No excuses. Just results.`,
+                    `Your future self is watching you right now. Will you show up for "${food}"? 30 mins. Go.`,
+                    `Dopamine, serotonin, endorphins — all unlocked by "${food}". Your ${todayDay} reward starts after this.`
                 ];
-                title = `💪 High-Performance Workout Alert`;
-                body = quotes[Math.floor(Math.random() * quotes.length)];
+                body = opts[Math.floor(Math.random() * opts.length)];
+
+            } else if (act.includes('water') || act.includes('lemon') || act.includes('acv') || act.includes('hydrat')) {
+                title = `💧 Hydration Check`;
+                const opts = [
+                    `Your cells are 70% water. Don't let them shrivel on a ${todayDay}. Drink: ${food}.`,
+                    `Dehydrated brain = foggy thinking. 30 second fix: "${food}". Do it now.`,
+                    `Optimal blood flow, clear skin, fast metabolism — all from sipping "${food}" consistently.`
+                ];
+                body = opts[Math.floor(Math.random() * opts.length)];
+
             } else {
-                const quotes = [
-                    `⚡ Protocol Slot Reminder for ${todayDay}: "${task.act}" starts in 30 mins. Setup: ${food}.`,
-                    `🧬 Biology upgrade in progress! It's time for "${task.act}". Instruction: ${food} (${rule}).`
+                title = `⚡ Ritual Unlocked`;
+                const opts = [
+                    `"${task.act}" in 30 mins. Small daily wins compound into massive life results. Ready?`,
+                    `This ${todayDay} ${timeGreet} block matters: "${task.act} — ${food}". Show up.`,
+                    `Discipline is choosing your future self over your present comfort. Time: ${task.t}. Task: ${task.act}.`
                 ];
-                title = `⚡ Protocol Slot Active`;
-                body = quotes[Math.floor(Math.random() * quotes.length)];
+                body = opts[Math.floor(Math.random() * opts.length)];
             }
-            
+
             return { title, body };
+        }
+
+        function getNextUpcomingTask() {
+            const now = new Date();
+            const nowMins = now.getHours() * 60 + now.getMinutes();
+            const dayName = ['sun','mon','tue','wed','thu','fri','sat'][now.getDay()];
+            const todayKey = getKey(now);
+            const tasks = [...(appData.schedule[dayName] || [])];
+            // Also include one-off tasks for today
+            (appData.oneOffTasks?.[todayKey] || []).forEach(t => tasks.push(t));
+            tasks.sort((a,b) => timeToMins(a.t) - timeToMins(b.t));
+            
+            for (const task of tasks) {
+                const tMins = timeToMins(task.t);
+                if (tMins > nowMins) return task;
+            }
+            return null; // all done for today
         }
 
         function fireNotification(task, uid) {
@@ -2235,7 +2337,7 @@ if ('serviceWorker' in navigator) {
                     requireInteraction: true 
                 });
             }
-            showIsland("Active Slot: " + task.act);
+            showIsland("🔥 " + task.act + " in 30 min");
             vibrate([50, 100, 50]); 
             rebuildNotificationQueue();
         }
@@ -2248,7 +2350,7 @@ if ('serviceWorker' in navigator) {
             }
             Notification.requestPermission().then(permission => {
                 if (permission === 'granted') {
-                    showIsland("Notifications enabled!");
+                    showIsland("✅ Alerts Enabled!");
                     rebuildNotificationQueue();
                 } else {
                     showIsland("Permission denied");
@@ -2259,25 +2361,34 @@ if ('serviceWorker' in navigator) {
 
         function testNotification() {
             vibrate(30);
+            const doTest = () => {
+                showIsland("Firing test alert in 5s...");
+                scheduleTestAlert();
+            };
             if (Notification.permission !== 'granted') {
-                Notification.requestPermission().then(permission => {
-                    if (permission === 'granted') {
-                        showIsland("Alert permitted! Firing in 5s...");
-                        scheduleTestAlert();
-                    } else {
-                        showIsland("Permission denied");
-                    }
+                Notification.requestPermission().then(p => {
+                    if (p === 'granted') doTest();
+                    else showIsland("Permission denied");
                 });
             } else {
-                showIsland("Testing alert in 5 seconds...");
-                scheduleTestAlert();
+                doTest();
             }
         }
 
         function scheduleTestAlert() {
             setTimeout(() => {
-                const testTask = { act: "Breakfast", instr: "Besan Chilla + Mint Chutney", rule: "High Protein Sunday Special", type: "meal" };
-                const alertData = getMotivationalAlert(testTask);
+                // Use next upcoming REAL task for the test, otherwise use a motivational fallback
+                const nextTask = getNextUpcomingTask();
+                let alertData;
+                if (nextTask) {
+                    alertData = getMotivationalAlert(nextTask);
+                    alertData.title = "🔔 Preview: " + alertData.title;
+                } else {
+                    alertData = {
+                        title: "🏆 You crushed today!",
+                        body: "All rituals complete. Rest, recover, and come back stronger tomorrow. You're building a real streak."
+                    };
+                }
                 if (navigator.serviceWorker && navigator.serviceWorker.controller) {
                     navigator.serviceWorker.controller.postMessage({
                         type: 'SHOW_NOTIFICATION',
@@ -2492,21 +2603,23 @@ if ('serviceWorker' in navigator) {
             return { score, label, color, advice };
         }
 
-        function calculateHydrationEfficiency(waterLogs) {
+        function calculateHydrationEfficiency(waterLogs, waterTotal) {
+            const total = waterTotal || 0;
             if(!waterLogs || waterLogs.length === 0) {
                 return { 
                     score: '0%', 
                     label: 'NO INTAKE', 
                     color: 'var(--text-2)',
-                    advice: 'Log water to begin tracking cellular absorption efficiency.' 
+                    advice: 'Log water to begin tracking cellular absorption efficiency. Aim for 3L spread across the day.' 
                 };
             }
             if(waterLogs.length === 1) {
+                const pct = Math.min(Math.round((total / 3000) * 100), 100);
                 return { 
-                    score: '100%', 
-                    label: 'OPTIMAL (START)', 
-                    color: '#34C759',
-                    advice: 'Excellent first log. Space your next drink 2 hours apart to keep cellular hydration optimal.' 
+                    score: pct + '%', 
+                    label: 'STARTED', 
+                    color: '#5AC8FA',
+                    advice: `Good start! You've logged ${(total/1000).toFixed(1)}L. Space your next drink 1–2 hours apart for maximum cellular uptake.` 
                 };
             }
             
@@ -2520,27 +2633,28 @@ if ('serviceWorker' in navigator) {
             
             for(let i=1; i<times.length; i++) {
                 const gap = times[i] - times[i-1];
-                if(gap < 30) {
-                    deductions += 10; 
-                } else if(gap > 240) {
-                    deductions += 15; 
-                }
+                if(gap < 30) { deductions += 10; }
+                else if(gap > 240) { deductions += 15; }
             }
             
-            score = Math.max(score - deductions, 0);
+            // Volume bonus/penalty
+            if(total >= 3000) score += 10;
+            else if(total < 1500) deductions += 20;
+            
+            score = Math.max(Math.min(score - deductions, 100), 0);
             
             let label = 'OPTIMAL';
             let color = '#34C759';
-            let advice = 'Optimal absorption! Your water intake spacing is well synchronized to support cellular metabolism.';
+            let advice = `Excellent! ${(total/1000).toFixed(1)}L logged with great spacing. Your cells are well hydrated.`;
             
-            if (score < 60) {
+            if (score < 50) {
                 label = 'INEFFICIENT';
                 color = '#FF3B30';
-                advice = 'Inefficient spacing detected. You are either chugging water too fast or staying dehydrated for long periods. Aim for regular sips.';
-            } else if (score < 85) {
+                advice = `Only ${(total/1000).toFixed(1)}L logged. Drink more consistently — aim for 250ml every 2 hours to reach 3L.`;
+            } else if (score < 80) {
                 label = 'MODERATE';
                 color = 'var(--primary)';
-                advice = 'Moderate spacing. Try to avoid drinking too much at once or leaving gaps longer than 4 hours.';
+                advice = `${(total/1000).toFixed(1)}L so far. Good progress! Spread remaining intake evenly before end of day.`;
             }
             
             return { score: score + '%', label, color, advice };
