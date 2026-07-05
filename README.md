@@ -6,11 +6,9 @@
 
 ## 📱 Live Demo
 
-**[bhanushamdasani.github.io/HealthyHabits](https://bhanushamdasani.github.io/HealthyHabits)**
+**[HealthyHabits Live Web App](https://healthy-habits-phi.vercel.app/)**
 
-> Works fully offline after first load. Add to your home screen for the native app experience.
-
----
+> HealthyHabits is an online web application that helps you track daily habits, plan your schedule, monitor progress, and build consistency—all directly from your browser.
 
 ## ✨ Features
 
