@@ -188,7 +188,7 @@
         .tab-btn { display: inline-block; padding: 10px 18px; margin-right: 8px; background: var(--surface); border: 1px solid var(--border-glass); border-radius: 14px; font-size: 0.9rem; font-weight: 700; color: var(--text-2); cursor: pointer; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); transition: 0.2s; }
         .tab-btn.active { background: var(--text-1); color: var(--app-bg); border-color: transparent; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
 
-        .task-list { padding: 0 20px 20px; }
+        .task-list { padding: 0 20px calc(140px + env(safe-area-inset-bottom)); }
         
         /* Layout Slider Transition Classes */
         .view-slider-outer {
@@ -306,13 +306,13 @@
         .cal-header button { background: var(--surface-2); border: 1px solid var(--border-glass); border-radius: 8px; color: var(--text-1); padding: 5px 12px; font-weight: bold; cursor: pointer; }
         .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; text-align: center; }
         .cal-day-name { font-size: 0.7rem; color: var(--text-2); font-weight: 700; margin-bottom: 5px; text-transform: uppercase; }
-        .cal-cell { padding: 8px 0; border-radius: 10px; background: var(--border); font-size: 0.85rem; font-weight: 700; cursor: pointer; border: 1px solid var(--border-glass); display: flex; align-items: center; justify-content: center; transition: background-color 0.2s, color 0.2s; }
-        .cal-cell:hover:not(.cal-empty) { background: var(--border-glass); }
+        .cal-cell { aspect-ratio: 1; border-radius: 50%; background: var(--border); font-size: 0.85rem; font-weight: 700; cursor: pointer; border: 1px solid var(--border-glass); display: flex; align-items: center; justify-content: center; transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1); }
+        .cal-cell:hover:not(.cal-empty) { background: var(--border-glass); transform: scale(1.08); }
         .cal-empty { background: transparent; border: none; cursor: default; }
         .cal-perfect { background: var(--success); color: white; border-color: var(--success); box-shadow: 0 2px 8px rgba(52, 199, 89, 0.3); }
         .cal-perfect:hover { background: #2ebd51; }
         .cal-partial { background: rgba(0, 122, 255, 0.15); color: #007AFF; border-color: #007AFF; }
-        .cal-today { border: 2px solid var(--text-1); font-weight: 900; }
+        .cal-today { border: 2px solid var(--primary); color: var(--primary); font-weight: 900; }
 
         .bmi-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
         .bmi-val { font-size: 2.2rem; font-weight: 800; letter-spacing: -1px; }
@@ -768,37 +768,69 @@
 
             <div class="set-card">
                 <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px;">
-                    <span style="font-size: 0.7rem; font-weight: 800; color: var(--text-2); text-transform: uppercase;">Body Mass Index</span>
-                    <span style="font-size: 1.2rem;">🩺</span>
+                    <span style="font-size: 0.7rem; font-weight: 800; color: var(--text-2); text-transform: uppercase;">Body Mass Index (BMI)</span>
+                    <span style="font-size: 1.1rem;">🩺</span>
                 </div>
                 <div class="bmi-row">
                     <span class="bmi-val" id="bmi-num">--</span>
                     <span class="bmi-pill" id="bmi-text" style="background:var(--text-2)">CALC</span>
                 </div>
-                <p id="bmi-advice" style="font-size: 0.85rem; color: var(--text-2); margin-top: 10px; line-height: 1.45; font-weight: 500;">
+                
+                <!-- Visual Scale Grid -->
+                <div style="display: flex; justify-content: space-between; font-size: 0.65rem; color: var(--text-2); font-weight: 700; margin-top: 15px; margin-bottom: 5px;">
+                    <span>Underweight (&lt;18.5)</span>
+                    <span>Healthy (18.5-24.9)</span>
+                    <span>Overweight (25-29.9)</span>
+                    <span>Obese (30+)</span>
+                </div>
+                <div style="height: 6px; background: linear-gradient(90deg, #5AC8FA 20%, #34C759 45%, #FF9500 75%, #FF3B30 100%); border-radius: 3px; position: relative; margin-bottom: 15px;">
+                    <div id="bmi-indicator" style="position: absolute; top: -5px; left: 0%; transform: translateX(-50%); width: 16px; height: 16px; border-radius: 50%; background: var(--text-1); border: 2px solid white; box-shadow: 0 2px 5px rgba(0,0,0,0.3); transition: left 0.5s cubic-bezier(0.16, 1, 0.3, 1);"></div>
+                </div>
+
+                <p id="bmi-advice" style="font-size: 0.85rem; color: var(--text-2); line-height: 1.45; font-weight: 500; margin: 0;">
                     Please log your height and weight to receive personalized biometric feedback.
                 </p>
             </div>
 
-            <!-- Metabolic Energy TDEE Card (With Educational Toggle) -->
+            <!-- Metabolic Energy TDEE Card (Fully Visualized) -->
             <div class="set-card">
                 <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px;">
                     <span style="font-size: 0.7rem; font-weight: 800; color: var(--text-2); text-transform: uppercase;">Metabolic Energy (TDEE)</span>
-                    <span style="font-size: 1.1rem; cursor:pointer;" onclick="toggleTDEEExplanation()">ℹ️</span>
+                    <span style="font-size: 1.1rem;">⚡</span>
                 </div>
-                <div class="stat-row"><span>Basal Metabolic Rate (BMR)</span><span class="stat-val" id="bmr-val">--</span></div>
-                <div class="stat-row"><span>Total Daily Energy (TDEE)</span><span class="stat-val" id="tdee-val" style="color:var(--primary)">--</span></div>
                 
-                <!-- Collapsible Explainer -->
-                <div id="tdee-explanation" style="max-height: 0; overflow: hidden; transition: max-height 0.3s cubic-bezier(0.16, 1, 0.3, 1); font-size: 0.8rem; color: var(--text-2); line-height: 1.45; border-top: 1px solid var(--border); padding-top: 10px; margin-top: 10px; font-weight: 500;">
-                    <div style="margin-bottom: 8px;"><strong style="color:var(--text-1)">What is BMR?</strong><br>Basal Metabolic Rate is the calories your body burns simply staying alive (breathing, organs) at complete rest.</div>
-                    <div style="margin-bottom: 8px;"><strong style="color:var(--text-1)">What is TDEE?</strong><br>Total Daily Energy Expenditure is BMR multiplied by your physical movement factor. It is your true weight-maintenance calorie count.</div>
-                    <div><strong style="color:var(--text-1)">Deficit Target (Fat Loss):</strong><br>Aim to eat 300 to 500 kcal less than your TDEE daily. This forces your body to tap fat stores for energy.</div>
+                <!-- BMR Section -->
+                <div style="margin-bottom: 15px;">
+                    <div style="display:flex; justify-content:space-between; font-size:0.85rem; font-weight:700; margin-bottom:4px;">
+                        <span>🔋 Idle Fuel (BMR)</span>
+                        <span class="stat-val" id="bmr-val">--</span>
+                    </div>
+                    <div style="height: 8px; background: rgba(255,149,0,0.1); border-radius: 4px; overflow:hidden;">
+                        <div id="bmr-bar" style="width: 0%; height: 100%; background: #FF9500; border-radius: 4px; transition: width 0.5s ease;"></div>
+                    </div>
+                    <span style="font-size: 0.7rem; color: var(--text-2); font-weight: 600; display: block; margin-top: 3px;">Energy required just to stay alive at complete rest (organs, breathing).</span>
                 </div>
 
-                <p style="font-size: 0.78rem; color: var(--text-2); line-height: 1.4; margin: 8px 0 0 0; font-weight: 600; cursor: pointer; text-align: center; text-decoration: underline;" onclick="toggleTDEEExplanation()">
-                    What do these numbers mean? Learn more
-                </p>
+                <!-- TDEE Section -->
+                <div style="margin-bottom: 15px;">
+                    <div style="display:flex; justify-content:space-between; font-size:0.85rem; font-weight:700; margin-bottom:4px;">
+                        <span>🏃 Active Fuel (TDEE)</span>
+                        <span class="stat-val" id="tdee-val" style="color:var(--primary)">--</span>
+                    </div>
+                    <div style="height: 8px; background: rgba(0,122,255,0.1); border-radius: 4px; overflow:hidden;">
+                        <div id="tdee-bar" style="width: 0%; height: 100%; background: var(--primary); border-radius: 4px; transition: width 0.5s ease;"></div>
+                    </div>
+                    <span style="font-size: 0.7rem; color: var(--text-2); font-weight: 600; display: block; margin-top: 3px;">Your total daily burn, including all movement, walking, and exercises.</span>
+                </div>
+
+                <!-- Fat Loss Zone Section -->
+                <div style="border-top: 1px solid var(--border); padding-top: 12px; margin-top: 10px;">
+                    <div style="display:flex; justify-content:space-between; font-size:0.85rem; font-weight:700; margin-bottom:4px;">
+                        <span>🔥 Fat Burn Zone (Caloric Deficit)</span>
+                        <span class="stat-val" id="deficit-val" style="color:#34C759">--</span>
+                    </div>
+                    <span style="font-size: 0.7rem; color: var(--text-2); font-weight: 600; display: block;">Eat in this zone daily to force your body to burn fat for fuel (TDEE minus 300 to 500 kcal).</span>
+                </div>
             </div>
 
             <div class="set-card">
@@ -857,6 +889,9 @@
                 <button class="btn-xl" style="background:transparent; border: 2px solid var(--text-1); color: var(--text-1);" onclick="document.getElementById('file-input').click()">📂 Import Backup File</button>
                 <input type="file" id="file-input" class="hidden" accept=".json" onchange="importData(this)">
             </div>
+
+            <!-- Scroll Spacer to avoid navigation bar overlap -->
+            <div style="height: calc(130px + env(safe-area-inset-bottom));"></div>
         </main>
 
         <main id="view-settings" class="slider-page" style="padding-top:20px;">
@@ -1013,6 +1048,9 @@
                 <button class="btn-xl" style="background: rgba(255, 149, 0, 0.1); border: 2px solid #FF9500; color: #FF9500; margin-bottom: 10px;" onclick="resetCheckboxes()">Reset Week's Checkboxes</button>
                 <button class="btn-xl" style="background: transparent; border: 2px solid #FF3B30; color: #FF3B30;" onclick="hardReset()">Factory Reset App</button>
             </div>
+
+            <!-- Scroll Spacer to avoid navigation bar overlap -->
+            <div style="height: calc(130px + env(safe-area-inset-bottom));"></div>
         </main>
             </div>
         </div>
@@ -1673,7 +1711,7 @@ if ('serviceWorker' in navigator) {
                 appData.weights[k].waterLogs.pop();
             }
             
-            saveData(); updateWaterUI(current);
+            saveData(); updateWaterUI(current); updateAnalytics();
             if(amount > 0) showIsland(`Water Added (+${amount}ml)`);
         }
 
@@ -1710,6 +1748,19 @@ if ('serviceWorker' in navigator) {
             let bmiAdvice = "Please log your height and weight to receive personalized biometric feedback.";
 
             if(bmi > 0 && isFinite(bmi)) {
+                let percent = 0;
+                if (bmi < 18.5) {
+                    percent = (bmi / 18.5) * 25;
+                } else if (bmi < 25) {
+                    percent = 25 + ((bmi - 18.5) / 6.5) * 25;
+                } else if (bmi < 30) {
+                    percent = 50 + ((bmi - 25) / 5) * 25;
+                } else {
+                    percent = 75 + Math.min(((bmi - 30) / 10) * 25, 25);
+                }
+                const ind = document.getElementById('bmi-indicator');
+                if(ind) ind.style.left = percent + '%';
+
                 if(bmi < 18.5) {
                     bmiStatus = "UNDERWEIGHT";
                     bmiColor = "#5AC8FA"; 
@@ -1727,6 +1778,9 @@ if ('serviceWorker' in navigator) {
                     bmiColor = "#FF3B30"; 
                     bmiAdvice = "Your BMI indicates obesity, which can increase long-term health risks. Prioritize a doctor-approved caloric deficit, highly joint-friendly movement (like walking or cycling), and strict sleep hygiene for recovery.";
                 }
+            } else {
+                const ind = document.getElementById('bmi-indicator');
+                if(ind) ind.style.left = '0%';
             }
             
             document.getElementById('bmi-text').innerText = bmiStatus;
@@ -1750,6 +1804,23 @@ if ('serviceWorker' in navigator) {
             document.getElementById('bmr-val').innerText = currentW > 0 ? Math.round(bmr) + " kcal" : "--";
             document.getElementById('tdee-val').innerText = currentW > 0 ? Math.round(tdee) + " kcal" : "--";
 
+            const bmrBar = document.getElementById('bmr-bar');
+            const tdeeBar = document.getElementById('tdee-bar');
+            const deficitVal = document.getElementById('deficit-val');
+            
+            if (currentW > 0) {
+                const maxCal = 3000;
+                const bmrPct = Math.min((bmr / maxCal) * 100, 100);
+                const tdeePct = Math.min((tdee / maxCal) * 100, 100);
+                if (bmrBar) bmrBar.style.width = bmrPct + '%';
+                if (tdeeBar) tdeeBar.style.width = tdeePct + '%';
+                if (deficitVal) deficitVal.innerText = Math.round(tdee - 400) + " kcal";
+            } else {
+                if (bmrBar) bmrBar.style.width = '0%';
+                if (tdeeBar) tdeeBar.style.width = '0%';
+                if (deficitVal) deficitVal.innerText = "--";
+            }
+
             // Sleep Consistency Index calculations
             const circadian = calculateCircadianConsistency();
             document.getElementById('sleep-consistency-num').innerText = circadian.score === '--' ? '--' : circadian.score + '%';
@@ -1766,6 +1837,8 @@ if ('serviceWorker' in navigator) {
             const hydroLabelEl = document.getElementById('hydro-efficiency-label');
             hydroLabelEl.innerText = hydro.label;
             hydroLabelEl.style.background = hydro.color;
+            const hydroAdviceEl = document.getElementById('hydro-advice');
+            if (hydroAdviceEl) hydroAdviceEl.innerText = hydro.advice;
 
             document.getElementById('s-start').innerText = (parseFloat(appData.startW) || 0) + " kg";
             document.getElementById('s-curr').innerText = currentW + " kg";
@@ -2078,22 +2151,73 @@ if ('serviceWorker' in navigator) {
             });
         }
 
+        function getMotivationalAlert(task) {
+            const act = task.act.toLowerCase();
+            const type = task.type;
+            
+            let title = `⚡ Habit Protocol Active!`;
+            let body = `Time for ${task.act}: ${task.instr}`;
+            
+            if (act.includes('wake')) {
+                const quotes = [
+                    "Rise and grind, Champion! Your morning momentum sets the tone for the entire day. Let's win today!",
+                    "First light belongs to you. Prime your system, drink your water, and dominate this morning!",
+                    "Daylight is here! Time to wake your baseline metabolism and start burning fat."
+                ];
+                title = `🌅 Wake Up Protocol Activated`;
+                body = quotes[Math.floor(Math.random() * quotes.length)];
+            } else if (act.includes('sleep') || act.includes('lights out')) {
+                const quotes = [
+                    "Initiating hormonal recovery block. Cell repair and muscle synthesis start now. Sleep deep!",
+                    "Unplug and recharge. Circumvent blue light, release growth hormones, and rest well.",
+                    "Shutting down core engine. Time to rest your neurons for tomorrow's performance."
+                ];
+                title = `🌙 Circadian Rest Trigger`;
+                body = quotes[Math.floor(Math.random() * quotes.length)];
+            } else if (type === 'workout' || act.includes('gym') || act.includes('cardio')) {
+                const quotes = [
+                    "No excuses. Time to activate hypertrophy and crush this session. Sweat is just fat crying!",
+                    "Your muscles are waiting for stress. Drive vascular blood flow and lift with purpose!",
+                    "Zone 2 / Strength engine active. Elevate your heart rate and build the body of your dreams."
+                ];
+                title = `💪 High-Performance Workout Alert`;
+                body = `${task.act} starts now! ` + quotes[Math.floor(Math.random() * quotes.length)] + ` (${task.instr})`;
+            } else if (type === 'meal' || act.includes('breakfast') || act.includes('lunch') || act.includes('dinner')) {
+                const quotes = [
+                    "Fuel your biology, don't just feed your emotions. High-nutrition fuel block active!",
+                    "Eat clean, perform dirty. Prioritize protein synthesis and protect your insulin baseline.",
+                    "Metabolic refueling block. Chew slowly, enjoy the nutrition, and refuel your cells."
+                ];
+                title = `🍽️ Precision Fuel Block`;
+                body = `${task.act} active: ${task.instr}. ` + quotes[Math.floor(Math.random() * quotes.length)];
+            } else if (act.includes('water') || act.includes('lemon') || act.includes('acv') || act.includes('hydration')) {
+                const quotes = [
+                    "Hydrate at the cellular level. Keep blood volume high and flush out metabolic waste!",
+                    "Fuel your cells. Proper fluid distribution drives thermogenesis and athletic performance.",
+                    "Sip, don't chug! Maintain optimal cellular fluid balance to protect joint health."
+                ];
+                title = `💧 Hydration Trigger Active`;
+                body = quotes[Math.floor(Math.random() * quotes.length)] + ` (${task.instr})`;
+            }
+            
+            return { title, body };
+        }
+
         function fireNotification(task, uid) {
             if (appData.history[uid] === true) return;
-            const title = `🔔 Protocol Active: ${task.act}`;
-            const body = `${task.instr} (${task.rule})`;
+            const alertData = getMotivationalAlert(task);
             
             if (navigator.serviceWorker && navigator.serviceWorker.controller) {
                 navigator.serviceWorker.controller.postMessage({
                     type: 'SHOW_NOTIFICATION',
-                    title: title,
-                    body: body,
+                    title: alertData.title,
+                    body: alertData.body,
                     tag: uid,
                     icon: './icon.png'
                 });
             } else if (Notification.permission === 'granted') {
-                new Notification(title, { 
-                    body: body, 
+                new Notification(alertData.title, { 
+                    body: alertData.body, 
                     tag: uid, 
                     icon: './icon.png',
                     requireInteraction: true 
@@ -2140,18 +2264,18 @@ if ('serviceWorker' in navigator) {
 
         function scheduleTestAlert() {
             setTimeout(() => {
-                const title = "🧪 HealthyHabits Test Alert";
-                const body = "Your notification engine is working perfectly offline!";
+                const testTask = { act: "GYM", instr: "LEGS: Squats & Lunges", rule: "Lift heavy", type: "workout" };
+                const alertData = getMotivationalAlert(testTask);
                 if (navigator.serviceWorker && navigator.serviceWorker.controller) {
                     navigator.serviceWorker.controller.postMessage({
                         type: 'SHOW_NOTIFICATION',
-                        title: title,
-                        body: body,
+                        title: alertData.title,
+                        body: alertData.body,
                         tag: 'test-alert',
                         icon: './icon.png'
                     });
                 } else {
-                    new Notification(title, { body: body, icon: './icon.png' });
+                    new Notification(alertData.title, { body: alertData.body, icon: './icon.png' });
                 }
                 vibrate([50, 100, 50]);
             }, 5000);
@@ -2357,7 +2481,22 @@ if ('serviceWorker' in navigator) {
         }
 
         function calculateHydrationEfficiency(waterLogs) {
-            if(!waterLogs || waterLogs.length < 2) return { score: '--', label: 'N/A', color: 'var(--text-2)' };
+            if(!waterLogs || waterLogs.length === 0) {
+                return { 
+                    score: '0%', 
+                    label: 'NO INTAKE', 
+                    color: 'var(--text-2)',
+                    advice: 'Log water to begin tracking cellular absorption efficiency.' 
+                };
+            }
+            if(waterLogs.length === 1) {
+                return { 
+                    score: '100%', 
+                    label: 'OPTIMAL (START)', 
+                    color: '#34C759',
+                    advice: 'Excellent first log. Space your next drink 2 hours apart to keep cellular hydration optimal.' 
+                };
+            }
             
             const times = waterLogs.map(log => {
                 const [h, m] = log.time.split(':').map(Number);
@@ -2370,9 +2509,9 @@ if ('serviceWorker' in navigator) {
             for(let i=1; i<times.length; i++) {
                 const gap = times[i] - times[i-1];
                 if(gap < 30) {
-                    deductions += 5; 
-                } else if(gap > 240) {
                     deductions += 10; 
+                } else if(gap > 240) {
+                    deductions += 15; 
                 }
             }
             
@@ -2380,15 +2519,19 @@ if ('serviceWorker' in navigator) {
             
             let label = 'OPTIMAL';
             let color = '#34C759';
+            let advice = 'Optimal absorption! Your water intake spacing is well synchronized to support cellular metabolism.';
+            
             if (score < 60) {
                 label = 'INEFFICIENT';
                 color = '#FF3B30';
+                advice = 'Inefficient spacing detected. You are either chugging water too fast or staying dehydrated for long periods. Aim for regular sips.';
             } else if (score < 85) {
                 label = 'MODERATE';
                 color = 'var(--primary)';
+                advice = 'Moderate spacing. Try to avoid drinking too much at once or leaving gaps longer than 4 hours.';
             }
             
-            return { score: score + '%', label, color };
+            return { score: score + '%', label, color, advice };
         }
 
         function openSleepSheet() {
