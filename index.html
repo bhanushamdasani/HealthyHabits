@@ -2128,11 +2128,15 @@ if ('serviceWorker' in navigator) {
                 if (!task.reminder) return;
                 if (mode === 'light' && !appData.lightDayTypes.includes(task.type)) return;
 
-                let notifyTimeMs = msUntil(task.t) - (30 * 60 * 1000); // 30 minutes early
-                if (notifyTimeMs < 0 && msUntil(task.t) > 0) notifyTimeMs = 0; // immediate catch-up if starts within 30m
+                const exactTimeMs = msUntil(task.t);
+                if (exactTimeMs > 0) {
+                    // Schedule alert 30 minutes before task time
+                    let notifyTimeMs = exactTimeMs - (30 * 60 * 1000);
+                    if (notifyTimeMs < 0) {
+                        notifyTimeMs = 0; // If task is less than 30 mins away, alert immediately
+                    }
 
-                if (notifyTimeMs >= 0 && msUntil(task.t) < 86400000) {
-                    const id = setTimeout(() => fireNotification(task, uid, dayName), notifyTimeMs);
+                    const id = setTimeout(() => fireNotification(task, uid), notifyTimeMs);
                     activeTimers.push({ id, task, time: task.t });
                 }
             });
@@ -2152,77 +2156,68 @@ if ('serviceWorker' in navigator) {
             });
         }
 
-        function getMotivationalAlert(task, dayName) {
+        function getMotivationalAlert(task) {
             const act = task.act.toLowerCase();
             const type = task.type;
-            const food = task.instr || '';
-            const dayCap = (dayName || 'today').toUpperCase();
+            const food = task.instr;
+            const rule = task.rule;
             
-            // Day prefixes to add local day vibe
-            const dayVibes = {
-                mon: "Monday Hustle 🚀",
-                tue: "Tuesday Grit 💪",
-                wed: "Mid-week Focus 🎯",
-                thu: "Thursday Synergy ⚡",
-                fri: "Friday Finish 🔥",
-                sat: "Saturday Rejuvenation 🍃",
-                sun: "Sunday Rest & Recovery 🌞"
-            };
-            const prefix = dayVibes[dayName] || "Daily Routine ⏰";
-
-            let title = `🔔 ${prefix}: ${task.act}`;
-            let body = `Starts in 30m: ${task.instr} (${task.rule})`;
-
+            // Get today's day name (e.g., "Sunday", "Monday")
+            const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+            const todayDay = days[new Date().getDay()];
+            
+            let title = `🔔 Protocol Slot Active!`;
+            let body = `Time for ${task.act}: ${task.instr} (${task.rule})`;
+            
             if (act.includes('wake')) {
                 const quotes = [
-                    `Rise and shine for this ${dayCap}! Your morning momentum is waiting. Let's make it count.`,
-                    `First light of ${dayCap} is here. Prime your system with lemon water and dominate early!`,
-                    `Wake up engine activated! Time to start thermogenesis and kickstart this beautiful day.`
+                    `🌅 Rise & Shine! It's ${todayDay} morning. Time to jumpstart your engine with "${food}". Let's win today!`,
+                    `🌅 First light of ${todayDay}! Flush out toxins with your morning protocol: "${food}". Baseline rule: ${rule}.`,
+                    `🌅 Wake up, Champion! It's a fresh ${todayDay}. Prime your gut with "${food}" right away!`
                 ];
-                title = `🌅 ${prefix} • Rise & Prime`;
+                title = `🌅 Morning Protocol Alert`;
                 body = quotes[Math.floor(Math.random() * quotes.length)];
             } else if (act.includes('sleep') || act.includes('lights out')) {
                 const quotes = [
-                    `Circadian shutdown mode. Muscle synthesis and cellular restoration triggered. Sleep deep!`,
-                    `Lights out! Time to shield your eyes from blue light and let melatonin restore you.`,
-                    `Day complete. Shut down the thoughts, rest your neurons, and prepare for tomorrow's wins.`
+                    `🌙 It's ${todayDay} night. Initiating deep recovery sleep. Protocol: "${food}". Rule: ${rule}.`,
+                    `🌙 Shutting down core processors. Ready for tomorrow. Setup your sleep protocol: "${food}".`,
+                    `🌙 Circadian alignment check! End your ${todayDay} with lights out. Target rule: ${rule}.`
                 ];
-                title = `🌙 ${prefix} • Sleep Protocol`;
+                title = `🌙 Sleep Protocol Activated`;
+                body = quotes[Math.floor(Math.random() * quotes.length)];
+            } else if (type === 'meal' || act.includes('breakfast') || act.includes('lunch') || act.includes('dinner') || act.includes('snack')) {
+                // Swiggy / Zomato style quotes!
+                const quotes = [
+                    `🛎️ Swiggy / Zomato can't deliver this level of gainz! It's ${todayDay} meal time: "${food}" is scheduled. Eat clean! 🥞`,
+                    `🥞 Warm, fresh, and high-protein. Your kitchen is serving "${food}" in 30 mins! Skip the junk delivery today! 🥗`,
+                    `🍲 Chef Self is preparing "${food}" for your ${todayDay} fuel block. Rated 5 stars for high metabolism. ⭐⭐⭐⭐⭐`,
+                    `🔥 Swiggy is jealous of your healthy plate! Time to refuel with "${food}". Rule: ${rule}. Eat up!`
+                ];
+                title = `🍽️ Zomato/Swiggy Fuel Alert`;
                 body = quotes[Math.floor(Math.random() * quotes.length)];
             } else if (type === 'workout' || act.includes('gym') || act.includes('cardio') || act.includes('activity')) {
                 const quotes = [
-                    `Time to move! Crush this ${task.act} session. No excuses, make your muscles work!`,
-                    `Pre-workout warning: Get ready to sweat, elevate blood flow, and lift with purpose.`,
-                    `Physical engine activation. Burn energy, gain strength, and boost your heart rate.`
+                    `🏋️ Discipline beats motivation on this ${todayDay}! Prepare for "${food}" in 30 mins. Let's work! 💪`,
+                    `💪 Sweat is just fat crying! Get ready for your ${todayDay} session: "${task.act}" (${food}). Rule: ${rule}.`,
+                    `🏃 Cardio/Strength engine is preheating! "${task.act}" is starting soon. Protocol: ${food}. Let's crush it!`
                 ];
-                title = `💪 ${prefix} • Movement Calling`;
-                body = quotes[Math.floor(Math.random() * quotes.length)] + ` (Details: ${task.instr})`;
-            } else if (type === 'meal' || act.includes('breakfast') || act.includes('lunch') || act.includes('dinner')) {
-                // ZOMATO/SWIGGY STYLE MOTIVATIONAL MEALS!
-                const swiggyLines = [
-                    `Bhai, your chef-special "${food}" is scheduled in 30 mins! 🥞 Hot, fresh, and high-nutrition. Prepare the ingredients!`,
-                    `Your kitchen, your rules! 🍳 Preparing "${food}" in 30 minutes. Keep your protein synthesis high!`,
-                    `Hungry? "${food}" is coming right up! 🍽️ Zero delivery fee, 100% metabolic-friendly. Let's cook!`,
-                    `Slot Alert: "${food}" is preparation-ready. Fuel your cells, don't just feed emotions!`
-                ];
-                title = `🍔 Swiggy Habit • ${task.act}`;
-                body = swiggyLines[Math.floor(Math.random() * swiggyLines.length)];
-            } else if (act.includes('water') || act.includes('lemon') || act.includes('acv') || act.includes('hydration')) {
+                title = `💪 High-Performance Workout Alert`;
+                body = quotes[Math.floor(Math.random() * quotes.length)];
+            } else {
                 const quotes = [
-                    `Cellular fluid trigger: Spacing water drinks keeps blood volume and thermogenesis high.`,
-                    `Hydration checkpoint! Avoid dry muscles. Sip now to maintain electrolyte balances.`,
-                    `Sip, don't chug. Keep your body hydrated and flush out metabolic waste.`
+                    `⚡ Protocol Slot Reminder for ${todayDay}: "${task.act}" starts in 30 mins. Setup: ${food}.`,
+                    `🧬 Biology upgrade in progress! It's time for "${task.act}". Instruction: ${food} (${rule}).`
                 ];
-                title = `💧 ${prefix} • Hydration Check`;
-                body = quotes[Math.floor(Math.random() * quotes.length)] + ` (${task.instr})`;
+                title = `⚡ Protocol Slot Active`;
+                body = quotes[Math.floor(Math.random() * quotes.length)];
             }
-
+            
             return { title, body };
         }
 
-        function fireNotification(task, uid, dayName) {
+        function fireNotification(task, uid) {
             if (appData.history[uid] === true) return;
-            const alertData = getMotivationalAlert(task, dayName);
+            const alertData = getMotivationalAlert(task);
             
             if (navigator.serviceWorker && navigator.serviceWorker.controller) {
                 navigator.serviceWorker.controller.postMessage({
@@ -2281,8 +2276,8 @@ if ('serviceWorker' in navigator) {
 
         function scheduleTestAlert() {
             setTimeout(() => {
-                const testTask = { act: "Breakfast", instr: "Besan Chilla", rule: "Light Protein", type: "meal" };
-                const alertData = getMotivationalAlert(testTask, "sun");
+                const testTask = { act: "Breakfast", instr: "Besan Chilla + Mint Chutney", rule: "High Protein Sunday Special", type: "meal" };
+                const alertData = getMotivationalAlert(testTask);
                 if (navigator.serviceWorker && navigator.serviceWorker.controller) {
                     navigator.serviceWorker.controller.postMessage({
                         type: 'SHOW_NOTIFICATION',
