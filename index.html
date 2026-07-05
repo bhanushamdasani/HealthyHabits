@@ -305,8 +305,78 @@
  
         .nav-bar { position: absolute; bottom: 0; left: 0; right: 0; width: 100%; background: var(--nav-glass); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-top: 1px solid var(--border); display: flex; justify-content: space-around; padding: 10px 0 25px; z-index: 500; }
         .nav-item { background: none; border: none; display: flex; flex-direction: column; align-items: center; opacity: 0.4; transition: 0.2s; font-size: 1.6rem; cursor: pointer; padding-top: 5px; }
-        .nav-item.active { opacity: 1; transform: scale(1.05); color: #007AFF; }
+        .nav-item.active { opacity: 1; transform: scale(1.05); color: var(--primary); }
         .nav-label { font-size: 0.65rem; font-weight: 700; margin-top: 4px; }
+
+        /* Bottom Sheet Styles */
+        .bottom-sheet {
+            position: absolute;
+            bottom: -100%;
+            left: 0;
+            right: 0;
+            background: var(--surface);
+            border-radius: 30px 30px 0 0;
+            border-top: 1px solid var(--border);
+            box-shadow: 0 -10px 30px rgba(0,0,0,0.15);
+            z-index: 1500;
+            padding: 24px;
+            transition: bottom 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        .bottom-sheet.active {
+            bottom: 0;
+        }
+        .sheet-backdrop {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.4);
+            z-index: 1400;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+        .sheet-backdrop.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        .sheet-drag-handle {
+            width: 40px;
+            height: 5px;
+            background: var(--border);
+            border-radius: 3px;
+            align-self: center;
+            margin-bottom: 5px;
+        }
+        #confetti-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 9999;
+        }
+        .stat-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid var(--border);
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+        .stat-row:last-of-type {
+            border-bottom: none;
+        }
+        .stat-val {
+            font-weight: 800;
+            color: var(--text-1);
+        }
     </style>
 </head>
 <body>
@@ -314,21 +384,37 @@
         <div id="dynamic-island"><span class="di-icon">🔔</span><span id="di-msg">Notification</span></div>
 
         <div id="onboarding" class="hidden">
-        <div class="ob-card">
-            <span style="font-size: 3rem; margin-bottom: 20px; display: block;">🧬</span>
-            <div class="brand-gradient" style="font-size: 2rem; margin-bottom: 5px; letter-spacing: -1px;">HealthyHabits</div>
-            <p style="color: var(--text-2); font-size: 1rem; margin-bottom: 35px; line-height: 1.4;">Initialize Protocol</p>
-            <input type="text" id="ob-name" class="input-field" placeholder="First Name">
-            <div class="unit-switch">
-                <div class="unit-opt active" id="u-cm" onclick="setHeightMode('cm')">CM</div>
-                <div class="unit-opt" id="u-ft" onclick="setHeightMode('ft')">FT / IN</div>
+            <div class="ob-card" style="max-height: 90vh; overflow-y: auto; padding: 25px;">
+                <span style="font-size: 3rem; margin-bottom: 10px; display: block;">🧬</span>
+                <div class="brand-gradient" style="font-size: 2rem; margin-bottom: 5px; letter-spacing: -1px;">HealthyHabits</div>
+                <p style="color: var(--text-2); font-size: 0.9rem; margin-bottom: 25px; line-height: 1.4;">Initialize Protocol</p>
+                <input type="text" id="ob-name" class="input-field" placeholder="First Name">
+                <div style="display: flex; gap: 10px; margin-bottom: 15px;">
+                    <input type="number" id="ob-age" class="input-field" placeholder="Age" style="margin-bottom: 0; flex: 1;">
+                    <select id="ob-gender" class="input-field" style="margin-bottom: 0; flex: 1; padding: 0 10px;">
+                        <option value="male">Male</option>
+                        <option value="female">Female</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+                <div class="unit-switch">
+                    <div class="unit-opt active" id="u-cm" onclick="setHeightMode('cm')">CM</div>
+                    <div class="unit-opt" id="u-ft" onclick="setHeightMode('ft')">FT / IN</div>
+                </div>
+                <div id="input-cm"><input type="number" id="h-cm" class="input-field" placeholder="Height (cm)"></div>
+                <div id="input-ft" class="hidden" style="display:flex; gap:10px;"><input type="number" id="h-ft" class="input-field" placeholder="Ft"><input type="number" id="h-in" class="input-field" placeholder="In"></div>
+                <input type="number" id="ob-weight" class="input-field" placeholder="Current Weight (kg)">
+                <span class="sm-label" style="text-align: left; margin-bottom: 5px;">Daily Activity Level</span>
+                <select id="ob-activity" class="input-field" style="padding: 0 10px; margin-bottom: 20px;">
+                    <option value="1.2">Sedentary (No exercise)</option>
+                    <option value="1.375">Light (1-3 days/wk)</option>
+                    <option value="1.55">Moderate (3-5 days/wk)</option>
+                    <option value="1.725">Active (6-7 days/wk)</option>
+                    <option value="1.9">Athletic (Hard daily)</option>
+                </select>
+                <button class="btn-xl" style="margin-top: 10px;" onclick="completeOnboarding()">Initialize</button>
             </div>
-            <div id="input-cm"><input type="number" id="h-cm" class="input-field" placeholder="Height (cm)"></div>
-            <div id="input-ft" class="hidden" style="display:flex; gap:10px;"><input type="number" id="h-ft" class="input-field" placeholder="Ft"><input type="number" id="h-in" class="input-field" placeholder="In"></div>
-            <input type="number" id="ob-weight" class="input-field" placeholder="Current Weight (kg)">
-            <button class="btn-xl" style="margin-top: 10px;" onclick="completeOnboarding()">Initialize</button>
         </div>
-    </div>
 
     <div id="app" class="hidden">
         <header>
@@ -419,6 +505,19 @@
                 </div>
             </div>
 
+            <!-- Circadian Log Card -->
+            <div class="set-card" style="margin: 0 20px 20px; padding: 18px 20px;">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+                    <h3 style="margin: 0; font-size: 1.05rem; font-weight: 800; color: var(--primary);">🌙 Circadian Log</h3>
+                    <button class="apply-week-btn" onclick="openSleepSheet()">Log Sleep</button>
+                </div>
+                <div style="display:flex; justify-content:space-between; font-size:0.85rem; font-weight:600; color:var(--text-2);">
+                    <div>Bedtime: <span id="sleep-bedtime" style="color:var(--text-1)">--</span></div>
+                    <div>Wake: <span id="sleep-waketime" style="color:var(--text-1)">--</span></div>
+                    <div>Sleep Duration: <span id="sleep-duration" style="color:var(--primary)">--</span></div>
+                </div>
+            </div>
+
             <div class="tabs">
                 <div class="tab-btn" id="btn-mon" onclick="changeDateToDay('mon')">Mon</div>
                 <div class="tab-btn" id="btn-tue" onclick="changeDateToDay('tue')">Tue</div>
@@ -427,6 +526,11 @@
                 <div class="tab-btn" id="btn-fri" onclick="changeDateToDay('fri')">Fri</div>
                 <div class="tab-btn" id="btn-sat" onclick="changeDateToDay('sat')">Sat</div>
                 <div class="tab-btn" id="btn-sun" onclick="changeDateToDay('sun')">Sun</div>
+            </div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin: 10px 20px 5px;">
+                <h3 style="margin: 0; font-size: 1.05rem; font-weight: 800; color: var(--text-1);">Protocol Slots</h3>
+                <button class="apply-week-btn" onclick="openOneOffSheet()">+ Add Today's Task</button>
             </div>
 
             <div id="task-container" class="task-list"></div>
@@ -460,6 +564,19 @@
                 </p>
             </div>
 
+            <!-- Metabolic Energy TDEE Card -->
+            <div class="set-card">
+                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px;">
+                    <span style="font-size: 0.7rem; font-weight: 800; color: var(--text-2); text-transform: uppercase;">Metabolic Energy (TDEE)</span>
+                    <span style="font-size: 1.2rem;">⚡</span>
+                </div>
+                <div class="stat-row"><span>Basal Metabolic Rate (BMR)</span><span class="stat-val" id="bmr-val">--</span></div>
+                <div class="stat-row"><span>Total Daily Energy (TDEE)</span><span class="stat-val" id="tdee-val" style="color:var(--primary)">--</span></div>
+                <p style="font-size: 0.8rem; color: var(--text-2); line-height: 1.4; margin: 8px 0 0 0; font-weight: 500;">
+                    This estimates your daily energy expenditure. To maintain a deficit for fat burn, aim for a 300-500 kcal reduction from TDEE.
+                </p>
+            </div>
+
             <div class="set-card">
                 <div class="wb-label">7-DAY WEIGHT TREND</div>
                 <div class="chart-wrap" id="chart-area"></div>
@@ -467,8 +584,38 @@
 
             <div class="set-card">
                 <div class="stat-row"><span>Starting</span><span class="stat-val" id="s-start">--</span></div>
-                <div class="stat-row"><span>Current</span><span class="stat-val" id="s-curr" style="color:#007AFF">--</span></div>
+                <div class="stat-row"><span>Current</span><span class="stat-val" id="s-curr" style="color:var(--primary)">--</span></div>
                 <div class="stat-row"><span>Change</span><span class="stat-val" id="s-diff">--</span></div>
+            </div>
+
+            <!-- Circadian Consistency Index Card -->
+            <div class="set-card">
+                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px;">
+                    <span style="font-size: 0.7rem; font-weight: 800; color: var(--text-2); text-transform: uppercase;">Sleep Consistency Index</span>
+                    <span style="font-size: 1.2rem;">💤</span>
+                </div>
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+                    <span class="bmi-val" id="sleep-consistency-num">--</span>
+                    <span class="bmi-pill" id="sleep-consistency-label" style="background:var(--text-2)">N/A</span>
+                </div>
+                <p id="sleep-advice" style="font-size: 0.85rem; color: var(--text-2); line-height: 1.45; font-weight: 500; margin: 0;">
+                    Log at least 3 days of sleep to calculate your Circadian Consistency Score.
+                </p>
+            </div>
+
+            <!-- Hydration Efficiency Card -->
+            <div class="set-card">
+                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px;">
+                    <span style="font-size: 0.7rem; font-weight: 800; color: var(--text-2); text-transform: uppercase;">Hydration Efficiency</span>
+                    <span style="font-size: 1.2rem;">💧</span>
+                </div>
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+                    <span class="bmi-val" id="hydro-efficiency-num">--</span>
+                    <span class="bmi-pill" id="hydro-efficiency-label" style="background:var(--text-2)">N/A</span>
+                </div>
+                <p id="hydro-advice" style="font-size: 0.85rem; color: var(--text-2); line-height: 1.45; font-weight: 500; margin: 0;">
+                    Spread your water intake evenly throughout the day (approx. 250ml every 2 hours) to maximize cellular absorption.
+                </p>
             </div>
 
             <div class="set-card">
@@ -492,11 +639,39 @@
             <div class="set-card">
                 <h3 style="margin-top:0;">Biometrics</h3>
                 <input id="up-name" class="sm-input" placeholder="Display Name">
-                <div class="bio-inputs">
+                <div class="bio-inputs" style="margin-bottom: 12px;">
                     <input id="up-height" type="number" class="sm-input" placeholder="Height (cm)" style="margin-bottom: 0;">
                     <input id="up-sw" type="number" class="sm-input" placeholder="Start Weight (kg)" style="margin-bottom: 0;">
                 </div>
+                <div class="bio-inputs" style="margin-bottom: 15px;">
+                    <input id="up-age" type="number" class="sm-input" placeholder="Age" style="margin-bottom: 0;">
+                    <select id="up-gender" class="sm-input" style="margin-bottom: 0; padding: 10px;">
+                        <option value="male">Male</option>
+                        <option value="female">Female</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+                <span class="sm-label">Activity Level</span>
+                <select id="up-activity" class="sm-input" style="padding: 10px; margin-bottom: 15px;">
+                    <option value="1.2">Sedentary (No exercise)</option>
+                    <option value="1.375">Lightly Active (1-3 days/wk)</option>
+                    <option value="1.55">Moderately Active (3-5 days/wk)</option>
+                    <option value="1.725">Very Active (6-7 days/wk)</option>
+                    <option value="1.9">Extra Active (Hard daily)</option>
+                </select>
                 <button class="btn-xl" onclick="updateProfile()">Save Profile</button>
+            </div>
+
+            <!-- Theme Accent Customization Card -->
+            <div class="set-card">
+                <h3 style="margin-top:0;">Theme Customization</h3>
+                <p style="font-size:0.8rem; color:var(--text-2); margin-bottom:12px;">Select your primary accent color theme.</p>
+                <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px;">
+                    <button class="bulk-btn" style="background:#007AFF; color:#fff; border:none;" onclick="setAccentTheme('classic')">Blue</button>
+                    <button class="bulk-btn" style="background:#8B5CF6; color:#fff; border:none;" onclick="setAccentTheme('violet')">Violet</button>
+                    <button class="bulk-btn" style="background:#06B6D4; color:#fff; border:none;" onclick="setAccentTheme('cyan')">Cyan</button>
+                    <button class="bulk-btn" style="background:#10B981; color:#fff; border:none;" onclick="setAccentTheme('emerald')">Emerald</button>
+                </div>
             </div>
 
             <div class="set-card">
@@ -617,6 +792,53 @@
                 ⚙️ <span class="nav-label">Settings</span>
             </button>
         </nav>
+        
+        <!-- Canvas for particle confetti celebration -->
+        <canvas id="confetti-canvas"></canvas>
+
+        <!-- Sheets Backdrop -->
+        <div id="sheet-backdrop" class="sheet-backdrop" onclick="closeAllSheets()"></div>
+
+        <!-- Sleep Logger Bottom Sheet -->
+        <div id="sleep-sheet" class="bottom-sheet">
+            <div class="sheet-drag-handle"></div>
+            <h3 style="margin: 0; font-weight: 800;">Log Sleep</h3>
+            
+            <span class="sm-label">Bedtime</span>
+            <input type="time" id="sleep-in-bedtime" class="sm-input" style="padding: 10px;">
+            
+            <span class="sm-label">Wake Up Time</span>
+            <input type="time" id="sleep-in-waketime" class="sm-input" style="padding: 10px;">
+            
+            <button class="btn-xl" onclick="saveSleepLog()">Save Sleep Log</button>
+        </div>
+
+        <!-- One-Off Task Bottom Sheet -->
+        <div id="oneoff-sheet" class="bottom-sheet">
+            <div class="sheet-drag-handle"></div>
+            <h3 style="margin: 0; font-weight: 800;">Add Today's Task</h3>
+            
+            <span class="sm-label">Time (e.g., 02:30 PM)</span>
+            <input type="text" id="oneoff-time" class="sm-input" placeholder="02:30 PM">
+            
+            <span class="sm-label">Activity Name</span>
+            <input type="text" id="oneoff-act" class="sm-input" placeholder="e.g. Doctor Visit">
+            
+            <span class="sm-label">Instruction</span>
+            <input type="text" id="oneoff-instr" class="sm-input" placeholder="e.g. Annual physical checkup">
+            
+            <span class="sm-label">Rule / Target</span>
+            <input type="text" id="oneoff-rule" class="sm-input" placeholder="e.g. Fasting since 10 AM">
+            
+            <span class="sm-label">Type</span>
+            <select id="oneoff-type" class="sm-input" style="padding: 10px;">
+                <option value="hack">Bio-Hack</option>
+                <option value="meal">Meal</option>
+                <option value="workout">Workout</option>
+            </select>
+            
+            <button class="btn-xl" onclick="saveOneOffTask()">Add Task</button>
+        </div>
     </div>
     </div>
 
@@ -705,14 +927,18 @@ if ('serviceWorker' in navigator) {
             ]
         };
 
-        let appData = { schedule: {}, history: {}, dayModes: {}, dayReasons: {}, lightDayTypes: ['workout'], weights: {}, user: "Warrior", height: 170, startW: 0 };
+        let appData = { 
+            schedule: {}, history: {}, dayModes: {}, dayReasons: {}, lightDayTypes: ['workout'], weights: {}, 
+            user: "Warrior", height: 170, startW: 0, age: 25, gender: "male", activity: 1.2, 
+            sleepLogs: {}, dateTasks: {}, accentTheme: "classic" 
+        };
         let viewedDateObj = new Date();
         let calDate = new Date();
         let currentTabDay = 'mon';
         let activeTimers = [];
         let isBreathing = false;
         let originalOffset = 0;
-        let lastPct = 0; // NEW: track percentage to trigger celebration
+        let lastPct = 0; 
 
         window.onload = () => {
             initTheme();
@@ -755,6 +981,12 @@ if ('serviceWorker' in navigator) {
                 if(!appData.dayReasons) appData.dayReasons = {};
                 if(!appData.lightDayTypes) appData.lightDayTypes = ['workout'];
                 if(!appData.weights) appData.weights = {};
+                if(!appData.sleepLogs) appData.sleepLogs = {};
+                if(!appData.dateTasks) appData.dateTasks = {};
+                if(!appData.accentTheme) appData.accentTheme = 'classic';
+                if(!appData.age) appData.age = 25;
+                if(!appData.gender) appData.gender = 'male';
+                if(!appData.activity) appData.activity = 1.2;
                 
                 document.getElementById('app').classList.remove('hidden');
                 initApp();
@@ -773,9 +1005,14 @@ if ('serviceWorker' in navigator) {
         }
 
         function initApp() {
-            document.getElementById('up-name').value = appData.user;
-            document.getElementById('up-height').value = appData.height;
-            document.getElementById('up-sw').value = appData.startW;
+            setAccentTheme(appData.accentTheme || 'classic');
+            
+            document.getElementById('up-name').value = appData.user || '';
+            document.getElementById('up-height').value = appData.height || '';
+            document.getElementById('up-sw').value = appData.startW || '';
+            document.getElementById('up-age').value = appData.age || 25;
+            document.getElementById('up-gender').value = appData.gender || 'male';
+            document.getElementById('up-activity').value = appData.activity || 1.2;
 
             viewedDateObj = new Date();
             calDate = new Date();
@@ -828,9 +1065,10 @@ if ('serviceWorker' in navigator) {
             const display = document.getElementById('date-display');
             document.getElementById('date-text').innerText = label;
             document.getElementById('date-icon').innerText = icons[mode];
-            display.style.color = (dateKey === todayStr) ? "#007AFF" : "var(--text-1)";
+            display.style.color = (dateKey === todayStr) ? "var(--primary)" : "var(--text-1)";
             
             updateDayModeUI();
+            updateSleepUI();
         }
 
         function setTab(day) {
@@ -843,7 +1081,18 @@ if ('serviceWorker' in navigator) {
             const dateKey = getKey(viewedDateObj);
             const mode = appData.dayModes[dateKey] || 'active';
 
-            appData.schedule[currentTabDay].forEach((item, i) => {
+            // Merge weekly templates with date-specific tasks
+            const recurringTasks = appData.schedule[currentTabDay] || [];
+            const dateSpecificTasks = appData.dateTasks[dateKey] || [];
+            
+            const combinedTasks = [
+                ...recurringTasks.map(t => ({ ...t, isRecurring: true })),
+                ...dateSpecificTasks.map(t => ({ ...t, isRecurring: false }))
+            ];
+            
+            combinedTasks.sort((a,b) => timeToMins(a.t) - timeToMins(b.t));
+
+            combinedTasks.forEach((item, i) => {
                 const uid = `${dateKey}-${item.id}`;
                 const isDone = appData.history[uid] === true;
                 
@@ -860,15 +1109,21 @@ if ('serviceWorker' in navigator) {
                 div.className = `task-card task-${item.type} ${isDone ? 'done' : ''} ${muted ? 'muted' : ''}`;
                 div.setAttribute('data-index', i);
                 
+                // Show trash icon for date-specific tasks
+                let actionContent = `<a href="${link}" target="_blank" class="action-btn">${icon}</a>`;
+                if (!item.isRecurring) {
+                    actionContent = `<button onclick="deleteOneOffTask('${item.id}'); event.stopPropagation();" class="action-btn" style="border-color:var(--danger); color:var(--danger); background:transparent;">🗑️</button>`;
+                }
+
                 div.innerHTML = `
                     <div class="check-circle" onclick="toggleTask('${uid}', this.parentElement)"></div>
                     <div class="task-body" onclick="toggleTask('${uid}', this.parentElement)">
-                        <span class="time-badge">${item.t} ${muted ? '🔕' : ''}</span>
+                        <span class="time-badge">${item.t} ${muted ? '🔕' : ''} ${!item.isRecurring ? '✨ Today' : ''}</span>
                         <div style="font-weight:700; margin-bottom:3px; font-size:1.05rem;">${item.act}</div>
                         <div style="font-size:0.9rem; color:var(--text-2); margin-bottom:6px;">${item.instr}</div>
-                        <span style="display:inline-block; background:rgba(0,122,255,0.15); color:#007AFF; font-size:0.7rem; font-weight:700; padding:4px 10px; border-radius:8px;">${item.rule}</span>
+                        <span style="display:inline-block; background:var(--primary-dim); color:var(--primary); font-size:0.7rem; font-weight:700; padding:4px 10px; border-radius:8px;">${item.rule}</span>
                     </div>
-                    <a href="${link}" target="_blank" class="action-btn">${icon}</a>
+                    ${actionContent}
                 `;
                 list.appendChild(div);
             });
@@ -952,37 +1207,52 @@ if ('serviceWorker' in navigator) {
 
         function calculateStreak() {
             let streak = 0;
-            let checkDate = new Date();
-            checkDate.setHours(12, 0, 0, 0);
+            let checkTime = new Date().setHours(12, 0, 0, 0); 
+            const oneDayMs = 24 * 60 * 60 * 1000;
+            
+            let bestStreak = localStorage.getItem('meta_best_streak') || 0;
+            bestStreak = parseInt(bestStreak);
+            let perfectDays = 0;
             
             for (let i = 0; i < 365; i++) {
+                const checkDate = new Date(checkTime);
                 const k = getKey(checkDate);
                 const mode = appData.dayModes[k] || 'active';
                 
                 if (mode === 'silent') {
-                    checkDate.setDate(checkDate.getDate() - 1);
+                    checkTime -= oneDayMs;
                     continue; 
                 }
 
                 const dayName = ['sun','mon','tue','wed','thu','fri','sat'][checkDate.getDay()];
-                const tasks = appData.schedule[dayName];
-                let done = 0;
+                const recurringTasks = appData.schedule[dayName] || [];
+                const dateSpecificTasks = appData.dateTasks[k] || [];
+                const combined = [...recurringTasks, ...dateSpecificTasks];
                 
-                tasks.forEach(task => { if(appData.history[`${k}-${task.id}`]) done++; });
-                const score = tasks.length ? (done / tasks.length) * 100 : 0;
+                let done = 0;
+                combined.forEach(task => { if(appData.history[`${k}-${task.id}`]) done++; });
+                const score = combined.length ? (done / combined.length) * 100 : 0;
 
                 if (score >= 80) { 
-                    streak++; 
-                    checkDate.setDate(checkDate.getDate() - 1); 
+                    streak++;
+                    perfectDays++;
+                    checkTime -= oneDayMs; 
                 } else {
-                    if (k === getKey(new Date()) && score < 80) checkDate.setDate(checkDate.getDate() - 1);
+                    if (k === getKey(new Date()) && score < 80) checkTime -= oneDayMs;
                     else break;
                 }
+            }
+            
+            if (streak > bestStreak) {
+                bestStreak = streak;
+                localStorage.setItem('meta_best_streak', bestStreak);
             }
             
             const display = document.getElementById('streak-display');
             document.getElementById('streak-count').innerText = streak;
             display.classList.toggle('streak-active', streak > 0);
+            
+            return { streak, bestStreak, perfectDays };
         }
 
         function toggleBreathing() {
@@ -1021,19 +1291,28 @@ if ('serviceWorker' in navigator) {
             const progCircle = document.getElementById('prog-circle');
             const progText = document.getElementById('prog-text');
 
-            const tasks = appData.schedule[currentTabDay];
             const k = getKey(viewedDateObj);
+            
+            const recurringTasks = appData.schedule[currentTabDay] || [];
+            const dateSpecificTasks = appData.dateTasks[k] || [];
+            const combinedTasks = [
+                ...recurringTasks.map(t => ({ ...t, isRecurring: true })),
+                ...dateSpecificTasks.map(t => ({ ...t, isRecurring: false }))
+            ];
+            combinedTasks.sort((a,b) => timeToMins(a.t) - timeToMins(b.t));
+
             let doneCount = 0;
-            tasks.forEach(task => { if(appData.history[`${k}-${task.id}`]) doneCount++; });
-            const pct = tasks.length > 0 ? Math.round((doneCount / tasks.length) * 100) : 0;
+            combinedTasks.forEach(task => { if(appData.history[`${k}-${task.id}`]) doneCount++; });
+            const pct = combinedTasks.length > 0 ? Math.round((doneCount / combinedTasks.length) * 100) : 0;
             const offset = 125.6 - (125.6 * pct) / 100;
             progCircle.style.strokeDashoffset = offset;
             progText.innerText = pct + "%";
             
-            // NEW: 100% Celebration
+            // NEW: 100% Celebration with Confetti Canvas
             if(pct === 100 && lastPct !== 100) {
                 showIsland("🎉 Protocol Complete!");
-                vibrate([50, 100, 50, 100, 50]); // Celebration vibration
+                vibrate([50, 100, 50, 100, 50]); 
+                triggerConfetti();
             }
             lastPct = pct;
 
@@ -1063,10 +1342,10 @@ if ('serviceWorker' in navigator) {
             let activeTask = null;
             let activeIdx = -1;
             
-            for(let i=0; i<tasks.length; i++) {
-                const [timeStr, period] = tasks[i].t.split(' '); let [h, m] = timeStr.split(':');
+            for(let i=0; i<combinedTasks.length; i++) {
+                const [timeStr, period] = combinedTasks[i].t.split(' '); let [h, m] = timeStr.split(':');
                 h = parseInt(h); m = parseInt(m); if(period === 'PM' && h !== 12) h += 12; if(period === 'AM' && h === 12) h = 0;
-                if((h * 60 + m) > nowMins) { activeTask = tasks[i]; activeIdx = i; break; }
+                if((h * 60 + m) > nowMins) { activeTask = combinedTasks[i]; activeIdx = i; break; }
             }
 
             if(activeTask) { 
@@ -1081,6 +1360,59 @@ if ('serviceWorker' in navigator) {
                 }
             } 
             else { timeEl.innerText = "REST"; titleEl.innerText = "Day Complete"; descEl.innerText = "Sleep protocols active."; }
+        }
+
+        function triggerConfetti() {
+            const canvas = document.getElementById('confetti-canvas');
+            if(!canvas) return;
+            const ctx = canvas.getContext('2d');
+            canvas.width = canvas.parentElement.clientWidth;
+            canvas.height = canvas.parentElement.clientHeight;
+            
+            let particles = [];
+            const colors = ['#007AFF', '#34C759', '#FF9500', '#FF3B30', '#5AC8FA', '#8B5CF6'];
+            
+            for(let i=0; i<120; i++) {
+                particles.push({
+                    x: canvas.width / 2,
+                    y: canvas.height * 0.8,
+                    vx: (Math.random() - 0.5) * 15,
+                    vy: (Math.random() * -15) - 5,
+                    color: colors[Math.floor(Math.random() * colors.length)],
+                    size: Math.random() * 6 + 4,
+                    gravity: 0.35,
+                    opacity: 1,
+                    rotation: Math.random() * Math.PI,
+                    rotationSpeed: (Math.random() - 0.5) * 0.2
+                });
+            }
+            
+            function animate() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                let alive = false;
+                particles.forEach(p => {
+                    if (p.opacity > 0) {
+                        alive = true;
+                        p.vy += p.gravity;
+                        p.x += p.vx;
+                        p.y += p.vy;
+                        p.rotation += p.rotationSpeed;
+                        p.opacity -= 0.015;
+                        
+                        ctx.save();
+                        ctx.translate(p.x, p.y);
+                        ctx.rotate(p.rotation);
+                        ctx.fillStyle = p.color;
+                        ctx.globalAlpha = Math.max(p.opacity, 0);
+                        ctx.fillRect(-p.size/2, -p.size/2, p.size, p.size);
+                        ctx.restore();
+                    }
+                });
+                
+                if (alive) requestAnimationFrame(animate);
+                else ctx.clearRect(0, 0, canvas.width, canvas.height);
+            }
+            animate();
         }
 
         function updateDashboardInputs() {
@@ -1098,6 +1430,16 @@ if ('serviceWorker' in navigator) {
             current += amount; if(current < 0) current = 0;
             if(!appData.weights[k]) appData.weights[k] = {};
             appData.weights[k].water = current;
+            
+            if(!appData.weights[k].waterLogs) appData.weights[k].waterLogs = [];
+            if(amount > 0) {
+                const now = new Date();
+                const logTime = String(now.getHours()).padStart(2, '0') + ':' + String(now.getMinutes()).padStart(2, '0');
+                appData.weights[k].waterLogs.push({ time: logTime, amount: amount });
+            } else if(amount < 0 && appData.weights[k].waterLogs.length > 0) {
+                appData.weights[k].waterLogs.pop();
+            }
+            
             saveData(); updateWaterUI(current);
             if(amount > 0) showIsland(`Water Added (+${amount}ml)`);
         }
@@ -1158,6 +1500,40 @@ if ('serviceWorker' in navigator) {
             document.getElementById('bmi-text').style.background = bmiColor;
             document.getElementById('bmi-advice').innerText = bmiAdvice;
 
+            // Mifflin-St Jeor TDEE Calculations
+            const h = parseFloat(appData.height) || 170;
+            const age = parseInt(appData.age) || 25;
+            const gender = appData.gender || 'male';
+            const activity = parseFloat(appData.activity) || 1.2;
+
+            let bmr = 0;
+            if (gender === 'male') {
+                bmr = 10 * currentW + 6.25 * h - 5 * age + 5;
+            } else {
+                bmr = 10 * currentW + 6.25 * h - 5 * age - 161;
+            }
+            const tdee = bmr * activity;
+
+            document.getElementById('bmr-val').innerText = currentW > 0 ? Math.round(bmr) + " kcal" : "--";
+            document.getElementById('tdee-val').innerText = currentW > 0 ? Math.round(tdee) + " kcal" : "--";
+
+            // Sleep Consistency Index calculations
+            const circadian = calculateCircadianConsistency();
+            document.getElementById('sleep-consistency-num').innerText = circadian.score === '--' ? '--' : circadian.score + '%';
+            const labelEl = document.getElementById('sleep-consistency-label');
+            labelEl.innerText = circadian.label;
+            labelEl.style.background = circadian.color;
+            document.getElementById('sleep-advice').innerText = circadian.advice;
+
+            // Hydration Efficiency calculations
+            const k = getKey(viewedDateObj);
+            const waterLogs = appData.weights[k]?.waterLogs || [];
+            const hydro = calculateHydrationEfficiency(waterLogs);
+            document.getElementById('hydro-efficiency-num').innerText = hydro.score;
+            const hydroLabelEl = document.getElementById('hydro-efficiency-label');
+            hydroLabelEl.innerText = hydro.label;
+            hydroLabelEl.style.background = hydro.color;
+
             document.getElementById('s-start').innerText = (parseFloat(appData.startW) || 0) + " kg";
             document.getElementById('s-curr').innerText = currentW + " kg";
             const diff = (currentW - (parseFloat(appData.startW) || 0)).toFixed(1);
@@ -1185,7 +1561,7 @@ if ('serviceWorker' in navigator) {
                 const dayLabel = dateObj.toLocaleDateString('en-US', {weekday:'narrow'});
                 if(w > 0) {
                     const heightPct = ((w - min) / (max - min)) * 80 + 20;
-                    col.innerHTML = `<div class="chart-bar filled" style="height:${heightPct}%; background: linear-gradient(180deg, #007AFF, #5AC8FA); border-radius: 4px 4px 0 0; filter: drop-shadow(0 2px 5px rgba(0,122,255,0.25));"></div><div class="chart-label">${dayLabel}</div>`;
+                    col.innerHTML = `<div class="chart-bar filled" style="height:${heightPct}%; background: linear-gradient(180deg, var(--primary), var(--primary-dim)); border-radius: 4px 4px 0 0; filter: drop-shadow(0 2px 5px var(--primary-dim));"></div><div class="chart-label">${dayLabel}</div>`;
                 } else {
                     col.innerHTML = `<div class="chart-bar" style="height:6px; background: var(--border); border-radius: 3px;"></div><div class="chart-label">${dayLabel}</div>`;
                 }
@@ -1244,7 +1620,7 @@ if ('serviceWorker' in navigator) {
                 const m = appData.dayModes[getKey(d)] || 'active';
                 counts[m]++; d.setDate(d.getDate() - 1);
             }
-            document.getElementById('weekly-summary').innerHTML = `<span style="color:#007AFF">🔔 ${counts.active} Active</span><span style="color:#FF9500">🔅 ${counts.light} Light</span><span style="color:#8E8E93">🌙 ${counts.silent} Silent</span>`;
+            document.getElementById('weekly-summary').innerHTML = `<span style="color:var(--primary)">🔔 ${counts.active} Active</span><span style="color:#FF9500">🔅 ${counts.light} Light</span><span style="color:#8E8E93">🌙 ${counts.silent} Silent</span>`;
         }
 
         function bulkToggleType(type, state) {
@@ -1309,7 +1685,7 @@ if ('serviceWorker' in navigator) {
                 
                 el.innerHTML = `
                     <div class="accordion-header" onclick="this.parentElement.classList.toggle('open'); vibrate(15);">
-                        <div><span style="color:#007AFF; margin-right:10px;">${item.t}</span> ${item.act}</div>
+                        <div><span style="color:var(--primary); margin-right:10px;">${item.t}</span> ${item.act}</div>
                         <div>▼</div>
                     </div>
                     <div class="accordion-body">
@@ -1452,16 +1828,27 @@ if ('serviceWorker' in navigator) {
 
         function fireNotification(task, uid) {
             if (appData.history[uid] === true) return;
-            if (Notification.permission === 'granted') {
-                const notif = new Notification(`⏳ Starts in 1 Hour: ${task.act}`, { 
-                    body: task.instr, 
+            const title = `⏳ Starts in 1 Hour: ${task.act}`;
+            const body = task.instr;
+            
+            if (navigator.serviceWorker && navigator.serviceWorker.controller) {
+                navigator.serviceWorker.controller.postMessage({
+                    type: 'SHOW_NOTIFICATION',
+                    title: title,
+                    body: body,
+                    tag: uid,
+                    icon: './icon.png'
+                });
+            } else if (Notification.permission === 'granted') {
+                new Notification(title, { 
+                    body: body, 
                     tag: uid, 
                     icon: './icon.png',
                     requireInteraction: true 
                 });
             }
             showIsland(task.act + " in 1 hour");
-            vibrate([50, 100, 50]); // Alert vibration
+            vibrate([50, 100, 50]); 
             rebuildNotificationQueue();
         }
 
@@ -1494,18 +1881,33 @@ if ('serviceWorker' in navigator) {
             vibrate(30);
             const name = document.getElementById('ob-name').value; 
             const w = parseFloat(document.getElementById('ob-weight').value); 
+            const age = parseInt(document.getElementById('ob-age').value) || 25;
+            const gender = document.getElementById('ob-gender').value;
+            const activity = parseFloat(document.getElementById('ob-activity').value) || 1.2;
             let h = 0;
             if(!document.getElementById('input-cm').classList.contains('hidden')) h = parseFloat(document.getElementById('h-cm').value);
             else { const ft = parseFloat(document.getElementById('h-ft').value) || 0; const in_ = parseFloat(document.getElementById('h-in').value) || 0; h = (ft * 30.48) + (in_ * 2.54); }
-            if(!name || !w || !h) return showIsland("Please fill all fields");
-            appData.user = name; appData.height = h; appData.startW = w;
-            appData.schedule = JSON.parse(JSON.stringify(defaultSchedule));
-            appData.history = {}; appData.dayModes = {}; appData.dayReasons = {}; appData.lightDayTypes = ['workout'];
             
-            // Populate today's morning weight from onboarding weight
+            if(!name || !w || !h) return showIsland("Please fill all fields");
+            
+            appData.user = name; 
+            appData.height = h; 
+            appData.startW = w;
+            appData.age = age;
+            appData.gender = gender;
+            appData.activity = activity;
+            appData.schedule = JSON.parse(JSON.stringify(defaultSchedule));
+            appData.history = {}; 
+            appData.dayModes = {}; 
+            appData.dayReasons = {}; 
+            appData.lightDayTypes = ['workout'];
+            appData.sleepLogs = {};
+            appData.dateTasks = {};
+            appData.accentTheme = 'classic';
+            
             const todayKey = getKey(new Date());
             appData.weights = {};
-            appData.weights[todayKey] = { am: w, pm: '', water: 0 };
+            appData.weights[todayKey] = { am: w, pm: '', water: 0, waterLogs: [] };
             
             saveData(); location.reload();
         }
@@ -1523,8 +1925,244 @@ if ('serviceWorker' in navigator) {
             appData.user = document.getElementById('up-name').value || appData.user;
             appData.height = parseFloat(document.getElementById('up-height').value) || appData.height;
             appData.startW = parseFloat(document.getElementById('up-sw').value) || appData.startW;
+            appData.age = parseInt(document.getElementById('up-age').value) || appData.age;
+            appData.gender = document.getElementById('up-gender').value || appData.gender;
+            appData.activity = parseFloat(document.getElementById('up-activity').value) || appData.activity;
+            
             saveData(); showIsland("Profile Saved");
             updateAnalytics();
+        }
+
+        // --- NEW CIRCADIAN & DYNAMIC ONE-OFF TASK HELPERS ---
+        function calculateCircadianConsistency() {
+            if(!appData.sleepLogs) return { score: '--', label: 'N/A', color: 'var(--text-2)', advice: 'Log sleep times to analyze consistency.' };
+            
+            const bedtimes = [];
+            const d = new Date();
+            for(let i=0; i<7; i++) {
+                const k = getKey(d);
+                const log = appData.sleepLogs[k];
+                if(log && log.bedtime) {
+                    const [h, m] = log.bedtime.split(':').map(Number);
+                    const minsFromNoon = ((h + 12) % 24) * 60 + m;
+                    bedtimes.push(minsFromNoon);
+                }
+                d.setDate(d.getDate() - 1);
+            }
+            
+            if (bedtimes.length < 3) {
+                return {
+                    score: '--',
+                    label: 'CALC',
+                    color: 'var(--text-2)',
+                    advice: 'Log sleep details for at least 3 days in the Reports tab to calculate sleep consistency.'
+                };
+            }
+            
+            const mean = bedtimes.reduce((a,b) => a+b, 0) / bedtimes.length;
+            const variance = bedtimes.reduce((a,b) => a + Math.pow(b - mean, 2), 0) / bedtimes.length;
+            const stdDevMins = Math.sqrt(variance);
+            
+            let score = 100 - (stdDevMins / 2);
+            score = Math.max(Math.round(score), 0);
+            
+            let label = 'IRREGULAR';
+            let color = '#FF3B30';
+            let advice = 'Your sleep schedule has high variance. Shift bedtime to within 30 minutes of your target to avoid circadian desynchronization.';
+            
+            if (stdDevMins <= 30) {
+                label = 'EXCELLENT';
+                color = '#34C759';
+                advice = 'Superb circadian alignment! Your bedtime varies by less than 30 minutes. This promotes high-quality REM recovery.';
+            } else if (stdDevMins <= 60) {
+                label = 'GOOD';
+                color = 'var(--primary)';
+                advice = 'Solid consistency. Bedtime variance is under 1 hour. Fine-tune your wind-down routine to stabilize it further.';
+            } else if (stdDevMins <= 90) {
+                label = 'MODERATE';
+                color = '#FF9500';
+                advice = 'Moderate schedule variation. Try keeping screens away 1 hour before sleep to lock in a consistent bedtime.';
+            }
+            
+            return { score, label, color, advice };
+        }
+
+        function calculateHydrationEfficiency(waterLogs) {
+            if(!waterLogs || waterLogs.length < 2) return { score: '--', label: 'N/A', color: 'var(--text-2)' };
+            
+            const times = waterLogs.map(log => {
+                const [h, m] = log.time.split(':').map(Number);
+                return h * 60 + m;
+            }).sort((a,b) => a-b);
+            
+            let score = 100;
+            let deductions = 0;
+            
+            for(let i=1; i<times.length; i++) {
+                const gap = times[i] - times[i-1];
+                if(gap < 30) {
+                    deductions += 5; 
+                } else if(gap > 240) {
+                    deductions += 10; 
+                }
+            }
+            
+            score = Math.max(score - deductions, 0);
+            
+            let label = 'OPTIMAL';
+            let color = '#34C759';
+            if (score < 60) {
+                label = 'INEFFICIENT';
+                color = '#FF3B30';
+            } else if (score < 85) {
+                label = 'MODERATE';
+                color = 'var(--primary)';
+            }
+            
+            return { score: score + '%', label, color };
+        }
+
+        function openSleepSheet() {
+            const dateKey = getKey(viewedDateObj);
+            const data = appData.sleepLogs[dateKey] || { bedtime: '', waketime: '' };
+            document.getElementById('sleep-in-bedtime').value = data.bedtime;
+            document.getElementById('sleep-in-waketime').value = data.waketime;
+            
+            document.getElementById('sheet-backdrop').classList.add('active');
+            document.getElementById('sleep-sheet').classList.add('active');
+        }
+
+        function openOneOffSheet() {
+            const now = new Date();
+            const timeStr = now.toLocaleTimeString('en-US', {hour: '2-digit', minute:'2-digit'});
+            document.getElementById('oneoff-time').value = timeStr;
+            document.getElementById('oneoff-act').value = '';
+            document.getElementById('oneoff-instr').value = '';
+            document.getElementById('oneoff-rule').value = '';
+            
+            document.getElementById('sheet-backdrop').classList.add('active');
+            document.getElementById('oneoff-sheet').classList.add('active');
+        }
+
+        function closeAllSheets() {
+            document.getElementById('sheet-backdrop').classList.remove('active');
+            document.getElementById('sleep-sheet').classList.remove('active');
+            document.getElementById('oneoff-sheet').classList.remove('active');
+        }
+
+        function saveSleepLog() {
+            const dateKey = getKey(viewedDateObj);
+            const bedtime = document.getElementById('sleep-in-bedtime').value;
+            const waketime = document.getElementById('sleep-in-waketime').value;
+            
+            if(!appData.sleepLogs) appData.sleepLogs = {};
+            appData.sleepLogs[dateKey] = { bedtime, waketime };
+            saveData();
+            closeAllSheets();
+            updateSleepUI();
+            updateAnalytics();
+            showIsland("Sleep Logged");
+        }
+
+        function saveOneOffTask() {
+            const dateKey = getKey(viewedDateObj);
+            const timeVal = document.getElementById('oneoff-time').value;
+            const actVal = document.getElementById('oneoff-act').value;
+            const instrVal = document.getElementById('oneoff-instr').value;
+            const ruleVal = document.getElementById('oneoff-rule').value;
+            const typeVal = document.getElementById('oneoff-type').value;
+            
+            if(!actVal || !timeVal) return showIsland("Enter Name & Time");
+            
+            const task = {
+                id: 'oneoff_' + Date.now(),
+                t: timeVal,
+                act: actVal,
+                instr: instrVal,
+                rule: ruleVal,
+                type: typeVal,
+                reminder: true
+            };
+            
+            if(!appData.dateTasks) appData.dateTasks = {};
+            if(!appData.dateTasks[dateKey]) appData.dateTasks[dateKey] = [];
+            appData.dateTasks[dateKey].push(task);
+            
+            saveData();
+            closeAllSheets();
+            setTab(currentTabDay);
+            rebuildNotificationQueue();
+            showIsland("Today's Task Added");
+        }
+
+        function deleteOneOffTask(id) {
+            vibrate([30, 30]);
+            const dateKey = getKey(viewedDateObj);
+            if (appData.dateTasks[dateKey]) {
+                appData.dateTasks[dateKey] = appData.dateTasks[dateKey].filter(t => t.id !== id);
+                saveData();
+                setTab(currentTabDay);
+                rebuildNotificationQueue();
+                showIsland("Task Deleted");
+            }
+        }
+
+        const themeAccents = {
+            classic: { primary: '#007AFF', dim: 'rgba(0, 122, 255, 0.15)' },
+            violet: { primary: '#8B5CF6', dim: 'rgba(139, 92, 246, 0.15)' },
+            cyan: { primary: '#06B6D4', dim: 'rgba(6, 182, 212, 0.15)' },
+            emerald: { primary: '#10B981', dim: 'rgba(16, 185, 129, 0.15)' }
+        };
+
+        function setAccentTheme(themeName) {
+            vibrate(15);
+            const theme = themeAccents[themeName] || themeAccents.classic;
+            document.documentElement.style.setProperty('--primary', theme.primary);
+            document.documentElement.style.setProperty('--primary-dim', theme.dim);
+            appData.accentTheme = themeName;
+            saveData();
+            showIsland(`Accent set to ${themeName}`);
+        }
+
+        function updateSleepUI() {
+            const dateKey = getKey(viewedDateObj);
+            const log = appData.sleepLogs[dateKey];
+            
+            const bedtimeEl = document.getElementById('sleep-bedtime');
+            const waketimeEl = document.getElementById('sleep-waketime');
+            const durationEl = document.getElementById('sleep-duration');
+            
+            if (log && log.bedtime && log.waketime) {
+                bedtimeEl.innerText = formatTime12h(log.bedtime);
+                waketimeEl.innerText = formatTime12h(log.waketime);
+                const durationHrs = calculateSleepDuration(log.bedtime, log.waketime);
+                durationEl.innerText = durationHrs.toFixed(1) + " hrs";
+            } else {
+                bedtimeEl.innerText = "--";
+                waketimeEl.innerText = "--";
+                durationEl.innerText = "--";
+            }
+        }
+
+        function formatTime12h(time24) {
+            if (!time24) return '--';
+            const [h, m] = time24.split(':').map(Number);
+            const ampm = h >= 12 ? 'PM' : 'AM';
+            const displayH = h % 12 || 12;
+            return `${String(displayH).padStart(2, '0')}:${String(m).padStart(2, '0')} ${ampm}`;
+        }
+
+        function calculateSleepDuration(bedtime, waketime) {
+            const [bH, bM] = bedtime.split(':').map(Number);
+            const [wH, wM] = waketime.split(':').map(Number);
+            
+            let bedDate = new Date(2000, 0, 1, bH, bM);
+            let wakeDate = new Date(2000, 0, 1, wH, wM);
+            
+            if (wakeDate < bedDate) {
+                wakeDate.setDate(wakeDate.getDate() + 1);
+            }
+            return (wakeDate - bedDate) / (1000 * 60 * 60);
         }
 
         function exportData() {
