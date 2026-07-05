@@ -12,6 +12,10 @@
     <link rel="icon" type="image/png" href="./icon.png">
     <link rel="apple-touch-icon" href="./icon.png">
     
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
     <title>HealthyHabits</title>
     <style>
         :root {
@@ -34,16 +38,48 @@
         }
 
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        body { background-color: var(--bg); color: var(--text-1); font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif; margin: 0; padding: 0; padding-bottom: 120px; transition: background 0.3s ease, color 0.3s ease; overflow-x: hidden; }
+        
+        body {
+            background-color: #0d0e12;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            transition: background 0.3s ease;
+            overflow: hidden;
+        }
+        [data-theme="light"] body {
+            background-color: #f5f6fa;
+        }
+        
+        .app-container {
+            width: 100%;
+            max-width: 480px;
+            height: 100vh;
+            background-color: var(--bg);
+            color: var(--text-1);
+            position: relative;
+            box-shadow: 0 0 40px rgba(0, 0, 0, 0.3);
+            border-left: 1px solid var(--border);
+            border-right: 1px solid var(--border);
+            transition: background 0.3s ease, color 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        
         .hidden { display: none !important; }
         .fade-in { animation: fadeIn 0.4s forwards; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        #dynamic-island { position: fixed; top: -100px; left: 50%; transform: translateX(-50%); background: var(--island-bg); color: var(--island-text); padding: 12px 24px; border-radius: 30px; z-index: 2000; display: flex; align-items: center; gap: 12px; font-size: 0.9rem; font-weight: 600; transition: top 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); border: 1px solid var(--border); box-shadow: 0 8px 25px rgba(0,0,0,0.2); }
+        #dynamic-island { position: absolute; top: -100px; left: 50%; transform: translateX(-50%); background: var(--island-bg); color: var(--island-text); padding: 12px 24px; border-radius: 30px; z-index: 2000; display: flex; align-items: center; gap: 12px; font-size: 0.9rem; font-weight: 600; transition: top 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); border: 1px solid var(--border); box-shadow: 0 8px 25px rgba(0,0,0,0.2); width: max-content; max-width: 90%; }
         #dynamic-island.active { top: 15px; }
         .di-icon { font-size: 1.2rem; }
 
-        #onboarding { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg); z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 30px; }
+        #onboarding { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg); z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 30px; }
         .ob-card { background: var(--surface); width: 100%; max-width: 400px; padding: 40px 30px; border-radius: 30px; box-shadow: var(--shadow); border: 1px solid var(--border); text-align: center; }
         .input-field { width: 100%; padding: 18px; border-radius: 16px; border: 2px solid var(--border); background: var(--bg); color: var(--text-1); font-size: 1.1rem; text-align: center; outline: none; margin-bottom: 15px; font-weight: 600; }
         .input-field:focus { border-color: #007AFF; }
@@ -104,21 +140,106 @@
 
         .task-list { padding: 0 20px 20px; }
         
-        /* NEW: The Active Glow Class for "You Are Here" */
-        .task-card { background: rgba(255, 255, 255, 0.65); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border-radius: 20px; padding: 18px; margin-bottom: 12px; display: flex; align-items: flex-start; border: 1px solid rgba(255, 255, 255, 0.4); box-shadow: 0 4px 15px rgba(0,0,0,0.03); transition: transform 0.2s, border-color 0.4s, box-shadow 0.4s; position: relative; overflow: hidden; }
-        [data-theme="dark"] .task-card { background: rgba(28, 28, 30, 0.4); border-color: rgba(255,255,255,0.08); box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
+        main {
+            flex: 1;
+            overflow-y: auto;
+            padding-bottom: 100px;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none; /* Hide scrollbar for clean look */
+        }
+        main::-webkit-scrollbar { display: none; }
         
-        .live-task-glow { border-color: #007AFF !important; box-shadow: 0 0 15px rgba(0, 122, 255, 0.3) !important; }
+        #app {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        
+        /* Task Cards type-based styling */
+        .task-card.task-workout {
+            border-left: 5px solid #FF9500;
+        }
+        .task-card.task-meal {
+            border-left: 5px solid #34C759;
+        }
+        .task-card.task-hack {
+            border-left: 5px solid #007AFF;
+        }
+        
+        .task-card { 
+            background: rgba(255, 255, 255, 0.6); 
+            backdrop-filter: blur(16px); 
+            -webkit-backdrop-filter: blur(16px); 
+            border-radius: 20px; 
+            padding: 16px 18px; 
+            margin-bottom: 12px; 
+            display: flex; 
+            align-items: flex-start; 
+            border: 1px solid rgba(255, 255, 255, 0.4); 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.02); 
+            transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.3s, box-shadow 0.3s, opacity 0.3s; 
+            position: relative; 
+            overflow: hidden; 
+        }
+        [data-theme="dark"] .task-card { 
+            background: rgba(28, 28, 30, 0.45); 
+            border-color: rgba(255,255,255,0.06); 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.15); 
+        }
+        
+        .task-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.05);
+        }
+        [data-theme="dark"] .task-card:hover {
+            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+        }
+        
+        .live-task-glow { 
+            border-color: #007AFF !important; 
+            box-shadow: 0 0 20px rgba(0, 122, 255, 0.25) !important; 
+        }
+        [data-theme="dark"] .live-task-glow {
+            box-shadow: 0 0 25px rgba(0, 122, 255, 0.4) !important;
+        }
+        
+        #prog-circle {
+            filter: drop-shadow(0 0 3px rgba(255,255,255,0.8));
+            transition: stroke-dashoffset 0.35s ease;
+        }
 
         .task-card:active { transform: scale(0.98); }
-        .task-card.muted { opacity: 0.7; }
-        .check-circle { width: 24px; height: 24px; border-radius: 50%; border: 2px solid var(--text-2); margin-right: 14px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; margin-top: 3px; cursor: pointer;}
-        .task-card.done .check-circle { background: #34C759; border-color: #34C759; }
+        .task-card.muted { opacity: 0.45; }
+        
+        .check-circle { 
+            width: 24px; 
+            height: 24px; 
+            border-radius: 50%; 
+            border: 2px solid var(--text-2); 
+            margin-right: 14px; 
+            flex-shrink: 0; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            margin-top: 3px; 
+            cursor: pointer;
+            transition: background-color 0.2s, border-color 0.2s, transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.2);
+        }
+        .check-circle:hover {
+            transform: scale(1.1);
+        }
+        .task-card.done .check-circle { 
+            background: #34C759; 
+            border-color: #34C759; 
+            transform: scale(1.05);
+        }
         .task-card.done .check-circle::after { content: '✓'; color: #fff; font-size: 14px; font-weight: 800; }
         .task-card.done .task-body { opacity: 0.4; text-decoration: line-through; }
         .task-body { flex: 1; cursor: pointer;}
         .time-badge { font-size: 0.75rem; color: #007AFF; font-weight: 800; margin-bottom: 3px; display: block; }
-        .action-btn { background: var(--bg); border: 1px solid var(--border); border-radius: 50%; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; font-size: 1rem; color: var(--text-1); cursor: pointer; margin-left: 10px; flex-shrink: 0; text-decoration: none; }
+        .action-btn { background: var(--bg); border: 1px solid var(--border); border-radius: 50%; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; font-size: 1rem; color: var(--text-1); cursor: pointer; margin-left: 10px; flex-shrink: 0; text-decoration: none; transition: transform 0.2s; }
+        .action-btn:hover { transform: scale(1.05); }
 
         .set-card { background: var(--surface); border-radius: 24px; padding: 20px; border: 1px solid var(--border); margin: 0 20px 25px; box-shadow: var(--shadow); }
         
@@ -126,16 +247,18 @@
         .cal-header button { background: var(--surface-2); border: 1px solid var(--border); border-radius: 8px; color: var(--text-1); padding: 5px 12px; font-weight: bold; cursor: pointer; }
         .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; text-align: center; }
         .cal-day-name { font-size: 0.7rem; color: var(--text-2); font-weight: 700; margin-bottom: 5px; text-transform: uppercase; }
-        .cal-cell { padding: 8px 0; border-radius: 10px; background: var(--bg); font-size: 0.85rem; font-weight: 700; cursor: pointer; border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; }
+        .cal-cell { padding: 8px 0; border-radius: 10px; background: var(--bg); font-size: 0.85rem; font-weight: 700; cursor: pointer; border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; transition: background-color 0.2s, color 0.2s; }
+        .cal-cell:hover:not(.cal-empty) { background: var(--border); }
         .cal-empty { background: transparent; border: none; cursor: default; }
         .cal-perfect { background: #34C759; color: white; border-color: #34C759; box-shadow: 0 2px 8px rgba(52, 199, 89, 0.3); }
+        .cal-perfect:hover { background: #2ebd51; }
         .cal-partial { background: rgba(0, 122, 255, 0.15); color: #007AFF; border-color: #007AFF; }
         .cal-today { border: 2px solid var(--text-1); font-weight: 900; }
-
+ 
         .bmi-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
         .bmi-val { font-size: 2.2rem; font-weight: 800; letter-spacing: -1px; }
         .bmi-pill { padding: 6px 14px; border-radius: 20px; font-size: 0.75rem; font-weight: 800; text-transform: uppercase; color: #fff; background: var(--text-2); }
-
+ 
         .chart-wrap { display: flex; align-items: flex-end; justify-content: space-between; height: 160px; padding-top: 30px; margin-bottom: 10px; }
         .chart-col { width: 12%; text-align: center; }
         .chart-bar { background: #007AFF; opacity: 0.3; border-radius: 6px; width: 100%; transition: height 0.5s ease; min-height: 6px; }
@@ -145,18 +268,22 @@
         .stat-row { display: flex; justify-content: space-between; margin-bottom: 12px; padding-bottom: 12px; border-bottom: 1px solid var(--border); }
         .stat-row:last-child { border: none; margin: 0; padding: 0; }
         .stat-val { font-weight: 700; font-size: 1.1rem; }
-
-        .btn-xl { width: 100%; padding: 16px; border-radius: 16px; background: var(--text-1); color: var(--bg); font-size: 1rem; font-weight: 700; border: none; cursor: pointer; }
-        .btn-success { background: transparent; border: 2px solid var(--success); color: var(--success); width: 100%; padding: 14px; border-radius: 14px; font-weight: 700; cursor: pointer; }
-        .btn-danger { background: transparent; border: 2px solid var(--danger); color: var(--danger); width: 100%; padding: 14px; border-radius: 14px; font-weight: 700; cursor: pointer; }
+ 
+        .btn-xl { width: 100%; padding: 16px; border-radius: 16px; background: var(--text-1); color: var(--bg); font-size: 1rem; font-weight: 700; border: none; cursor: pointer; transition: background-color 0.2s, transform 0.1s; }
+        .btn-xl:active { transform: scale(0.99); }
+        .btn-success { background: transparent; border: 2px solid var(--success); color: var(--success); width: 100%; padding: 14px; border-radius: 14px; font-weight: 700; cursor: pointer; transition: background-color 0.2s; }
+        .btn-success:hover { background: rgba(52, 199, 89, 0.08); }
+        .btn-danger { background: transparent; border: 2px solid var(--danger); color: var(--danger); width: 100%; padding: 14px; border-radius: 14px; font-weight: 700; cursor: pointer; transition: background-color 0.2s; }
+        .btn-danger:hover { background: rgba(255, 59, 48, 0.08); }
         
         .bulk-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
-        .bulk-btn { padding: 12px; border-radius: 12px; background: var(--surface-2); border: 1px solid var(--border); color: var(--text-1); font-weight: 700; font-size: 0.8rem; cursor: pointer; }
+        .bulk-btn { padding: 12px; border-radius: 12px; background: var(--surface-2); border: 1px solid var(--border); color: var(--text-1); font-weight: 700; font-size: 0.8rem; cursor: pointer; transition: background-color 0.2s; }
+        .bulk-btn:hover { background: var(--border); }
         .queue-box { background: var(--bg); border: 1px solid var(--border); border-radius: 12px; padding: 12px; margin-top: 10px; }
         .queue-item { font-size: 0.8rem; font-weight: 600; display: flex; justify-content: space-between; border-bottom: 1px solid var(--border); padding: 8px 0; }
         .queue-item:last-child { border-bottom: none; }
         .checkbox-group label { display: flex; align-items: center; gap: 8px; font-size: 0.85rem; font-weight: 600; margin-bottom: 8px; }
-
+ 
         .editor-list { display: flex; flex-direction: column; gap: 10px; }
         .accordion-item { background: var(--bg); border-radius: 16px; overflow: hidden; border: 1px solid var(--border); transition: all 0.3s ease; }
         .accordion-header { padding: 15px; display: flex; justify-content: space-between; align-items: center; font-weight: 700; font-size: 0.95rem; cursor: pointer; }
@@ -166,7 +293,7 @@
         
         .bio-inputs { display: flex; flex-direction: column; gap: 10px; margin-bottom: 15px; }
         @media (min-width: 400px) { .bio-inputs { flex-direction: row; } }
-
+ 
         .sm-input { width: 100%; padding: 14px; background: var(--bg); border: 1px solid var(--border); border-radius: 12px; margin-bottom: 12px; color: var(--text-1); font-family: inherit; font-size: 1rem; outline: none; font-weight: 600;}
         .sm-input:focus { border-color: var(--primary); }
         .sm-label { font-size: 0.7rem; font-weight: 700; color: var(--text-2); margin-bottom: 5px; display: block; text-transform: uppercase; }
@@ -175,18 +302,18 @@
         .mini-opt { flex: 1; text-align: center; padding: 8px; font-size: 0.8rem; font-weight: 800; color: var(--text-2); border-radius: 7px; cursor: pointer; transition: all 0.2s; }
         .mini-opt.active.on { background: var(--success); color: #fff; }
         .mini-opt.active.off { background: var(--silent); color: #fff; }
-
-        .nav-bar { position: fixed; bottom: 0; width: 100%; background: var(--nav-glass); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-top: 1px solid var(--border); display: flex; justify-content: space-around; padding: 10px 0 25px; z-index: 500; }
+ 
+        .nav-bar { position: absolute; bottom: 0; left: 0; right: 0; width: 100%; background: var(--nav-glass); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-top: 1px solid var(--border); display: flex; justify-content: space-around; padding: 10px 0 25px; z-index: 500; }
         .nav-item { background: none; border: none; display: flex; flex-direction: column; align-items: center; opacity: 0.4; transition: 0.2s; font-size: 1.6rem; cursor: pointer; padding-top: 5px; }
         .nav-item.active { opacity: 1; transform: scale(1.05); color: #007AFF; }
         .nav-label { font-size: 0.65rem; font-weight: 700; margin-top: 4px; }
     </style>
 </head>
 <body>
+    <div class="app-container">
+        <div id="dynamic-island"><span class="di-icon">🔔</span><span id="di-msg">Notification</span></div>
 
-    <div id="dynamic-island"><span class="di-icon">🔔</span><span id="di-msg">Notification</span></div>
-
-    <div id="onboarding" class="hidden">
+        <div id="onboarding" class="hidden">
         <div class="ob-card">
             <span style="font-size: 3rem; margin-bottom: 20px; display: block;">🧬</span>
             <div class="brand-gradient" style="font-size: 2rem; margin-bottom: 5px; letter-spacing: -1px;">HealthyHabits</div>
@@ -274,15 +401,21 @@
                 </div>
             </div>
 
-            <div class="hydro-card">
-                <div>
-                    <h3 style="margin: 0; font-size: 1.05rem; font-weight: 800; color: #007AFF;">💧 Hydro-Engine</h3>
-                    <p id="water-status" style="margin: 4px 0 0 0; font-size: 0.8rem; color: var(--text-2); font-weight: 600;">Target: 3.0 Liters</p>
+            <div class="hydro-card" style="flex-direction: column; align-items: stretch; gap: 12px;">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <h3 style="margin: 0; font-size: 1.05rem; font-weight: 800; color: #007AFF;">💧 Hydro-Engine</h3>
+                        <p id="water-status" style="margin: 4px 0 0 0; font-size: 0.8rem; color: var(--text-2); font-weight: 600;">Target: 3.0 Liters</p>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 15px;">
+                        <button class="hydro-btn" onclick="updateWater(-250)">-</button>
+                        <span style="font-size: 1.2rem; font-weight: 800; min-width: 55px; text-align: center;" id="water-val">0.0</span>
+                        <button class="hydro-btn" onclick="updateWater(250)">+</button>
+                    </div>
                 </div>
-                <div style="display: flex; align-items: center; gap: 15px;">
-                    <button class="hydro-btn" onclick="updateWater(-250)">-</button>
-                    <span style="font-size: 1.2rem; font-weight: 800; min-width: 55px; text-align: center;" id="water-val">0.0</span>
-                    <button class="hydro-btn" onclick="updateWater(250)">+</button>
+                <!-- Water Progress Fill Bar -->
+                <div class="water-progress-track" style="height: 10px; background: rgba(0,122,255,0.08); border-radius: 5px; overflow: hidden; border: 1px solid rgba(0,122,255,0.1);">
+                    <div id="water-progress-fill" style="width: 0%; height: 100%; background: linear-gradient(90deg, #5AC8FA, #007AFF); border-radius: 5px; transition: width 0.4s cubic-bezier(0.1, 0.8, 0.25, 1);"></div>
                 </div>
             </div>
 
@@ -485,9 +618,10 @@
             </button>
         </nav>
     </div>
+    </div>
 
     <script>
-        if ('serviceWorker' in navigator) {
+if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => { navigator.serviceWorker.register('./sw.js').catch(()=>{}); });
         }
 
@@ -496,78 +630,78 @@
 
         const defaultSchedule = {
             mon: [
-                { t:"03:30 AM", act:"Wake Up 1", instr:"500ml Warm Water + ½ Lemon + 1 tsp ACV", rule:"Prime Metabolism", type:"hack", reminder:true },
-                { t:"04:00 AM", act:"Cardio 1", instr:"Mandir Visit (Fast Brisk Walk)", rule:"Fasted Fat Burn", type:"workout", reminder:true },
-                { t:"07:00 AM", act:"Pre-Nap", instr:"5 Soaked Almonds + 1 Walnut", rule:"Brain Repair", type:"meal", reminder:true },
-                { t:"07:15 AM", act:"Sleep 2", instr:"Sleep in Pitch Black Room", rule:"Hormone Reset", type:"hack", reminder:true },
-                { t:"10:00 AM", act:"Wake Up 2", instr:"Black Coffee / Green Tea", rule:"Cortisol Spike", type:"meal", reminder:true },
-                { t:"10:30 AM", act:"Breakfast", instr:"Veg Poha (60g) + Peas + Peanuts", rule:"+ 1 Multivitamin", type:"meal", reminder:true },
-                { t:"11:00 AM", act:"Work", instr:"Deep Focus Block (No Phone)", rule:"Drink 1L Water", type:"hack", reminder:true },
-                { t:"01:30 PM", act:"Lunch", instr:"2 Roti + Rajma (150g) + Cucumber Salad", rule:"Eat Salad First", type:"meal", reminder:true },
-                { t:"01:50 PM", act:"Movement", instr:"'Shatapavali' Walk (10 Mins)", rule:"DO NOT SIT", type:"workout", reminder:true },
-                { t:"03:45 PM", act:"Pre-Gym", instr:"1 Banana + Black Coffee + Flaxseeds", rule:"Energy Load", type:"meal", reminder:true },
-                { t:"04:00 PM", act:"GYM", instr:"Full Body: Squat, Pushup, Lat Pull, Press", rule:"Last Set = DROP SET", type:"workout", reminder:true },
-                { t:"05:30 PM", act:"Post-Gym", instr:"1 Scoop Whey Protein + Water", rule:"Drink at Gym", type:"meal", reminder:true },
-                { t:"06:00 PM", act:"Work", instr:"Course Completion / Study", rule:"Active Brain", type:"hack", reminder:true },
-                { t:"08:00 PM", act:"Dinner", instr:"Paneer Bhurji (100g) + Spinach", rule:"NO ROTI", type:"meal", reminder:true },
-                { t:"08:20 PM", act:"Movement", instr:"'Shatapavali' Walk (10 Mins)", rule:"DO NOT SIT", type:"workout", reminder:true },
-                { t:"10:00 PM", act:"Sleep", instr:"Lights Out", rule:"8 Hours Target", type:"hack", reminder:true }
+                { id: "t_mon_0", t:"03:30 AM", act:"Wake Up 1", instr:"500ml Warm Water + ½ Lemon + 1 tsp ACV", rule:"Prime Metabolism", type:"hack", reminder:true },
+                { id: "t_mon_1", t:"04:00 AM", act:"Cardio 1", instr:"Mandir Visit (Fast Brisk Walk)", rule:"Fasted Fat Burn", type:"workout", reminder:true },
+                { id: "t_mon_2", t:"07:00 AM", act:"Pre-Nap", instr:"5 Soaked Almonds + 1 Walnut", rule:"Brain Repair", type:"meal", reminder:true },
+                { id: "t_mon_3", t:"07:15 AM", act:"Sleep 2", instr:"Sleep in Pitch Black Room", rule:"Hormone Reset", type:"hack", reminder:true },
+                { id: "t_mon_4", t:"10:00 AM", act:"Wake Up 2", instr:"Black Coffee / Green Tea", rule:"Cortisol Spike", type:"meal", reminder:true },
+                { id: "t_mon_5", t:"10:30 AM", act:"Breakfast", instr:"Veg Poha (60g) + Peas + Peanuts", rule:"+ 1 Multivitamin", type:"meal", reminder:true },
+                { id: "t_mon_6", t:"11:00 AM", act:"Work", instr:"Deep Focus Block (No Phone)", rule:"Drink 1L Water", type:"hack", reminder:true },
+                { id: "t_mon_7", t:"01:30 PM", act:"Lunch", instr:"2 Roti + Rajma (150g) + Cucumber Salad", rule:"Eat Salad First", type:"meal", reminder:true },
+                { id: "t_mon_8", t:"01:50 PM", act:"Movement", instr:"'Shatapavali' Walk (10 Mins)", rule:"DO NOT SIT", type:"workout", reminder:true },
+                { id: "t_mon_9", t:"03:45 PM", act:"Pre-Gym", instr:"1 Banana + Black Coffee + Flaxseeds", rule:"Energy Load", type:"meal", reminder:true },
+                { id: "t_mon_10", t:"04:00 PM", act:"GYM", instr:"Full Body: Squat, Pushup, Lat Pull, Press", rule:"Last Set = DROP SET", type:"workout", reminder:true },
+                { id: "t_mon_11", t:"05:30 PM", act:"Post-Gym", instr:"1 Scoop Whey Protein + Water", rule:"Drink at Gym", type:"meal", reminder:true },
+                { id: "t_mon_12", t:"06:00 PM", act:"Work", instr:"Course Completion / Study", rule:"Active Brain", type:"hack", reminder:true },
+                { id: "t_mon_13", t:"08:00 PM", act:"Dinner", instr:"Paneer Bhurji (100g) + Spinach", rule:"NO ROTI", type:"meal", reminder:true },
+                { id: "t_mon_14", t:"08:20 PM", act:"Movement", instr:"'Shatapavali' Walk (10 Mins)", rule:"DO NOT SIT", type:"workout", reminder:true },
+                { id: "t_mon_15", t:"10:00 PM", act:"Sleep", instr:"Lights Out", rule:"8 Hours Target", type:"hack", reminder:true }
             ],
             tue: [
-                { t:"03:30 AM", act:"Wake Up 1", instr:"500ml Warm Water + ½ Lemon + 1 tsp ACV", rule:"Prime Metabolism", type:"hack", reminder:true },
-                { t:"04:00 AM", act:"Cardio 1", instr:"Mandir Visit (Fast Brisk Walk)", rule:"Fasted Fat Burn", type:"workout", reminder:true },
-                { t:"10:30 AM", act:"Breakfast", instr:"Oats Chilla (2) + Mint Chutney", rule:"+ 1 Multivitamin", type:"meal", reminder:true },
-                { t:"01:30 PM", act:"Lunch", instr:"1 Roti + Chole + 1 Bowl Curd", rule:"Probiotics", type:"meal", reminder:true },
-                { t:"04:00 PM", act:"GYM", instr:"Cardio: Cycle (20m) + Planks + Leg Raise", rule:"Sweat Mandatory", type:"workout", reminder:true },
-                { t:"08:00 PM", act:"Dinner", instr:"Bhindi Fry + Yellow Dal", rule:"Easy Digestion", type:"meal", reminder:true },
-                { t:"10:00 PM", act:"Sleep", instr:"Lights Out", rule:"8 Hours Target", type:"hack", reminder:true }
+                { id: "t_tue_0", t:"03:30 AM", act:"Wake Up 1", instr:"500ml Warm Water + ½ Lemon + 1 tsp ACV", rule:"Prime Metabolism", type:"hack", reminder:true },
+                { id: "t_tue_1", t:"04:00 AM", act:"Cardio 1", instr:"Mandir Visit (Fast Brisk Walk)", rule:"Fasted Fat Burn", type:"workout", reminder:true },
+                { id: "t_tue_2", t:"10:30 AM", act:"Breakfast", instr:"Oats Chilla (2) + Mint Chutney", rule:"+ 1 Multivitamin", type:"meal", reminder:true },
+                { id: "t_tue_3", t:"01:30 PM", act:"Lunch", instr:"1 Roti + Chole + 1 Bowl Curd", rule:"Probiotics", type:"meal", reminder:true },
+                { id: "t_tue_4", t:"04:00 PM", act:"GYM", instr:"Cardio: Cycle (20m) + Planks + Leg Raise", rule:"Sweat Mandatory", type:"workout", reminder:true },
+                { id: "t_tue_5", t:"08:00 PM", act:"Dinner", instr:"Bhindi Fry + Yellow Dal", rule:"Easy Digestion", type:"meal", reminder:true },
+                { id: "t_tue_6", t:"10:00 PM", act:"Sleep", instr:"Lights Out", rule:"8 Hours Target", type:"hack", reminder:true }
             ],
             wed: [
-                { t:"03:30 AM", act:"Wake Up 1", instr:"500ml Warm Water + ½ Lemon + 1 tsp ACV", rule:"Prime Metabolism", type:"hack", reminder:true },
-                { t:"04:00 AM", act:"Cardio 1", instr:"Mandir Visit (Fast Brisk Walk)", rule:"Fasted Fat Burn", type:"workout", reminder:true },
-                { t:"10:30 AM", act:"Breakfast", instr:"2 Idli + Sambhar (Less Potato)", rule:"+ 1 Multivitamin", type:"meal", reminder:true },
-                { t:"01:30 PM", act:"Lunch", instr:"1 Cup Rice + Dal Tadka + Salad", rule:"Carb Load for Gym", type:"meal", reminder:true },
-                { t:"04:00 PM", act:"GYM", instr:"Push-Pull-Legs: Deadlift, Bench, Rows", rule:"Last Set = DROP SET", type:"workout", reminder:true },
-                { t:"08:00 PM", act:"Dinner", instr:"Grilled Paneer (100g) + Soup", rule:"High Protein", type:"meal", reminder:true },
-                { t:"10:00 PM", act:"Sleep", instr:"Lights Out", rule:"8 Hours Target", type:"hack", reminder:true }
+                { id: "t_wed_0", t:"03:30 AM", act:"Wake Up 1", instr:"500ml Warm Water + ½ Lemon + 1 tsp ACV", rule:"Prime Metabolism", type:"hack", reminder:true },
+                { id: "t_wed_1", t:"04:00 AM", act:"Cardio 1", instr:"Mandir Visit (Fast Brisk Walk)", rule:"Fasted Fat Burn", type:"workout", reminder:true },
+                { id: "t_wed_2", t:"10:30 AM", act:"Breakfast", instr:"2 Idli + Sambhar (Less Potato)", rule:"+ 1 Multivitamin", type:"meal", reminder:true },
+                { id: "t_wed_3", t:"01:30 PM", act:"Lunch", instr:"1 Cup Rice + Dal Tadka + Salad", rule:"Carb Load for Gym", type:"meal", reminder:true },
+                { id: "t_wed_4", t:"04:00 PM", act:"GYM", instr:"Push-Pull-Legs: Deadlift, Bench, Rows", rule:"Last Set = DROP SET", type:"workout", reminder:true },
+                { id: "t_wed_5", t:"08:00 PM", act:"Dinner", instr:"Grilled Paneer (100g) + Soup", rule:"High Protein", type:"meal", reminder:true },
+                { id: "t_wed_6", t:"10:00 PM", act:"Sleep", instr:"Lights Out", rule:"8 Hours Target", type:"hack", reminder:true }
             ],
             thu: [
-                { t:"03:30 AM", act:"Wake Up 1", instr:"500ml Warm Water + ½ Lemon + 1 tsp ACV", rule:"Prime Metabolism", type:"hack", reminder:true },
-                { t:"04:00 AM", act:"Cardio 1", instr:"Mandir Visit (Fast Brisk Walk)", rule:"Fasted Fat Burn", type:"workout", reminder:true },
-                { t:"10:30 AM", act:"Breakfast", instr:"Paneer Sandwich (Brown Bread)", rule:"+ 1 Multivitamin", type:"meal", reminder:true },
-                { t:"01:30 PM", act:"Lunch", instr:"2 Roti + Soya Chunks Sabzi", rule:"High Protein", type:"meal", reminder:true },
-                { t:"04:00 PM", act:"GYM", instr:"LEGS: Squats, Leg Press, Lunges", rule:"DO NOT SKIP", type:"workout", reminder:true },
-                { t:"08:00 PM", act:"Dinner", instr:"Besan Chilla (2) + Salad", rule:"Light Digestion", type:"meal", reminder:true },
-                { t:"10:00 PM", act:"Sleep", instr:"Lights Out", rule:"8 Hours Target", type:"hack", reminder:true }
+                { id: "t_thu_0", t:"03:30 AM", act:"Wake Up 1", instr:"500ml Warm Water + ½ Lemon + 1 tsp ACV", rule:"Prime Metabolism", type:"hack", reminder:true },
+                { id: "t_thu_1", t:"04:00 AM", act:"Cardio 1", instr:"Mandir Visit (Fast Brisk Walk)", rule:"Fasted Fat Burn", type:"workout", reminder:true },
+                { id: "t_thu_2", t:"10:30 AM", act:"Breakfast", instr:"Paneer Sandwich (Brown Bread)", rule:"+ 1 Multivitamin", type:"meal", reminder:true },
+                { id: "t_thu_3", t:"01:30 PM", act:"Lunch", instr:"2 Roti + Soya Chunks Sabzi", rule:"High Protein", type:"meal", reminder:true },
+                { id: "t_thu_4", t:"04:00 PM", act:"GYM", instr:"LEGS: Squats, Leg Press, Lunges", rule:"DO NOT SKIP", type:"workout", reminder:true },
+                { id: "t_thu_5", t:"08:00 PM", act:"Dinner", instr:"Besan Chilla (2) + Salad", rule:"Light Digestion", type:"meal", reminder:true },
+                { id: "t_thu_6", t:"10:00 PM", act:"Sleep", instr:"Lights Out", rule:"8 Hours Target", type:"hack", reminder:true }
             ],
             fri: [
-                { t:"03:30 AM", act:"Wake Up 1", instr:"500ml Warm Water + ½ Lemon + 1 tsp ACV", rule:"Prime Metabolism", type:"hack", reminder:true },
-                { t:"04:00 AM", act:"Cardio 1", instr:"Mandir Visit (Fast Brisk Walk)", rule:"Fasted Fat Burn", type:"workout", reminder:true },
-                { t:"10:30 AM", act:"Breakfast", instr:"Moong Dal Chilla", rule:"+ 1 Multivitamin", type:"meal", reminder:true },
-                { t:"01:30 PM", act:"Lunch", instr:"1 Roti + Mix Veg Sabzi + Dal", rule:"Fiber Load", type:"meal", reminder:true },
-                { t:"04:00 PM", act:"GYM", instr:"Arms/Shoulders: Curls, Extensions", rule:"Last Set = DROP SET", type:"workout", reminder:true },
-                { t:"08:00 PM", act:"Dinner", instr:"Stir Fry Veggies + Paneer (80g)", rule:"High Heat Cooking", type:"meal", reminder:true },
-                { t:"10:00 PM", act:"Sleep", instr:"Lights Out", rule:"8 Hours Target", type:"hack", reminder:true }
+                { id: "t_fri_0", t:"03:30 AM", act:"Wake Up 1", instr:"500ml Warm Water + ½ Lemon + 1 tsp ACV", rule:"Prime Metabolism", type:"hack", reminder:true },
+                { id: "t_fri_1", t:"04:00 AM", act:"Cardio 1", instr:"Mandir Visit (Fast Brisk Walk)", rule:"Fasted Fat Burn", type:"workout", reminder:true },
+                { id: "t_fri_2", t:"10:30 AM", act:"Breakfast", instr:"Moong Dal Chilla", rule:"+ 1 Multivitamin", type:"meal", reminder:true },
+                { id: "t_fri_3", t:"01:30 PM", act:"Lunch", instr:"1 Roti + Mix Veg Sabzi + Dal", rule:"Fiber Load", type:"meal", reminder:true },
+                { id: "t_fri_4", t:"04:00 PM", act:"GYM", instr:"Arms/Shoulders: Curls, Extensions", rule:"Last Set = DROP SET", type:"workout", reminder:true },
+                { id: "t_fri_5", t:"08:00 PM", act:"Dinner", instr:"Stir Fry Veggies + Paneer (80g)", rule:"High Heat Cooking", type:"meal", reminder:true },
+                { id: "t_fri_6", t:"10:00 PM", act:"Sleep", instr:"Lights Out", rule:"8 Hours Target", type:"hack", reminder:true }
             ],
             sat: [
-                { t:"03:30 AM", act:"Wake Up 1", instr:"500ml Warm Water + ½ Lemon", rule:"Prime Metabolism", type:"hack", reminder:true },
-                { t:"04:00 AM", act:"Cardio 1", instr:"Mandir Visit (Fast Brisk Walk)", rule:"Fasted Fat Burn", type:"workout", reminder:true },
-                { t:"10:30 AM", act:"Breakfast", instr:"Veg Dalia (Porridge)", rule:"Gut Reset", type:"meal", reminder:true },
-                { t:"01:30 PM", act:"Lunch", instr:"Khichdi + 1 tsp Ghee", rule:"Joint Lubrication", type:"meal", reminder:true },
-                { t:"01:50 PM", act:"Movement", instr:"'Shatapavali' Walk (10 Mins)", rule:"DO NOT SIT", type:"workout", reminder:true },
-                { t:"03:45 PM", act:"Snack", instr:"Coconut Water", rule:"Electrolytes", type:"meal", reminder:true },
-                { t:"04:00 PM", act:"ACTIVITY", instr:"45 Min Outdoor Nature Walk", rule:"NO GYM", type:"workout", reminder:true },
-                { t:"08:00 PM", act:"Dinner", instr:"Papaya Bowl + Soup", rule:"Digestion Enzyme", type:"meal", reminder:true },
-                { t:"10:00 PM", act:"Sleep", instr:"Lights Out", rule:"8 Hours Target", type:"hack", reminder:true }
+                { id: "t_sat_0", t:"03:30 AM", act:"Wake Up 1", instr:"500ml Warm Water + ½ Lemon", rule:"Prime Metabolism", type:"hack", reminder:true },
+                { id: "t_sat_1", t:"04:00 AM", act:"Cardio 1", instr:"Mandir Visit (Fast Brisk Walk)", rule:"Fasted Fat Burn", type:"workout", reminder:true },
+                { id: "t_sat_2", t:"10:30 AM", act:"Breakfast", instr:"Veg Dalia (Porridge)", rule:"Gut Reset", type:"meal", reminder:true },
+                { id: "t_sat_3", t:"01:30 PM", act:"Lunch", instr:"Khichdi + 1 tsp Ghee", rule:"Joint Lubrication", type:"meal", reminder:true },
+                { id: "t_sat_4", t:"01:50 PM", act:"Movement", instr:"'Shatapavali' Walk (10 Mins)", rule:"DO NOT SIT", type:"workout", reminder:true },
+                { id: "t_sat_5", t:"03:45 PM", act:"Snack", instr:"Coconut Water", rule:"Electrolytes", type:"meal", reminder:true },
+                { id: "t_sat_6", t:"04:00 PM", act:"ACTIVITY", instr:"45 Min Outdoor Nature Walk", rule:"NO GYM", type:"workout", reminder:true },
+                { id: "t_sat_7", t:"08:00 PM", act:"Dinner", instr:"Papaya Bowl + Soup", rule:"Digestion Enzyme", type:"meal", reminder:true },
+                { id: "t_sat_8", t:"10:00 PM", act:"Sleep", instr:"Lights Out", rule:"8 Hours Target", type:"hack", reminder:true }
             ],
             sun: [
-                { t:"03:30 AM", act:"Wake Up 1", instr:"500ml Warm Water + ½ Lemon", rule:"No ACV today", type:"hack", reminder:true },
-                { t:"04:00 AM", act:"Cardio 1", instr:"Mandir Visit (Gentle Walk)", rule:"Mental Peace", type:"workout", reminder:true },
-                { t:"10:30 AM", act:"Breakfast", instr:"Besan Chilla", rule:"Light Protein", type:"meal", reminder:true },
-                { t:"01:30 PM", act:"Lunch", instr:"Lauki Dal + 1 Roti", rule:"Stomach Rest", type:"meal", reminder:true },
-                { t:"04:00 PM", act:"ACTIVITY", instr:"Yoga / Stretching (20 mins)", rule:"Muscle Release", type:"workout", reminder:true },
-                { t:"08:00 PM", act:"Dinner", instr:"Salad + 1 Bowl Curd", rule:"Probiotics", type:"meal", reminder:true },
-                { t:"10:00 PM", act:"Sleep", instr:"Lights Out", rule:"Ready for Monday", type:"hack", reminder:true }
+                { id: "t_sun_0", t:"03:30 AM", act:"Wake Up 1", instr:"500ml Warm Water + ½ Lemon", rule:"No ACV today", type:"hack", reminder:true },
+                { id: "t_sun_1", t:"04:00 AM", act:"Cardio 1", instr:"Mandir Visit (Gentle Walk)", rule:"Mental Peace", type:"workout", reminder:true },
+                { id: "t_sun_2", t:"10:30 AM", act:"Breakfast", instr:"Besan Chilla", rule:"Light Protein", type:"meal", reminder:true },
+                { id: "t_sun_3", t:"01:30 PM", act:"Lunch", instr:"Lauki Dal + 1 Roti", rule:"Stomach Rest", type:"meal", reminder:true },
+                { id: "t_sun_4", t:"04:00 PM", act:"ACTIVITY", instr:"Yoga / Stretching (20 mins)", rule:"Muscle Release", type:"workout", reminder:true },
+                { id: "t_sun_5", t:"08:00 PM", act:"Dinner", instr:"Salad + 1 Bowl Curd", rule:"Probiotics", type:"meal", reminder:true },
+                { id: "t_sun_6", t:"10:00 PM", act:"Sleep", instr:"Lights Out", rule:"Ready for Monday", type:"hack", reminder:true }
             ]
         };
 
@@ -588,6 +722,35 @@
             } else {
                 appData = JSON.parse(stored);
                 if(!appData.schedule) appData.schedule = JSON.parse(JSON.stringify(defaultSchedule));
+                
+                // Add stable IDs and migrate legacy history keys
+                let migrated = false;
+                Object.keys(appData.schedule).forEach(day => {
+                    appData.schedule[day].forEach((task, idx) => {
+                        if (!task.id) {
+                            task.id = `t_${day}_${idx}`;
+                            migrated = true;
+                        }
+                    });
+                });
+                if(!appData.history) appData.history = {};
+                Object.keys(appData.history).forEach(oldKey => {
+                    const match = oldKey.match(/^(\d{4}-\d{2}-\d{2})-(\d+)$/);
+                    if (match) {
+                        const dateStr = match[1];
+                        const idx = parseInt(match[2]);
+                        const dateObj = new Date(dateStr + 'T12:00:00'); // local time
+                        const days = ['sun','mon','tue','wed','thu','fri','sat'];
+                        const dayName = days[dateObj.getDay()];
+                        const newKey = `${dateStr}-t_${dayName}_${idx}`;
+                        
+                        appData.history[newKey] = appData.history[oldKey];
+                        delete appData.history[oldKey];
+                        migrated = true;
+                    }
+                });
+                if (migrated) saveData();
+
                 if(!appData.dayModes) appData.dayModes = {};
                 if(!appData.dayReasons) appData.dayReasons = {};
                 if(!appData.lightDayTypes) appData.lightDayTypes = ['workout'];
@@ -600,6 +763,14 @@
 
         function saveData() { localStorage.setItem('metabolic_os_v13', JSON.stringify(appData)); }
         function getKey(d) { return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); }
+
+        function timeToMins(timeStr) {
+            const [time, period] = timeStr.split(' ');
+            let [h, m] = time.split(':').map(Number);
+            if(period === 'PM' && h !== 12) h += 12;
+            if(period === 'AM' && h === 12) h = 0;
+            return h * 60 + m;
+        }
 
         function initApp() {
             document.getElementById('up-name').value = appData.user;
@@ -673,7 +844,7 @@
             const mode = appData.dayModes[dateKey] || 'active';
 
             appData.schedule[currentTabDay].forEach((item, i) => {
-                const uid = `${dateKey}-${i}`;
+                const uid = `${dateKey}-${item.id}`;
                 const isDone = appData.history[uid] === true;
                 
                 let muted = false;
@@ -686,8 +857,7 @@
                 if(item.type === 'workout') link = `https://www.youtube.com/results?search_query=${query}`;
 
                 const div = document.createElement('div');
-                // Added data-index so updateHero can highlight the live task
-                div.className = `task-card ${isDone ? 'done' : ''} ${muted ? 'muted' : ''}`;
+                div.className = `task-card task-${item.type} ${isDone ? 'done' : ''} ${muted ? 'muted' : ''}`;
                 div.setAttribute('data-index', i);
                 
                 div.innerHTML = `
@@ -716,6 +886,7 @@
             
             updateHero();
             calculateStreak();
+            rebuildNotificationQueue();
         }
 
         function setDayMode(mode) {
@@ -782,6 +953,7 @@
         function calculateStreak() {
             let streak = 0;
             let checkDate = new Date();
+            checkDate.setHours(12, 0, 0, 0);
             
             for (let i = 0; i < 365; i++) {
                 const k = getKey(checkDate);
@@ -796,7 +968,7 @@
                 const tasks = appData.schedule[dayName];
                 let done = 0;
                 
-                tasks.forEach((_, idx) => { if(appData.history[`${k}-${idx}`]) done++; });
+                tasks.forEach(task => { if(appData.history[`${k}-${task.id}`]) done++; });
                 const score = tasks.length ? (done / tasks.length) * 100 : 0;
 
                 if (score >= 80) { 
@@ -852,7 +1024,7 @@
             const tasks = appData.schedule[currentTabDay];
             const k = getKey(viewedDateObj);
             let doneCount = 0;
-            tasks.forEach((_, i) => { if(appData.history[`${k}-${i}`]) doneCount++; });
+            tasks.forEach(task => { if(appData.history[`${k}-${task.id}`]) doneCount++; });
             const pct = tasks.length > 0 ? Math.round((doneCount / tasks.length) * 100) : 0;
             const offset = 125.6 - (125.6 * pct) / 100;
             progCircle.style.strokeDashoffset = offset;
@@ -936,6 +1108,9 @@
             const statusEl = document.getElementById('water-status');
             statusEl.innerText = (ml >= 3000) ? "Goal Reached! 💧" : "Target: 3.0 Liters";
             statusEl.style.color = (ml >= 3000) ? "#34C759" : "var(--text-2)";
+            
+            const pct = Math.min((ml / 3000) * 100, 100);
+            document.getElementById('water-progress-fill').style.width = pct + '%';
         }
         
         function logWeight(type) {
@@ -949,11 +1124,11 @@
         }
 
         function updateAnalytics() {
-            const currentW = parseFloat(appData.weights[getKey(new Date())]?.am || appData.startW);
+            const currentW = parseFloat(appData.weights[getKey(new Date())]?.am) || parseFloat(appData.startW) || 0;
             const hM = appData.height / 100;
             const bmi = (currentW / (hM * hM)).toFixed(1);
             
-            document.getElementById('bmi-num').innerText = isFinite(bmi) ? bmi : "--";
+            document.getElementById('bmi-num').innerText = isFinite(bmi) && bmi > 0 ? bmi : "--";
             
             let bmiStatus = "CALC";
             let bmiColor = "var(--text-2)";
@@ -983,28 +1158,36 @@
             document.getElementById('bmi-text').style.background = bmiColor;
             document.getElementById('bmi-advice').innerText = bmiAdvice;
 
-            document.getElementById('s-start').innerText = appData.startW + " kg";
+            document.getElementById('s-start').innerText = (parseFloat(appData.startW) || 0) + " kg";
             document.getElementById('s-curr').innerText = currentW + " kg";
-            const diff = (currentW - parseFloat(appData.startW)).toFixed(1);
+            const diff = (currentW - (parseFloat(appData.startW) || 0)).toFixed(1);
             document.getElementById('s-diff').innerText = (diff > 0 ? "+" : "") + diff + " kg";
 
             const chart = document.getElementById('chart-area');
             chart.innerHTML = '';
             const dates = [];
-            for(let i=6; i>=0; i--) { const d = new Date(); d.setDate(d.getDate() - i); dates.push(getKey(d)); }
+            for(let i=6; i>=0; i--) { 
+                const d = new Date(); 
+                d.setHours(12, 0, 0, 0);
+                d.setDate(d.getDate() - i); 
+                dates.push(getKey(d)); 
+            }
             let vals = dates.map(d => appData.weights[d]?.am ? parseFloat(appData.weights[d].am) : 0).filter(v => v > 0);
-            if(vals.length === 0) vals = [parseFloat(appData.startW)];
+            if(vals.length === 0) vals = [parseFloat(appData.startW) || 0];
             const min = Math.min(...vals) - 1; const max = Math.max(...vals) + 1;
             dates.forEach(d => {
                 const w = appData.weights[d]?.am || 0;
                 const col = document.createElement('div');
                 col.className = 'chart-col';
-                const dayLabel = new Date(d).toLocaleDateString('en-US', {weekday:'narrow'});
+                
+                const parts = d.split('-');
+                const dateObj = new Date(parts[0], parts[1]-1, parts[2]);
+                const dayLabel = dateObj.toLocaleDateString('en-US', {weekday:'narrow'});
                 if(w > 0) {
                     const heightPct = ((w - min) / (max - min)) * 80 + 20;
-                    col.innerHTML = `<div class="chart-bar filled" style="height:${heightPct}%;"></div><div class="chart-label">${dayLabel}</div>`;
+                    col.innerHTML = `<div class="chart-bar filled" style="height:${heightPct}%; background: linear-gradient(180deg, #007AFF, #5AC8FA); border-radius: 4px 4px 0 0; filter: drop-shadow(0 2px 5px rgba(0,122,255,0.25));"></div><div class="chart-label">${dayLabel}</div>`;
                 } else {
-                    col.innerHTML = `<div class="chart-bar" style="height:6px;"></div><div class="chart-label">${dayLabel}</div>`;
+                    col.innerHTML = `<div class="chart-bar" style="height:6px; background: var(--border); border-radius: 3px;"></div><div class="chart-label">${dayLabel}</div>`;
                 }
                 chart.appendChild(col);
             });
@@ -1029,13 +1212,13 @@
                 const iterDate = new Date(year, month, i);
                 const k = getKey(iterDate);
                 const dayName = ['sun','mon','tue','wed','thu','fri','sat'][iterDate.getDay()];
-                const totalTasks = appData.schedule[dayName].length;
+                const tasks = appData.schedule[dayName];
                 
                 let doneCount = 0;
-                for(let t=0; t<totalTasks; t++) if(appData.history[`${k}-${t}`]) doneCount++;
+                tasks.forEach(task => { if(appData.history[`${k}-${task.id}`]) doneCount++; });
 
                 let statusClass = '';
-                if(doneCount === totalTasks && totalTasks > 0) statusClass = 'cal-perfect';
+                if(doneCount === tasks.length && tasks.length > 0) statusClass = 'cal-perfect';
                 else if(doneCount > 0) statusClass = 'cal-partial';
                 const isToday = (k === todayKey) ? 'cal-today' : '';
 
@@ -1179,6 +1362,7 @@
             vibrate(20);
             const day = document.getElementById('edit-day-select').value;
             appData.schedule[day].push({
+                id: 't_' + day + '_' + Date.now() + '_' + Math.floor(Math.random() * 1000),
                 t: "12:00 PM",
                 act: "New Activity",
                 instr: "Details here",
@@ -1216,7 +1400,7 @@
                 appData.schedule[day][index].reminder = (remVal === 'true' || remVal === true);
             });
             
-            appData.schedule[day].sort((a,b) => msUntil(b.t) - msUntil(a.t));
+            appData.schedule[day].sort((a,b) => timeToMins(a.t) - timeToMins(b.t));
             
             saveData();
             setTab(currentTabDay);
@@ -1236,8 +1420,8 @@
 
             if (mode === 'silent') return renderQueuePreview();
 
-            appData.schedule[dayName].forEach((task, i) => {
-                const uid = `${key}-${i}`;
+            appData.schedule[dayName].forEach((task) => {
+                const uid = `${key}-${task.id}`;
                 if (appData.history[uid] === true) return;
                 if (!task.reminder) return;
                 if (mode === 'light' && !appData.lightDayTypes.includes(task.type)) return;
@@ -1251,7 +1435,7 @@
                 }
             });
 
-            activeTimers.sort((a,b) => msUntil(a.time) - msUntil(b.time));
+            activeTimers.sort((a,b) => timeToMins(a.time) - timeToMins(b.time));
             renderQueuePreview();
         }
 
@@ -1267,6 +1451,7 @@
         }
 
         function fireNotification(task, uid) {
+            if (appData.history[uid] === true) return;
             if (Notification.permission === 'granted') {
                 const notif = new Notification(`⏳ Starts in 1 Hour: ${task.act}`, { 
                     body: task.instr, 
@@ -1280,10 +1465,16 @@
             rebuildNotificationQueue();
         }
 
+        let islandTimeout = null;
         function showIsland(msg) {
             const di = document.getElementById('dynamic-island');
             document.getElementById('di-msg').innerText = msg;
-            di.classList.add('active'); setTimeout(() => di.classList.remove('active'), 3000);
+            di.classList.add('active');
+            if (islandTimeout) clearTimeout(islandTimeout);
+            islandTimeout = setTimeout(() => {
+                di.classList.remove('active');
+                islandTimeout = null;
+            }, 3000);
         }
 
         function switchView(view) {
@@ -1301,13 +1492,21 @@
 
         function completeOnboarding() {
             vibrate(30);
-            const name = document.getElementById('ob-name').value; const w = document.getElementById('ob-weight').value; let h = 0;
+            const name = document.getElementById('ob-name').value; 
+            const w = parseFloat(document.getElementById('ob-weight').value); 
+            let h = 0;
             if(!document.getElementById('input-cm').classList.contains('hidden')) h = parseFloat(document.getElementById('h-cm').value);
             else { const ft = parseFloat(document.getElementById('h-ft').value) || 0; const in_ = parseFloat(document.getElementById('h-in').value) || 0; h = (ft * 30.48) + (in_ * 2.54); }
             if(!name || !w || !h) return showIsland("Please fill all fields");
             appData.user = name; appData.height = h; appData.startW = w;
             appData.schedule = JSON.parse(JSON.stringify(defaultSchedule));
             appData.history = {}; appData.dayModes = {}; appData.dayReasons = {}; appData.lightDayTypes = ['workout'];
+            
+            // Populate today's morning weight from onboarding weight
+            const todayKey = getKey(new Date());
+            appData.weights = {};
+            appData.weights[todayKey] = { am: w, pm: '', water: 0 };
+            
             saveData(); location.reload();
         }
 
@@ -1322,8 +1521,8 @@
         function updateProfile() {
             vibrate(20);
             appData.user = document.getElementById('up-name').value || appData.user;
-            appData.height = document.getElementById('up-height').value || appData.height;
-            appData.startW = document.getElementById('up-sw').value || appData.startW;
+            appData.height = parseFloat(document.getElementById('up-height').value) || appData.height;
+            appData.startW = parseFloat(document.getElementById('up-sw').value) || appData.startW;
             saveData(); showIsland("Profile Saved");
             updateAnalytics();
         }
