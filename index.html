@@ -2128,10 +2128,11 @@ if ('serviceWorker' in navigator) {
                 if (!task.reminder) return;
                 if (mode === 'light' && !appData.lightDayTypes.includes(task.type)) return;
 
-                const notifyTimeMs = msUntil(task.t);
+                let notifyTimeMs = msUntil(task.t) - (30 * 60 * 1000); // 30 minutes early
+                if (notifyTimeMs < 0 && msUntil(task.t) > 0) notifyTimeMs = 0; // immediate catch-up if starts within 30m
 
-                if (notifyTimeMs > 0 && notifyTimeMs < 86400000) {
-                    const id = setTimeout(() => fireNotification(task, uid), notifyTimeMs);
+                if (notifyTimeMs >= 0 && msUntil(task.t) < 86400000) {
+                    const id = setTimeout(() => fireNotification(task, uid, dayName), notifyTimeMs);
                     activeTimers.push({ id, task, time: task.t });
                 }
             });
@@ -2147,65 +2148,81 @@ if ('serviceWorker' in navigator) {
                 box.innerHTML = `<div class="queue-item" style="color: var(--text-2); justify-content: center;">No reminders left for today.</div>`; return;
             }
             activeTimers.slice(0, 3).forEach(t => {
-                box.innerHTML += `<div class="queue-item"><span>${t.task.act}</span> <span style="color:#007AFF">${t.time}</span></div>`;
+                box.innerHTML += `<div class="queue-item"><span>${t.task.act} (Alerts 30m early)</span> <span style="color:#007AFF">${t.time}</span></div>`;
             });
         }
 
-        function getMotivationalAlert(task) {
+        function getMotivationalAlert(task, dayName) {
             const act = task.act.toLowerCase();
             const type = task.type;
+            const food = task.instr || '';
+            const dayCap = (dayName || 'today').toUpperCase();
             
-            let title = `⚡ Habit Protocol Active!`;
-            let body = `Time for ${task.act}: ${task.instr}`;
-            
+            // Day prefixes to add local day vibe
+            const dayVibes = {
+                mon: "Monday Hustle 🚀",
+                tue: "Tuesday Grit 💪",
+                wed: "Mid-week Focus 🎯",
+                thu: "Thursday Synergy ⚡",
+                fri: "Friday Finish 🔥",
+                sat: "Saturday Rejuvenation 🍃",
+                sun: "Sunday Rest & Recovery 🌞"
+            };
+            const prefix = dayVibes[dayName] || "Daily Routine ⏰";
+
+            let title = `🔔 ${prefix}: ${task.act}`;
+            let body = `Starts in 30m: ${task.instr} (${task.rule})`;
+
             if (act.includes('wake')) {
                 const quotes = [
-                    "Rise and grind, Champion! Your morning momentum sets the tone for the entire day. Let's win today!",
-                    "First light belongs to you. Prime your system, drink your water, and dominate this morning!",
-                    "Daylight is here! Time to wake your baseline metabolism and start burning fat."
+                    `Rise and shine for this ${dayCap}! Your morning momentum is waiting. Let's make it count.`,
+                    `First light of ${dayCap} is here. Prime your system with lemon water and dominate early!`,
+                    `Wake up engine activated! Time to start thermogenesis and kickstart this beautiful day.`
                 ];
-                title = `🌅 Wake Up Protocol Activated`;
+                title = `🌅 ${prefix} • Rise & Prime`;
                 body = quotes[Math.floor(Math.random() * quotes.length)];
             } else if (act.includes('sleep') || act.includes('lights out')) {
                 const quotes = [
-                    "Initiating hormonal recovery block. Cell repair and muscle synthesis start now. Sleep deep!",
-                    "Unplug and recharge. Circumvent blue light, release growth hormones, and rest well.",
-                    "Shutting down core engine. Time to rest your neurons for tomorrow's performance."
+                    `Circadian shutdown mode. Muscle synthesis and cellular restoration triggered. Sleep deep!`,
+                    `Lights out! Time to shield your eyes from blue light and let melatonin restore you.`,
+                    `Day complete. Shut down the thoughts, rest your neurons, and prepare for tomorrow's wins.`
                 ];
-                title = `🌙 Circadian Rest Trigger`;
+                title = `🌙 ${prefix} • Sleep Protocol`;
                 body = quotes[Math.floor(Math.random() * quotes.length)];
-            } else if (type === 'workout' || act.includes('gym') || act.includes('cardio')) {
+            } else if (type === 'workout' || act.includes('gym') || act.includes('cardio') || act.includes('activity')) {
                 const quotes = [
-                    "No excuses. Time to activate hypertrophy and crush this session. Sweat is just fat crying!",
-                    "Your muscles are waiting for stress. Drive vascular blood flow and lift with purpose!",
-                    "Zone 2 / Strength engine active. Elevate your heart rate and build the body of your dreams."
+                    `Time to move! Crush this ${task.act} session. No excuses, make your muscles work!`,
+                    `Pre-workout warning: Get ready to sweat, elevate blood flow, and lift with purpose.`,
+                    `Physical engine activation. Burn energy, gain strength, and boost your heart rate.`
                 ];
-                title = `💪 High-Performance Workout Alert`;
-                body = `${task.act} starts now! ` + quotes[Math.floor(Math.random() * quotes.length)] + ` (${task.instr})`;
+                title = `💪 ${prefix} • Movement Calling`;
+                body = quotes[Math.floor(Math.random() * quotes.length)] + ` (Details: ${task.instr})`;
             } else if (type === 'meal' || act.includes('breakfast') || act.includes('lunch') || act.includes('dinner')) {
-                const quotes = [
-                    "Fuel your biology, don't just feed your emotions. High-nutrition fuel block active!",
-                    "Eat clean, perform dirty. Prioritize protein synthesis and protect your insulin baseline.",
-                    "Metabolic refueling block. Chew slowly, enjoy the nutrition, and refuel your cells."
+                // ZOMATO/SWIGGY STYLE MOTIVATIONAL MEALS!
+                const swiggyLines = [
+                    `Bhai, your chef-special "${food}" is scheduled in 30 mins! 🥞 Hot, fresh, and high-nutrition. Prepare the ingredients!`,
+                    `Your kitchen, your rules! 🍳 Preparing "${food}" in 30 minutes. Keep your protein synthesis high!`,
+                    `Hungry? "${food}" is coming right up! 🍽️ Zero delivery fee, 100% metabolic-friendly. Let's cook!`,
+                    `Slot Alert: "${food}" is preparation-ready. Fuel your cells, don't just feed emotions!`
                 ];
-                title = `🍽️ Precision Fuel Block`;
-                body = `${task.act} active: ${task.instr}. ` + quotes[Math.floor(Math.random() * quotes.length)];
+                title = `🍔 Swiggy Habit • ${task.act}`;
+                body = swiggyLines[Math.floor(Math.random() * swiggyLines.length)];
             } else if (act.includes('water') || act.includes('lemon') || act.includes('acv') || act.includes('hydration')) {
                 const quotes = [
-                    "Hydrate at the cellular level. Keep blood volume high and flush out metabolic waste!",
-                    "Fuel your cells. Proper fluid distribution drives thermogenesis and athletic performance.",
-                    "Sip, don't chug! Maintain optimal cellular fluid balance to protect joint health."
+                    `Cellular fluid trigger: Spacing water drinks keeps blood volume and thermogenesis high.`,
+                    `Hydration checkpoint! Avoid dry muscles. Sip now to maintain electrolyte balances.`,
+                    `Sip, don't chug. Keep your body hydrated and flush out metabolic waste.`
                 ];
-                title = `💧 Hydration Trigger Active`;
+                title = `💧 ${prefix} • Hydration Check`;
                 body = quotes[Math.floor(Math.random() * quotes.length)] + ` (${task.instr})`;
             }
-            
+
             return { title, body };
         }
 
-        function fireNotification(task, uid) {
+        function fireNotification(task, uid, dayName) {
             if (appData.history[uid] === true) return;
-            const alertData = getMotivationalAlert(task);
+            const alertData = getMotivationalAlert(task, dayName);
             
             if (navigator.serviceWorker && navigator.serviceWorker.controller) {
                 navigator.serviceWorker.controller.postMessage({
@@ -2264,8 +2281,8 @@ if ('serviceWorker' in navigator) {
 
         function scheduleTestAlert() {
             setTimeout(() => {
-                const testTask = { act: "GYM", instr: "LEGS: Squats & Lunges", rule: "Lift heavy", type: "workout" };
-                const alertData = getMotivationalAlert(testTask);
+                const testTask = { act: "Breakfast", instr: "Besan Chilla", rule: "Light Protein", type: "meal" };
+                const alertData = getMotivationalAlert(testTask, "sun");
                 if (navigator.serviceWorker && navigator.serviceWorker.controller) {
                     navigator.serviceWorker.controller.postMessage({
                         type: 'SHOW_NOTIFICATION',
