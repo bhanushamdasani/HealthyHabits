@@ -1,203 +1,447 @@
 # 🔥 HealthyHabits
 
-> **Your personal biohacking operating system.** A premium offline-first Progressive Web App (PWA) that helps you build, track, and stick to daily health rituals — from meals and workouts to sleep and hydration.
+> **A modern offline-first Progressive Web App (PWA) for building healthy habits, managing daily routines, and staying consistent with your wellness goals.**
+
+HealthyHabits is a feature-rich wellness companion designed to help users organize their daily schedule, track healthy habits, receive intelligent reminders, monitor health metrics, and maintain long-term consistency—all from a beautiful, installable web application.
 
 ---
 
-## 📱 Live Demo
+## 🌐 Live Demo
 
-**[HealthyHabits Live Web App](https://healthy-habits-phi.vercel.app/)**
+### 🚀 Try HealthyHabits
 
-> HealthyHabits is an online web application that helps you track daily habits, plan your schedule, monitor progress, and build consistency—all directly from your browser.
+**https://healthy-habits-phi.vercel.app/**
 
-## ✨ Features
-
-### 🧬 Daily Ritual Engine
-- 7-day fully customizable habit schedule (Mon–Sun)
-- Per-day task slots: Meals, Workouts, Bio-Hacks, Custom
-- **Active / Light / Silent** day modes with one-tap switching
-- Live task glow — highlights the next upcoming ritual in real-time
-- One-off task injection for spontaneous additions
-- Bulk mute/unmute task categories
-
-### 📊 Insights & Biometrics
-- **Interactive BMI Gauge** — sliding color-coded indicator (Underweight → Obese)
-- **7-Day Weight Trend Chart** — visual bar chart of AM/PM weight logs
-- **Sleep Consistency Index** — circadian rhythm score based on bedtime variance
-- **Hydration Efficiency Score** — tracks volume + spacing quality, updates live
-
-### 🗓️ Smart Calendar
-- **Month view** with circular date cells (green = perfect day, blue = partial)
-- **Monthly Stats Strip**: Perfect days / Partial days / 🔥 Current streak / Completion %
-- **Day Detail Panel** — tap any date to see every ritual + water intake for that day
-- Blue hydration dot on days you hit ≥2L of water
-- Current streak calculated live, day by day
-
-### 🔔 Intelligent Notifications
-- **30-minute early alerts** before each scheduled ritual
-- **Context-aware, day-specific motivational copy** — uses your actual scheduled food name / activity
-- Meal alerts styled like Swiggy/Zomato (e.g. *"Besan Chilla loading in 30 mins ⭐⭐⭐⭐⭐"*)
-- Workout alerts use pump-up psychology referencing your exact exercise
-- **Test Alert** fires a preview of your NEXT upcoming real task — never a hardcoded placeholder
-- Offline push via Service Worker
-
-### 💧 Hydration Engine
-- Track daily water intake in 250ml increments
-- Progress bar toward 3L daily goal
-- Live hydration efficiency score with advice on spacing
-
-### 🌙 Circadian Sleep Logger
-- Log bedtime + wake time per day
-- Sleep duration calculated automatically
-- Multi-day variance tracked for consistency scoring
-
-### 🎨 Premium UI
-- **Glassmorphism design** — Apple iOS-inspired translucent surfaces
-- Dark / Light mode toggle (persisted)
-- Dynamic Island notification pill
-- Confetti burst on daily completion
-- Breathing / mindfulness ring animation
-- Smooth slide transitions between views (no page reloads)
-- Responsive for all devices: iPhone SE → iPhone 16 Pro Max, Android, and laptop
+Experience HealthyHabits directly from your browser—no account or installation required.
 
 ---
 
-## 🛠️ Tech Stack
+## 🌟 Highlights
+
+- 📱 Installable Progressive Web App (PWA)
+- 🔔 Smart Reminder Notifications
+- 📶 Offline-First Experience
+- 🤖 Built-in Task Support Assistant
+- 📊 BMI, Hydration & Sleep Analytics
+- 📅 Weekly Habit Planner
+- 📈 Progress & Streak Tracking
+- 💾 Local Backup & Restore
+- 🌙 Dark & Light Theme
+- ⚡ Fast, Lightweight & Privacy-Friendly
+
+---
+
+# ✨ Features
+
+---
+
+## 🧬 Daily Habit Planner
+
+Organize your entire weekly routine with complete flexibility.
+
+Features include:
+
+- Fully customizable 7-day schedule
+- Separate routines for Monday–Sunday
+- Dedicated task types:
+  - Meals
+  - Workouts
+  - Bio Hacks
+  - Custom Activities
+- Active / Light / Silent day modes
+- Live highlighting of the next upcoming task
+- One-time task creation
+- Bulk enable/disable reminders
+
+---
+
+## 🤖 Smart Task Support Assistant
+
+Every activity includes a built-in **Support** button that provides contextual guidance based on the selected task.
+
+Depending on the activity, the assistant can help users:
+
+- 📖 Learn the correct way to perform an exercise
+- 🍳 View complete step-by-step recipes
+- 🥗 Understand nutritional benefits of meals
+- 💪 Learn why a workout or activity is important
+- ⚠️ Read safety tips and precautions
+- 💡 Receive practical health recommendations
+- 📚 Discover useful wellness information without leaving the app
+
+Instead of simply reminding users what to do, HealthyHabits also explains **how to do it and why it matters**, making it a complete wellness companion.
+
+---
+
+## 🔔 Intelligent Notifications
+
+HealthyHabits delivers personalized reminder notifications rather than generic alerts.
+
+Features include:
+
+- 30-minute early reminders
+- Context-aware notification messages
+- Uses the exact task name
+- Meal notifications inspired by food delivery apps
+- Workout reminders with motivational messages
+- Test Notification previews the actual next scheduled task
+- Works even when the app is closed (Service Worker)
+
+---
+
+## 📊 Health Insights
+
+Track your health with interactive visual analytics.
+
+Included metrics:
+
+### 📏 BMI Gauge
+
+- Interactive BMI indicator
+- Color-coded health zones
+- Real-time calculation
+
+### ⚖️ Weight Tracker
+
+- Morning & Evening weight logging
+- Weekly trend visualization
+- Progress monitoring
+
+### 😴 Sleep Consistency
+
+- Bedtime logging
+- Wake-up tracking
+- Automatic sleep duration calculation
+- Circadian rhythm consistency score
+
+### 💧 Hydration Analytics
+
+- Water intake tracker
+- 250ml quick-add buttons
+- Daily progress indicator
+- Hydration efficiency score
+- Personalized hydration advice
+
+---
+
+## 📅 Smart Calendar
+
+Visualize your consistency over time.
+
+Calendar Features:
+
+- Monthly calendar
+- Perfect day indicators
+- Partial completion indicators
+- Water intake markers
+- Current streak calculation
+- Completion percentage
+- Daily activity history
+- Tap any date to view detailed logs
+
+---
+
+## 🎨 Premium User Experience
+
+Designed with a clean and modern aesthetic.
+
+UI Features:
+
+- Apple-inspired Glassmorphism
+- Dynamic Island notification bar
+- Dark & Light themes
+- Smooth animations
+- Confetti celebration on completion
+- Breathing & mindfulness animation
+- Fully responsive layout
+- Optimized for:
+  - Android
+  - iPhone
+  - Tablets
+  - Desktop
+
+---
+
+# 📱 Progressive Web App (PWA)
+
+HealthyHabits can be installed directly from your browser.
+
+Benefits include:
+
+- Install like a native app
+- Launch from Home Screen
+- Full-screen experience
+- Offline functionality
+- Background notifications
+- Fast loading using Service Workers
+- No App Store required
+
+---
+
+# 🛠 Tech Stack
 
 | Layer | Technology |
-|---|---|
-| Core | Vanilla HTML5 + CSS3 + JavaScript (ES2022) |
-| Fonts | Plus Jakarta Sans (Google Fonts) |
-| Offline | Service Worker (Cache API) |
-| Install | Web App Manifest (PWA) |
-| Storage | `localStorage` (fully offline) |
-| Styling | Custom CSS Variables + Glassmorphism |
-| Animations | CSS Keyframes + `cubic-bezier` transitions |
-| Notifications | Web Notifications API + Service Worker postMessage |
-
-> **Zero dependencies. Zero frameworks. Zero build step.** Open `index.html` and it works.
+|---------|------------|
+| Frontend | HTML5, CSS3, JavaScript (ES2022) |
+| PWA | Service Worker, Web App Manifest |
+| Storage | localStorage |
+| Notifications | Web Notifications API |
+| Charts | HTML5 Canvas |
+| Fonts | Plus Jakarta Sans |
+| Styling | CSS Variables + Glassmorphism |
+| Deployment | Vercel |
 
 ---
 
-## 🚀 Getting Started
+# 🚀 Getting Started
 
-### Option 1 — Use it instantly
-Visit **[bhanushamdasani.github.io/HealthyHabits](https://bhanushamdasani.github.io/HealthyHabits)** on any device and tap **"Add to Home Screen"**.
+## 📱 Option 1 — Use on Mobile (Recommended)
 
-### Option 2 — Run locally
+Open:
+
+**https://healthy-habits-phi.vercel.app/**
+
+For the best experience:
+
+### Android (Chrome)
+
+1. Open the website
+2. Tap **⋮**
+3. Select **Add to Home Screen** or **Install App**
+4. Allow notifications when prompted
+
+### iPhone (Safari)
+
+1. Open the website
+2. Tap **Share**
+3. Select **Add to Home Screen**
+4. Open the installed app
+5. Allow notifications when requested
+
+Once installed, HealthyHabits behaves like a native application with:
+
+- Home Screen access
+- Full-screen mode
+- Offline support
+- Faster loading
+- Smart reminder notifications
+
+---
+
+## 💻 Option 2 — Run Locally
+
 ```bash
 git clone https://github.com/bhanushamdasani/HealthyHabits.git
+
 cd HealthyHabits
 
-# Serve with any static file server, e.g.:
-npx serve .
-# or
-python -m http.server 8080
-```
-Then open `http://localhost:8080` in your browser.
+npm install
 
-> ⚠️ Service Workers require HTTPS or `localhost` — opening `index.html` directly as a file:// URL will disable offline features and notifications.
+npm run dev
+```
+
+Then open:
+
+```
+http://localhost:5173
+```
+
+> Installation, offline caching, and notifications require HTTPS or localhost.
 
 ---
 
-## 📂 Project Structure
+# 📂 Project Structure
 
 ```
 HealthyHabits/
-├── index.html      # Entire app — UI, CSS, JS, all in one optimized file
-├── sw.js           # Service Worker — offline caching + push notifications
-├── manifest.json   # PWA manifest — install config, icons, theme
-└── icon.png        # App icon (used for home screen + notifications)
+│
+├── index.html
+├── sw.js
+├── manifest.json
+├── icon.png
+└── README.md
 ```
 
 ---
 
-## 🏗️ Architecture
+# 🏗 Architecture
 
 ```
-┌────────────────────────────────────────┐
-│           App Shell (index.html)       │
-│  ┌──────────┐  ┌──────────┐  ┌──────┐ │
-│  │ Rituals  │  │ Insights │  │ Sett │ │  ← Slider views (translateX)
-│  │ (Dashboard)│ (Analytics)│ │ ings │ │
-│  └──────────┘  └──────────┘  └──────┘ │
-│                                        │
-│  localStorage ←→ appData object        │  ← All state
-│  Service Worker ←→ Notification API    │  ← Background alerts
-└────────────────────────────────────────┘
+                 HealthyHabits
+
+             ┌─────────────────┐
+             │     index.html  │
+             └────────┬────────┘
+                      │
+        ┌─────────────┼─────────────┐
+        │             │             │
+ Dashboard      Insights      Settings
+        │             │             │
+        └─────────────┼─────────────┘
+                      │
+              localStorage
+                      │
+        ┌─────────────┴─────────────┐
+        │                           │
+ Service Worker          Notification API
+        │                           │
+        └─────────────┬─────────────┘
+                      │
+             Offline Support
 ```
 
-All state is stored as a single `appData` JSON object in `localStorage`. No backend, no accounts, no tracking — your data never leaves your device.
+HealthyHabits is entirely client-side.
+
+- No backend
+- No user accounts
+- No tracking
+- No external database
+
+Your data never leaves your device.
 
 ---
 
-## 🔧 Customization
+# 🔧 Customization
 
-All schedules are edited directly in the app via the **Settings → Schedule Editor** accordion. Each task has:
+Navigate to:
+
+**Settings → Schedule Editor**
+
+Every task can be customized.
 
 | Field | Description |
-|---|---|
-| `act` | Activity name (e.g. "Breakfast", "Gym") |
-| `t` | Time (e.g. "07:30 AM") |
-| `instr` | Instructions / food item / exercise detail |
-| `rule` | Personal rule or target |
-| `type` | `meal` / `workout` / `hack` |
-| `reminder` | `true` / `false` — whether to send alert |
+|--------|-------------|
+| act | Activity name |
+| t | Scheduled time |
+| instr | Exercise details, meal description, or preparation instructions |
+| rule | Personal goal or reminder |
+| type | meal / workout / hack / custom |
+| reminder | Enable or disable notifications |
 
 ---
 
-## 📤 Data Backup
+# 🤖 Task Support
 
-Go to **Insights → Export Backup File** to download your full data as a `.json` file. Restore it anytime with **Import Backup File**.
+Every activity includes a **Support** button.
 
----
+Support provides contextual information based on the task, including:
 
-## 🔔 Notification Setup
+- Exercise guidance
+- Proper workout techniques
+- Meal recipes
+- Nutritional information
+- Health benefits
+- Preparation instructions
+- Practical wellness tips
+- Safety precautions
 
-1. Open the app → go to **Settings → Alerts & Notifications**
-2. Tap **Enable Alerts** and grant browser permission
-3. Use **Test Alert (5s)** to verify — it fires a preview of your next scheduled task
-4. All alerts fire **30 minutes before** each ritual start time
-
-> On iOS, you must add the app to your Home Screen (PWA install) for notifications to work.
-
----
-
-## 📸 Screenshots
-
-| Rituals | Insights | Calendar |
-|---|---|---|
-| Live ritual view with glowing active task | BMI gauge + sleep index + hydration score | Month view with streak stats + day detail |
+HealthyHabits doesn't just remind you—it teaches you.
 
 ---
 
-## 🤝 Contributing
+# 💾 Data Backup
 
-PRs are welcome! For major changes, open an issue first.
+Backup your entire application data as a JSON file.
 
-```bash
-# Fork and clone
-git clone https://github.com/YOUR_USERNAME/HealthyHabits.git
+Navigate to:
 
-# Create a branch
-git checkout -b feature/my-feature
-
-# Make changes, then push
-git push origin feature/my-feature
+```
+Insights
+    ↓
+Export Backup
 ```
 
+Restore anytime using:
+
+```
+Import Backup
+```
+
+No cloud account required.
+
 ---
 
-## 📄 License
+# 🔔 Notification Setup
 
-MIT License — free to use, modify, and distribute.
+1. Open Settings
+2. Navigate to Alerts & Notifications
+3. Enable Notifications
+4. Grant browser permission
+5. Test using **Test Alert**
+
+Notifications automatically trigger **30 minutes before every scheduled activity**.
+
+---
+
+# 🌐 Browser Support
+
+| Browser | Supported |
+|----------|-----------|
+| Chrome | ✅ |
+| Edge | ✅ |
+| Brave | ✅ |
+| Firefox | ✅ |
+| Safari (iOS 16.4+) | ✅ |
+
+---
+
+# 📸 Screenshots
+
+> Coming Soon
+
+Suggested screenshots:
+
+- Dashboard
+- Insights
+- Calendar
+- Schedule Editor
+- Notifications
+- Dark Mode
+- Task Support
+
+---
+
+# 🤝 Contributing
+
+Contributions are always welcome.
+
+1. Fork the repository
+2. Create a feature branch
+
+```bash
+git checkout -b feature/new-feature
+```
+
+3. Commit your changes
+
+```bash
+git commit -m "Add new feature"
+```
+
+4. Push to GitHub
+
+```bash
+git push origin feature/new-feature
+```
+
+5. Open a Pull Request
+
+---
+
+# 📄 License
+
+Licensed under the MIT License.
+
+Feel free to use, modify, and distribute.
 
 ---
 
 <div align="center">
 
-Built with 🔥 by [@bhanushamdasani](https://github.com/bhanushamdasani)
+## ❤️ Built by Bhanu Shamdasani
 
-*Consistency beats intensity. Every. Single. Time.*
+**Healthy habits create a healthier life.**
+
+⭐ If you found this project helpful, consider giving it a **Star** on GitHub!
 
 </div>
