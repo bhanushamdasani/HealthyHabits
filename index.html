@@ -1922,19 +1922,8 @@ if ('serviceWorker' in navigator) {
             if(elPa) elPa.innerText = partialDays;
             if(elR) elR.innerText = rate + '%';
 
-            // Streak calculation (looking backwards from today)
-            let streak = 0;
-            let checkDate = new Date(today);
-            while(true) {
-                const ck = getKey(checkDate);
-                const dn = ['sun','mon','tue','wed','thu','fri','sat'][checkDate.getDay()];
-                const ts = appData.schedule[dn] || [];
-                if(ts.length === 0) { checkDate.setDate(checkDate.getDate()-1); if(streak > 90) break; continue; }
-                const done = ts.filter(t => appData.history[`${ck}-${t.id}`]).length;
-                if(done === ts.length && ts.length > 0) { streak++; checkDate.setDate(checkDate.getDate()-1); }
-                else break;
-                if(streak > 365) break;
-            }
+            // Unified Streak Calculation (Syncs with Hero Dashboard)
+            const { streak } = calculateStreak();
             const elS = document.getElementById('cal-stat-streak');
             if(elS) elS.innerText = streak;
         }
