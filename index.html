@@ -1604,6 +1604,15 @@ if ('serviceWorker' in navigator) {
         function updateHero() {
             if(isBreathing) return;
             const now = new Date();
+            
+            const greetingEl = document.getElementById('hero-greeting');
+            if (greetingEl) {
+                const hour = now.getHours();
+                if (hour < 12) greetingEl.innerText = 'Good Morning';
+                else if (hour < 17) greetingEl.innerText = 'Good Afternoon';
+                else greetingEl.innerText = 'Good Evening';
+            }
+            
             const viewingNow = getKey(viewedDateObj) === getKey(now);
             const card = document.getElementById('hero-card');
             const statusEl = document.getElementById('hero-status');
