@@ -14,50 +14,50 @@
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     
     <title>HealthyHabits</title>
     <style>
         :root {
-            --primary: #007AFF; --primary-dim: rgba(0, 122, 255, 0.12);
-            --success: #34C759; --danger: #FF3B30; --warning: #FF9500;
-            --water: #5AC8FA; --silent: #8E8E93; --silent-dim: rgba(142, 142, 147, 0.12);
+            --primary: #0A84FF; --primary-dim: rgba(10, 132, 255, 0.15);
+            --success: #30D158; --danger: #FF453A; --warning: #FF9F0A;
+            --water: #64D2FF; --silent: #98989D; --silent-dim: rgba(152, 152, 157, 0.15);
             
-            /* Apple Light Theme Glassmorphism */
-            --bg: rgba(245, 245, 247, 0.75); 
-            --app-bg: #F5F5F7;
-            --surface: rgba(255, 255, 255, 0.55); 
-            --surface-2: rgba(255, 255, 255, 0.75);
-            --text-1: #1D1D1F; 
-            --text-2: #86868B; 
-            --border: rgba(0,0,0,0.06);
-            --border-glass: rgba(0, 0, 0, 0.08);
-            --nav-glass: rgba(255,255,255,0.45); 
-            --hero-grad: linear-gradient(135deg, #1C1C1E, #000000);
-            --hero-warn: linear-gradient(135deg, #FF9500, #FF3B30); 
-            --hero-silent: linear-gradient(135deg, #6e6e73, #3a3a3c);
-            --shadow: 0 8px 30px rgba(0,0,0,0.04); 
-            --island-bg: rgba(0, 0, 0, 0.9); 
+            /* Apple Vision/iOS 18 Light Theme Glassmorphism */
+            --bg: rgba(242, 242, 247, 0.85); 
+            --app-bg: #F2F2F7;
+            --surface: rgba(255, 255, 255, 0.65); 
+            --surface-2: rgba(255, 255, 255, 0.85);
+            --text-1: #000000; 
+            --text-2: #8E8E93; 
+            --border: rgba(0,0,0,0.04);
+            --border-glass: rgba(0, 0, 0, 0.05);
+            --nav-glass: rgba(255,255,255,0.7); 
+            --hero-grad: linear-gradient(135deg, #1C1C1E 0%, #000000 100%);
+            --hero-warn: linear-gradient(135deg, #FF9F0A 0%, #FF453A 100%); 
+            --hero-silent: linear-gradient(135deg, #8E8E93 0%, #3A3A3C 100%);
+            --shadow: 0 10px 40px rgba(0,0,0,0.06); 
+            --island-bg: rgba(0, 0, 0, 0.95); 
             --island-text: #FFFFFF;
         }
 
         [data-theme="dark"] {
-            /* Apple Dark Theme Glassmorphism */
-            --bg: rgba(0, 0, 0, 0.65);
+            /* Apple Vision/iOS 18 Dark Theme Glassmorphism */
+            --bg: rgba(0, 0, 0, 0.75);
             --app-bg: #000000;
-            --surface: rgba(28, 28, 30, 0.45); 
-            --surface-2: rgba(44, 44, 46, 0.55);
-            --text-1: #F5F5F7; 
-            --text-2: #86868B; 
+            --surface: rgba(28, 28, 30, 0.55); 
+            --surface-2: rgba(44, 44, 46, 0.65);
+            --text-1: #FFFFFF; 
+            --text-2: #98989D; 
             --border: rgba(255,255,255,0.08);
-            --border-glass: rgba(255, 255, 255, 0.12);
-            --nav-glass: rgba(28,28,30,0.45); 
-            --hero-grad: linear-gradient(135deg, #2C2C2E, #1C1C1E);
-            --hero-warn: linear-gradient(135deg, #C66900, #881812); 
-            --hero-silent: linear-gradient(135deg, #48484a, #2c2c2e);
-            --shadow: 0 8px 30px rgba(0,0,0,0.3); 
-            --island-bg: rgba(44, 44, 46, 0.9); 
-            --island-text: #F5F5F7;
+            --border-glass: rgba(255, 255, 255, 0.1);
+            --nav-glass: rgba(28,28,30,0.65); 
+            --hero-grad: linear-gradient(135deg, #2C2C2E 0%, #1C1C1E 100%);
+            --hero-warn: linear-gradient(135deg, #D07400 0%, #991913 100%); 
+            --hero-silent: linear-gradient(135deg, #48484A 0%, #2C2C2E 100%);
+            --shadow: 0 10px 40px rgba(0,0,0,0.4); 
+            --island-bg: rgba(28, 28, 30, 0.95); 
+            --island-text: #FFFFFF;
         }
 
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -70,7 +70,7 @@
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             transition: background 0.3s ease;
             overflow: hidden;
         }
@@ -149,7 +149,7 @@
         .date-arrow { color: #007AFF; cursor: pointer; padding: 5px 15px; background: rgba(0, 122, 255, 0.15); border-radius: 10px; font-weight: 800; user-select: none; }
         .current-date-display { font-size: 0.95rem; font-weight: 700; color: var(--text-2); text-transform: uppercase; display: flex; align-items: center; gap: 6px; letter-spacing: 0.5px; }
 
-        .day-mode-bar { background: var(--surface); border: 1px solid var(--border-glass); border-radius: 20px; padding: 12px 14px; margin: 0 20px 10px; box-shadow: var(--shadow); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); }
+        .day-mode-bar { background: var(--surface); border: 1px solid var(--border-glass); border-radius: 20px; padding: 12px 14px; margin: 0 20px 10px; box-shadow: var(--shadow); backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px); }
         .day-mode-toggle { display: flex; background: var(--border); padding: 4px; border-radius: 14px; gap: 4px; margin-bottom: 10px; }
         .dm-opt { flex: 1; text-align: center; padding: 10px 4px; font-size: 0.8rem; font-weight: 800; color: var(--text-2); border-radius: 10px; cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: center; gap:4px;}
         .dm-opt.active.mode-active { background: var(--primary); color: #fff; box-shadow: 0 2px 8px var(--primary-dim); }
@@ -176,16 +176,16 @@
         @keyframes mindfulPacer { 0% { stroke-dashoffset: 125.6; } 45% { stroke-dashoffset: 0; } 55% { stroke-dashoffset: 0; } 100% { stroke-dashoffset: 125.6; } }
 
         .weight-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 20px 20px 10px 20px; }
-        .weight-box { background: var(--surface); padding: 16px; border-radius: 20px; text-align: center; border: 1px solid var(--border-glass); box-shadow: var(--shadow); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); }
+        .weight-box { background: var(--surface); padding: 16px; border-radius: 20px; text-align: center; border: 1px solid var(--border-glass); box-shadow: var(--shadow); backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px); }
         .wb-input { width: 100%; background: transparent; border: none; outline: none; font-size: 1.5rem; font-weight: 800; color: var(--text-1); text-align: center; }
         .wb-label { font-size: 0.7rem; color: var(--text-2); font-weight: 700; text-transform: uppercase; margin-bottom: 5px; }
         
-        .hydro-card { background: var(--surface); border: 1px solid var(--border-glass); border-radius: 22px; padding: 18px 20px; margin: 0 20px 20px; display: flex; justify-content: space-between; align-items: center; box-shadow: var(--shadow); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); }
+        .hydro-card { background: var(--surface); border: 1px solid var(--border-glass); border-radius: 22px; padding: 18px 20px; margin: 0 20px 20px; display: flex; justify-content: space-between; align-items: center; box-shadow: var(--shadow); backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px); }
         .hydro-btn { width: 38px; height: 38px; border-radius: 50%; border: 1px solid var(--border-glass); background: var(--surface-2); color: var(--primary); font-size: 1.2rem; font-weight: 700; cursor: pointer; box-shadow: 0 2px 8px rgba(0,0,0,0.03); display: flex; align-items: center; justify-content: center; }
         
         .tabs { overflow-x: auto; white-space: nowrap; padding: 0 20px 15px; scrollbar-width: none; }
         .tabs::-webkit-scrollbar { display: none; }
-        .tab-btn { display: inline-block; padding: 10px 18px; margin-right: 8px; background: var(--surface); border: 1px solid var(--border-glass); border-radius: 14px; font-size: 0.9rem; font-weight: 700; color: var(--text-2); cursor: pointer; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); transition: 0.2s; }
+        .tab-btn { display: inline-block; padding: 10px 18px; margin-right: 8px; background: var(--surface); border: 1px solid var(--border-glass); border-radius: 14px; font-size: 0.9rem; font-weight: 700; color: var(--text-2); cursor: pointer; backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); transition: 0.2s; }
         .tab-btn.active { background: var(--text-1); color: var(--app-bg); border-color: transparent; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
 
         .task-list { padding: 0 20px calc(140px + env(safe-area-inset-bottom)); }
@@ -228,8 +228,8 @@
         
         .task-card { 
             background: var(--surface); 
-            backdrop-filter: blur(20px); 
-            -webkit-backdrop-filter: blur(20px); 
+            backdrop-filter: blur(30px); 
+            -webkit-backdrop-filter: blur(30px); 
             border-radius: 20px; 
             padding: 16px 18px; 
             margin-bottom: 12px; 
