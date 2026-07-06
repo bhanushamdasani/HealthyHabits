@@ -306,13 +306,14 @@
         .cal-header button { background: var(--surface-2); border: 1px solid var(--border-glass); border-radius: 8px; color: var(--text-1); padding: 5px 12px; font-weight: bold; cursor: pointer; }
         .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; text-align: center; }
         .cal-day-name { font-size: 0.7rem; color: var(--text-2); font-weight: 700; margin-bottom: 5px; text-transform: uppercase; }
-        .cal-cell { aspect-ratio: 1; border-radius: 50%; background: var(--border); font-size: 0.85rem; font-weight: 700; cursor: pointer; border: 1px solid var(--border-glass); display: flex; align-items: center; justify-content: center; transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1); }
-        .cal-cell:hover:not(.cal-empty) { background: var(--border-glass); transform: scale(1.08); }
+        .cal-cell { aspect-ratio: 1; border-radius: 6px; background: var(--border); font-size: 0.85rem; font-weight: 700; cursor: pointer; border: 1px solid var(--border-glass); display: flex; align-items: center; justify-content: center; transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), background 0.3s; position: relative; }
+        .cal-cell:hover:not(.cal-empty) { transform: scale(1.15); box-shadow: 0 4px 10px rgba(0,0,0,0.1); z-index: 2; border-color: rgba(255,255,255,0.4); }
         .cal-empty { background: transparent; border: none; cursor: default; }
-        .cal-perfect { background: var(--success); color: white; border-color: var(--success); box-shadow: 0 2px 8px rgba(52, 199, 89, 0.3); }
-        .cal-perfect:hover { background: #2ebd51; }
-        .cal-partial { background: rgba(0, 122, 255, 0.15); color: #007AFF; border-color: #007AFF; }
-        .cal-today { border: 2px solid var(--primary); color: var(--primary); font-weight: 900; }
+        .cal-level-0 { background: var(--border); color: var(--text-2); }
+        .cal-level-1 { background: rgba(52, 199, 89, 0.25); border-color: rgba(52, 199, 89, 0.3); color: var(--success); }
+        .cal-level-2 { background: rgba(52, 199, 89, 0.6); border-color: rgba(52, 199, 89, 0.7); color: white; }
+        .cal-level-3 { background: #34C759; border-color: #2ebd51; box-shadow: 0 2px 8px rgba(52, 199, 89, 0.4); color: white; }
+        .cal-today::after { content:''; position:absolute; bottom:-4px; left:50%; transform:translateX(-50%); width:4px; height:4px; border-radius:50%; background:var(--primary); }
 
         .bmi-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
         .bmi-val { font-size: 2.2rem; font-weight: 800; letter-spacing: -1px; }
@@ -828,12 +829,6 @@
                 </p>
             </div>
 
-            <!-- hidden placeholders to avoid JS errors -->
-            <span id="bmr-val" style="display:none"></span>
-            <span id="tdee-val" style="display:none"></span>
-            <span id="bmr-bar" style="display:none"></span>
-            <span id="tdee-bar" style="display:none"></span>
-            <span id="deficit-val" style="display:none"></span>
 
             <div class="set-card">
                 <div class="wb-label">7-DAY WEIGHT TREND</div>
@@ -1285,6 +1280,22 @@ if ('serviceWorker' in navigator) {
 
         function initApp() {
             setAccentTheme(appData.accentTheme || 'classic');
+            
+            const quotes = [
+                "Discipline equals freedom.",
+                "Small disciplines repeated with consistency every day lead to great achievements.",
+                "We are what we repeatedly do. Excellence, then, is not an act, but a habit.",
+                "Don't wait for inspiration. You have to go after it with a club.",
+                "Success is the sum of small efforts, repeated day in and day out.",
+                "The successful warrior is the average man, with laser-like focus.",
+                "First we make our habits, then our habits make us.",
+                "What you do every day matters more than what you do once in a while.",
+                "The magic you are looking for is in the work you're avoiding.",
+                "Win the morning, win the day.",
+                "Your future is found in your daily routine."
+            ];
+            const quoteEl = document.getElementById('hero-quote');
+            if (quoteEl) quoteEl.innerText = `"${quotes[Math.floor(Math.random() * quotes.length)]}"`;
             
             document.getElementById('up-name').value = appData.user || '';
             document.getElementById('up-height').value = appData.height || '';
@@ -1792,39 +1803,6 @@ if ('serviceWorker' in navigator) {
             document.getElementById('bmi-text').style.background = bmiColor;
             document.getElementById('bmi-advice').innerText = bmiAdvice;
 
-            // Mifflin-St Jeor TDEE Calculations
-            const h = parseFloat(appData.height) || 170;
-            const age = parseInt(appData.age) || 25;
-            const gender = appData.gender || 'male';
-            const activity = parseFloat(appData.activity) || 1.2;
-
-            let bmr = 0;
-            if (gender === 'male') {
-                bmr = 10 * currentW + 6.25 * h - 5 * age + 5;
-            } else {
-                bmr = 10 * currentW + 6.25 * h - 5 * age - 161;
-            }
-            const tdee = bmr * activity;
-
-            document.getElementById('bmr-val').innerText = currentW > 0 ? Math.round(bmr) + " kcal" : "--";
-            document.getElementById('tdee-val').innerText = currentW > 0 ? Math.round(tdee) + " kcal" : "--";
-
-            const bmrBar = document.getElementById('bmr-bar');
-            const tdeeBar = document.getElementById('tdee-bar');
-            const deficitVal = document.getElementById('deficit-val');
-            
-            if (currentW > 0) {
-                const maxCal = 3000;
-                const bmrPct = Math.min((bmr / maxCal) * 100, 100);
-                const tdeePct = Math.min((tdee / maxCal) * 100, 100);
-                if (bmrBar) bmrBar.style.width = bmrPct + '%';
-                if (tdeeBar) tdeeBar.style.width = tdeePct + '%';
-                if (deficitVal) deficitVal.innerText = Math.round(tdee - 400) + " kcal";
-            } else {
-                if (bmrBar) bmrBar.style.width = '0%';
-                if (tdeeBar) tdeeBar.style.width = '0%';
-                if (deficitVal) deficitVal.innerText = "--";
-            }
 
             // Sleep Consistency Index calculations
             const circadian = calculateCircadianConsistency();
@@ -1914,16 +1892,16 @@ if ('serviceWorker' in navigator) {
                     totalCompleted += doneCount;
                 }
 
-                let statusClass = '';
-                if(doneCount === tasks.length && tasks.length > 0) { statusClass = 'cal-perfect'; perfectDays++; }
-                else if(doneCount > 0) { statusClass = 'cal-partial'; partialDays++; }
+                let statusClass = 'cal-level-0';
+                if (tasks.length > 0 && doneCount > 0) {
+                    const pct = doneCount / tasks.length;
+                    if (pct === 1) { statusClass = 'cal-level-3'; perfectDays++; }
+                    else if (pct >= 0.5) { statusClass = 'cal-level-2'; partialDays++; }
+                    else { statusClass = 'cal-level-1'; partialDays++; }
+                }
                 const isToday = (k === todayKey) ? 'cal-today' : '';
 
-                // dot indicator for water logged
-                const hasWater = (appData.weights[k]?.water || 0) >= 2000;
-                const waterDot = hasWater ? `<div style="position:absolute;bottom:2px;left:50%;transform:translateX(-50%);width:4px;height:4px;border-radius:50%;background:#5AC8FA;"></div>` : '';
-
-                grid.innerHTML += `<div class="cal-cell ${statusClass} ${isToday}" style="position:relative;" onclick="showCalDayDetail('${k}', '${dayName}', ${i})">${i}${waterDot}</div>`;
+                grid.innerHTML += `<div class="cal-cell ${statusClass} ${isToday}" onclick="showCalDayDetail('${k}', '${dayName}', ${i})" title="${dayName}, ${i}"></div>`;
             }
 
             // Month stats
