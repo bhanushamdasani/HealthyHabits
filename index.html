@@ -695,22 +695,30 @@
             <div class="hero-card" id="hero-card">
                 <div class="hero-header-row">
                     <div>
+                        <div class="brand-gradient" style="font-size: 1.8rem; font-weight: 800; letter-spacing: -1px; margin-bottom: 5px;" id="hero-greeting">Good Morning</div>
                         <div style="display: inline-flex; align-items: center; gap: 8px; background: rgba(255,255,255,0.2); backdrop-filter: blur(10px); padding: 6px 14px; border-radius: 20px; font-size: 0.75rem; font-weight: 800; text-transform: uppercase; margin-bottom: 20px; border: 1px solid rgba(255,255,255,0.1);">
                             <div style="width: 8px; height: 8px; background: #34C759; border-radius: 50%;" id="hero-status-dot"></div>
                             <span id="hero-status">LIVE RITUAL</span>
                         </div>
                     </div>
-                    <div class="progress-ring" onclick="toggleBreathing()">
+                    
+                    <div class="progress-ring" id="hero-ring" onclick="document.body.classList.toggle('breathe-active')">
                         <svg width="50" height="50">
-                            <circle stroke="rgba(255,255,255,0.2)" stroke-width="4" fill="transparent" r="20" cx="25" cy="25"/>
-                            <circle id="prog-circle" stroke="white" stroke-width="4" fill="transparent" r="20" cx="25" cy="25" stroke-dasharray="125.6" stroke-dashoffset="125.6"/>
+                            <circle cx="25" cy="25" r="20" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="4"></circle>
+                            <circle id="prog-circle" cx="25" cy="25" r="20" fill="none" stroke="#FFFFFF" stroke-width="4" stroke-dasharray="125.6" stroke-dashoffset="125.6"></circle>
                         </svg>
-                        <span class="progress-text" id="prog-text">0%</span>
+                        <div class="progress-text" id="prog-text">0%</div>
                     </div>
                 </div>
+
                 <div style="font-size: 3.2rem; font-weight: 800; line-height: 1; margin-bottom: 8px; font-variant-numeric: tabular-nums; letter-spacing: -1.5px;" id="hero-time">--:--</div>
                 <div style="font-size: 1.1rem; font-weight: 700; margin-bottom: 4px;" id="hero-title">Syncing...</div>
                 <div style="font-size: 0.9rem; opacity: 0.7; font-weight: 500;" id="hero-desc">Calculating timeline</div>
+
+                <!-- Motivational Quote Area -->
+                <div id="hero-quote" style="margin-top: 15px; font-size: 0.85rem; font-weight: 600; font-style: italic; color: rgba(255,255,255,0.85); line-height: 1.4; border-top: 1px solid rgba(255,255,255,0.15); padding-top: 12px; opacity: 0.9;">
+                    Loading protocol...
+                </div>
             </div>
 
             <div class="weight-row">
