@@ -1,7 +1,9 @@
-const CACHE_NAME = 'healthyhabits-v13';
+const CACHE_NAME = 'healthyhabits-v14';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
+  './index.css',
+  './app.js',
   './manifest.json',
   './icon.png'
 ];
