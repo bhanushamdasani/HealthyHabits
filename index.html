@@ -436,9 +436,10 @@
         .nav-bar {
             position: absolute;
             bottom: calc(15px + env(safe-area-inset-bottom));
-            left: 20px;
-            right: 20px;
+            left: 50%;
+            transform: translateX(-50%);
             width: calc(100% - 40px);
+            max-width: 440px;
             background: var(--nav-glass);
             backdrop-filter: blur(50px) saturate(200%);
             -webkit-backdrop-filter: blur(50px) saturate(200%);
@@ -450,10 +451,32 @@
             padding: 10px 8px;
             z-index: 1000;
             box-shadow: 0 8px 32px rgba(0,0,0,0.12), 0 1px 0 rgba(255,255,255,0.05) inset;
+            transition: width 0.4s cubic-bezier(0.16, 1, 0.3, 1), 
+                        border-radius 0.4s cubic-bezier(0.16, 1, 0.3, 1), 
+                        padding 0.4s cubic-bezier(0.16, 1, 0.3, 1), 
+                        box-shadow 0.4s ease,
+                        background-color 0.4s ease;
+            overflow: hidden;
         }
         [data-theme="dark"] .nav-bar {
             box-shadow: 0 8px 32px rgba(0,0,0,0.35), 0 1px 0 rgba(255,255,255,0.04) inset;
         }
+        
+        /* Compact morphed state */
+        .nav-bar.compact-nav {
+            width: 60px;
+            height: 60px;
+            padding: 0;
+            border-radius: 30px;
+            box-shadow: 0 10px 30px rgba(0, 122, 255, 0.25);
+            background: rgba(13, 14, 18, 0.85);
+            border-color: rgba(255,255,255,0.15);
+        }
+        [data-theme="light"] .nav-bar.compact-nav {
+            background: rgba(255, 255, 255, 0.9);
+            border-color: rgba(0, 0, 0, 0.1);
+        }
+        
         .nav-item {
             background: none;
             border: none;
@@ -489,6 +512,38 @@
         }
         .nav-label { font-size: 0.6rem; font-weight: 800; letter-spacing: 0.3px; opacity: 0.7; }
         .nav-item.active .nav-label { opacity: 1; color: var(--primary); }
+
+        /* Compact overrides for nav items */
+        .nav-bar.compact-nav .nav-item {
+            width: 0;
+            padding: 0;
+            opacity: 0;
+            overflow: hidden;
+            pointer-events: none;
+            transition: width 0.3s ease, padding 0.3s ease, opacity 0.2s ease;
+        }
+        
+        .nav-bar.compact-nav .nav-item.active {
+            width: 44px;
+            height: 44px;
+            padding: 0;
+            opacity: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            pointer-events: auto;
+            background: var(--primary-dim);
+        }
+        
+        .nav-bar.compact-nav .nav-item.active .nav-label {
+            display: none;
+        }
+        
+        .nav-bar.compact-nav .nav-item.active .nav-icon {
+            font-size: 1.5rem;
+            transform: scale(1);
+        }
  
         /* Bottom Sheet Styles */
         .bottom-sheet {
@@ -1357,7 +1412,51 @@ if ('serviceWorker' in navigator) {
             renderEditor(); 
             rebuildNotificationQueue();
             updateWeeklySummary();
+            initScrollTracker();
+        }
+
+        let navBarCompact = false;
+        function setNavBarCompact(compact) {
+            const nav = document.querySelector('.nav-bar');
+            if (!nav) return;
+            if (compact) {
+                nav.classList.add('compact-nav');
+                navBarCompact = true;
+            } else {
+                nav.classList.remove('compact-nav');
+                navBarCompact = false;
+            }
+        }
+
+        let lastScrollTops = { 'view-dashboard': 0, 'view-analytics': 0, 'view-settings': 0 };
+        function initScrollTracker() {
+            const nav = document.querySelector('.nav-bar');
+            if (!nav) return;
             
+            nav.addEventListener('click', (e) => {
+                if (navBarCompact) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    setNavBarCompact(false);
+                }
+            });
+
+            document.querySelectorAll('.slider-page').forEach(page => {
+                const id = page.id;
+                page.addEventListener('scroll', () => {
+                    const st = page.scrollTop;
+                    const lastSt = lastScrollTops[id] || 0;
+                    
+                    if (Math.abs(st - lastSt) > 15) {
+                        if (st > lastSt && st > 80) {
+                            setNavBarCompact(true);
+                        } else {
+                            setNavBarCompact(false);
+                        }
+                        lastScrollTops[id] = st;
+                    }
+                }, { passive: true });
+            });
         }
 
         function changeDateToDay(dayName) {
@@ -2472,6 +2571,7 @@ if ('serviceWorker' in navigator) {
 
         function switchView(view) {
             vibrate(10);
+            if (typeof setNavBarCompact === 'function') setNavBarCompact(false);
             const inner = document.getElementById('view-slider-inner');
             if (view === 'dashboard') {
                 inner.style.transform = 'translateX(0%)';
