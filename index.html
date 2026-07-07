@@ -791,7 +791,10 @@
                 </div>
 
                 <div style="font-size: 3.2rem; font-weight: 800; line-height: 1; margin-bottom: 8px; font-variant-numeric: tabular-nums; letter-spacing: -1.5px;" id="hero-time">--:--</div>
-                <div style="font-size: 1.1rem; font-weight: 700; margin-bottom: 4px;" id="hero-title">Syncing...</div>
+                <div style="font-size: 1.1rem; font-weight: 700; margin-bottom: 4px; display: flex; align-items: center; gap: 8px;">
+                    <span id="hero-title">Syncing...</span>
+                    <span id="hero-countdown" style="display: none; font-size: 0.65rem; font-weight: 800; text-transform: uppercase; padding: 4px 10px; border-radius: 8px; background: rgba(255,255,255,0.25); color: #fff;"></span>
+                </div>
                 <div style="font-size: 0.9rem; opacity: 0.7; font-weight: 500;" id="hero-desc">Calculating timeline</div>
 
                 <!-- Motivational Quote Area -->
@@ -1033,6 +1036,13 @@
                 <div style="display:flex; flex-direction:column; gap:10px;">
                     <button class="btn-xl" id="btn-noti-status" onclick="requestNotificationPermission()">🔔 Enable Notifications</button>
                     <button class="btn-xl" style="background:rgba(52,199,89,0.1); border: 2px solid var(--success); color: var(--success); margin-top: 5px;" onclick="testNotification()">🧪 Test Alert (5s Delay)</button>
+                </div>
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-top:15px; padding-top:15px; border-top:1px solid var(--border-glass);">
+                    <span style="font-size:0.85rem; font-weight:700; color:var(--text-1);">Task Success Chime</span>
+                    <div class="mini-switch" style="margin-bottom:0; width:120px;">
+                        <div class="mini-opt" id="chime-on-btn" onclick="toggleChimeSetting(true)">ON</div>
+                        <div class="mini-opt" id="chime-off-btn" onclick="toggleChimeSetting(false)">OFF</div>
+                    </div>
                 </div>
             </div>
 
@@ -1357,6 +1367,7 @@ if ('serviceWorker' in navigator) {
                 if(!appData.age) appData.age = 25;
                 if(!appData.gender) appData.gender = 'male';
                 if(!appData.activity) appData.activity = 1.2;
+                if(appData.chimeEnabled === undefined) appData.chimeEnabled = true;
                 
                 document.getElementById('app').classList.remove('hidden');
                 initApp();
@@ -1413,6 +1424,11 @@ if ('serviceWorker' in navigator) {
             rebuildNotificationQueue();
             updateWeeklySummary();
             initScrollTracker();
+            
+            // Dynamic countdown interval updates every minute
+            setInterval(() => {
+                updateHero();
+            }, 60000);
         }
 
         let navBarCompact = false;
@@ -1570,12 +1586,51 @@ if ('serviceWorker' in navigator) {
             saveData();
             
             // Haptic Feedback based on state
-            if(isDone) vibrate([30, 50, 30]); // Satisfying success pulse
-            else vibrate(30);                 // Short cancel pulse
+            if(isDone) {
+                vibrate([30, 50, 30]); // Satisfying success pulse
+                if (appData.chimeEnabled !== false) playSuccessChime();
+            } else {
+                vibrate(30);                 // Short cancel pulse
+            }
             
             updateHero();
             calculateStreak();
             rebuildNotificationQueue();
+        }
+
+        function playSuccessChime() {
+            try {
+                const ctx = new (window.AudioContext || window.webkitAudioContext)();
+                const now = ctx.currentTime;
+                
+                // Osc 1: Crystal high chime (C6 note)
+                const osc1 = ctx.createOscillator();
+                const gain1 = ctx.createGain();
+                osc1.type = 'sine';
+                osc1.frequency.setValueAtTime(1046.50, now);
+                osc1.frequency.exponentialRampToValueAtTime(1567.98, now + 0.12);
+                gain1.gain.setValueAtTime(0.12, now);
+                gain1.gain.exponentialRampToValueAtTime(0.001, now + 0.5);
+                osc1.connect(gain1);
+                gain1.connect(ctx.destination);
+                
+                // Osc 2: Warm fundamental (C5 note)
+                const osc2 = ctx.createOscillator();
+                const gain2 = ctx.createGain();
+                osc2.type = 'triangle';
+                osc2.frequency.setValueAtTime(523.25, now);
+                gain2.gain.setValueAtTime(0.06, now);
+                gain2.gain.exponentialRampToValueAtTime(0.001, now + 0.3);
+                osc2.connect(gain2);
+                gain2.connect(ctx.destination);
+                
+                osc1.start(now);
+                osc1.stop(now + 0.5);
+                osc2.start(now);
+                osc2.stop(now + 0.3);
+            } catch(e) {
+                console.log("AudioContext blocked or unsupported", e);
+            }
         }
 
         function setDayMode(mode) {
@@ -1769,12 +1824,18 @@ if ('serviceWorker' in navigator) {
             if(!viewingNow) {
                 card.style.background = mode === 'silent' ? 'var(--hero-silent)' : 'var(--hero-grad)';
                 dot.style.background = mode === 'silent' ? '#8E8E93' : '#34C759';
-                statusEl.innerText = "VIEWING LOG"; timeEl.innerText = "HIST"; titleEl.innerText = "Past/Future"; descEl.innerText = "Reviewing Data"; return;
+                statusEl.innerText = "VIEWING LOG"; timeEl.innerText = "HIST"; titleEl.innerText = "Past/Future"; descEl.innerText = "Reviewing Data"; 
+                const cdEl = document.getElementById('hero-countdown');
+                if (cdEl) cdEl.style.display = 'none';
+                return;
             }
 
             if(mode === 'silent') {
                 card.style.background = 'var(--hero-silent)'; dot.style.background = '#8E8E93'; dot.style.boxShadow = 'none';
-                statusEl.innerText = "SILENT DAY"; timeEl.innerText = "REST"; titleEl.innerText = "Reminders Paused"; descEl.innerText = "Tasks are still visible — check them off when ready."; return;
+                statusEl.innerText = "SILENT DAY"; timeEl.innerText = "REST"; titleEl.innerText = "Reminders Paused"; descEl.innerText = "Tasks are still visible — check them off when ready."; 
+                const cdEl = document.getElementById('hero-countdown');
+                if (cdEl) cdEl.style.display = 'none';
+                return;
             }
 
             card.style.background = mode === 'light' ? 'var(--hero-warn)' : 'var(--hero-grad)';
@@ -1791,18 +1852,36 @@ if ('serviceWorker' in navigator) {
                 if((h * 60 + m) > nowMins) { activeTask = combinedTasks[i]; activeIdx = i; break; }
             }
 
+            const countdownEl = document.getElementById('hero-countdown');
             if(activeTask) { 
                 timeEl.innerText = activeTask.t; 
-                titleEl.innerText = "Up Next: " + activeTask.act; 
+                titleEl.innerText = activeTask.act; 
                 descEl.innerText = activeTask.instr; 
                 
+                // Calculate time difference
+                const targetMins = timeToMins(activeTask.t);
+                const diff = targetMins - nowMins;
+                if (diff > 0 && countdownEl) {
+                    countdownEl.style.display = 'inline-block';
+                    const h = Math.floor(diff / 60);
+                    const m = diff % 60;
+                    countdownEl.innerText = h > 0 ? `In ${h}h ${m}m` : `In ${m}m`;
+                } else if (countdownEl) {
+                    countdownEl.style.display = 'none';
+                }
+
                 // HIGHLIGHT LIVE TASK
                 const targetCard = document.querySelector(`.task-card[data-index="${activeIdx}"]`);
                 if(targetCard && !targetCard.classList.contains('done')) {
                     targetCard.classList.add('live-task-glow');
                 }
             } 
-            else { timeEl.innerText = "REST"; titleEl.innerText = "Day Complete"; descEl.innerText = "All rituals done. Sleep well."; }
+            else { 
+                timeEl.innerText = "REST"; 
+                titleEl.innerText = "Day Complete"; 
+                descEl.innerText = "All rituals done. Sleep well."; 
+                if (countdownEl) countdownEl.style.display = 'none';
+            }
         }
 
         function triggerConfetti() {
@@ -2168,6 +2247,27 @@ if ('serviceWorker' in navigator) {
                     notiBtn.style.border = "none";
                 }
             }
+
+            // Sync Sound Toggle State
+            if (appData.chimeEnabled === undefined) appData.chimeEnabled = true;
+            const chimeOn = document.getElementById('chime-on-btn');
+            const chimeOff = document.getElementById('chime-off-btn');
+            if (chimeOn && chimeOff) {
+                if (appData.chimeEnabled) {
+                    chimeOn.classList.add('active', 'on');
+                    chimeOff.classList.remove('active', 'off');
+                } else {
+                    chimeOff.classList.add('active', 'off');
+                    chimeOn.classList.remove('active', 'on');
+                }
+            }
+        }
+
+        function toggleChimeSetting(val) {
+            vibrate(15);
+            appData.chimeEnabled = val;
+            saveData();
+            updateSettingsUI();
         }
 
         function msUntil(timeStr) {
@@ -2767,33 +2867,73 @@ if ('serviceWorker' in navigator) {
                     advice: 'Log water to begin tracking cellular absorption efficiency. Aim for 3L spread across the day.' 
                 };
             }
-            if(waterLogs.length === 1) {
-                const pct = Math.min(Math.round((total / 3000) * 100), 100);
-                return { 
-                    score: pct + '%', 
-                    label: 'STARTED', 
-                    color: '#5AC8FA',
-                    advice: `Good start! You've logged ${(total/1000).toFixed(1)}L. Space your next drink 1–2 hours apart for maximum cellular uptake.` 
-                };
-            }
             
-            const times = waterLogs.map(log => {
+            // 1. Group logs within 15 minutes of each other into "sessions"
+            const logsWithMins = waterLogs.map(log => {
                 const [h, m] = log.time.split(':').map(Number);
-                return h * 60 + m;
-            }).sort((a,b) => a-b);
+                return { mins: h * 60 + m, amount: log.amount || 250 };
+            }).sort((a,b) => a.mins - b.mins);
+            
+            const sessions = [];
+            logsWithMins.forEach(log => {
+                if (sessions.length === 0) {
+                    sessions.push({ mins: log.mins, amount: log.amount });
+                } else {
+                    const last = sessions[sessions.length - 1];
+                    if (log.mins - last.mins <= 15) {
+                        last.amount += log.amount;
+                    } else {
+                        sessions.push({ mins: log.mins, amount: log.amount });
+                    }
+                }
+            });
+            
+            if(sessions.length === 1) {
+                const singleVol = sessions[0].amount;
+                let score = Math.min(Math.round((total / 3000) * 100), 100);
+                
+                let advice = `Good start! You've logged ${(total/1000).toFixed(1)}L. Spread your next drinks 1–2 hours apart for maximum cellular uptake.`;
+                let label = 'STARTED';
+                let color = '#5AC8FA';
+                
+                if (singleVol > 1000) {
+                    score = Math.max(score - 15, 0);
+                    label = 'CHUGGED';
+                    color = '#FF9500';
+                    advice = `Logged ${(total/1000).toFixed(1)}L at once. Your kidneys can only absorb ~1L per hour. Next time, space it out!`;
+                } else if (total >= 3000) {
+                    label = 'OPTIMAL';
+                    color = '#34C759';
+                }
+                
+                return { score: score + '%', label, color, advice };
+            }
             
             let score = 100;
             let deductions = 0;
             
-            for(let i=1; i<times.length; i++) {
-                const gap = times[i] - times[i-1];
-                if(gap < 30) { deductions += 10; }
-                else if(gap > 240) { deductions += 15; }
+            for(let i=1; i<sessions.length; i++) {
+                const gap = sessions[i].mins - sessions[i-1].mins;
+                if(gap < 45) { 
+                    deductions += 5; 
+                } else if(gap > 240) { 
+                    deductions += 10; 
+                }
             }
             
-            // Volume bonus/penalty
-            if(total >= 3000) score += 10;
-            else if(total < 1500) deductions += 20;
+            sessions.forEach(s => {
+                if (s.amount > 1000) {
+                    deductions += 15;
+                }
+            });
+            
+            if(total >= 3000) {
+                score += 10;
+            } else if(total < 1500) {
+                deductions += 20;
+            } else if(total < 2500) {
+                deductions += 10;
+            }
             
             score = Math.max(Math.min(score - deductions, 100), 0);
             
@@ -2804,11 +2944,11 @@ if ('serviceWorker' in navigator) {
             if (score < 50) {
                 label = 'INEFFICIENT';
                 color = '#FF3B30';
-                advice = `Only ${(total/1000).toFixed(1)}L logged. Drink more consistently — aim for 250ml every 2 hours to reach 3L.`;
+                advice = `Cellular absorption is low. Try spacing drinks (250ml every 1.5–2 hours) instead of large intervals.`;
             } else if (score < 80) {
                 label = 'MODERATE';
                 color = 'var(--primary)';
-                advice = `${(total/1000).toFixed(1)}L so far. Good progress! Spread remaining intake evenly before end of day.`;
+                advice = `Good spacing, but total volume is ${(total/1000).toFixed(1)}L. Add a few more spaced cups to hit 3L.`;
             }
             
             return { score: score + '%', label, color, advice };
