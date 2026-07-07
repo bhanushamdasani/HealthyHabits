@@ -145,14 +145,94 @@
 
         header { position: sticky; top: 0; z-index: 100; background: var(--nav-glass); backdrop-filter: blur(40px) saturate(150%); -webkit-backdrop-filter: blur(40px) saturate(150%); padding: max(20px, env(safe-area-inset-top)) 20px 15px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-glass); box-shadow: 0 4px 20px rgba(0,0,0,0.05); }
         .brand-gradient { background: linear-gradient(135deg, #007AFF, #5AC8FA); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 900; letter-spacing: -0.5px; }
-        .streak-box { display: flex; align-items: center; gap: 4px; font-weight: 800; font-size: 0.9rem; }
+        .streak-box { 
+            display: flex; 
+            align-items: center; 
+            gap: 6px; 
+            font-weight: 800; 
+            font-size: 0.85rem; 
+            background: var(--surface); 
+            border: 1px solid var(--border-glass);
+            padding: 6px 12px;
+            border-radius: 14px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .streak-box:hover {
+            transform: scale(1.05);
+            border-color: rgba(255, 149, 0, 0.4);
+        }
         .streak-active .fire-icon { color: #FF9500; animation: pulse 2s infinite; }
         @keyframes pulse { 0% { opacity: 1; transform: scale(1); } 50% { opacity: 0.5; transform: scale(1.2); } 100% { opacity: 1; transform: scale(1); } }
-        .theme-toggle { width: 38px; height: 38px; border-radius: 50%; background: var(--surface); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 1.1rem; cursor: pointer; margin-left: 10px;}
+        
+        .theme-toggle { 
+            width: 38px; 
+            height: 38px; 
+            border-radius: 50%; 
+            background: var(--surface); 
+            border: 1px solid var(--border-glass); 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            font-size: 1.05rem; 
+            cursor: pointer; 
+            margin-left: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .theme-toggle:hover {
+            transform: scale(1.08) rotate(15deg);
+            background: var(--border);
+        }
+        .theme-toggle:active {
+            transform: scale(0.92);
+        }
 
-        .date-nav { display: flex; justify-content: center; align-items: center; gap: 15px; padding: 10px 20px; background: var(--bg); }
-        .date-arrow { color: #007AFF; cursor: pointer; padding: 5px 15px; background: rgba(0, 122, 255, 0.15); border-radius: 10px; font-weight: 800; user-select: none; }
-        .current-date-display { font-size: 0.95rem; font-weight: 700; color: var(--text-2); text-transform: uppercase; display: flex; align-items: center; gap: 6px; letter-spacing: 0.5px; }
+        .date-nav { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            gap: 12px; 
+            padding: 8px 12px; 
+            background: var(--surface); 
+            border: 1px solid var(--border-glass); 
+            border-radius: 24px;
+            margin: 15px 20px 10px;
+            box-shadow: var(--shadow);
+            backdrop-filter: blur(30px);
+            -webkit-backdrop-filter: blur(30px);
+        }
+        .date-arrow { 
+            color: var(--primary); 
+            cursor: pointer; 
+            width: 34px;
+            height: 34px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--border); 
+            border-radius: 50%; 
+            font-size: 1.2rem;
+            font-weight: 800; 
+            user-select: none; 
+            transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .date-arrow:hover {
+            transform: scale(1.08);
+            background: var(--primary-dim);
+        }
+        .date-arrow:active {
+            transform: scale(0.92);
+        }
+        .current-date-display { 
+            font-size: 0.9rem; 
+            font-weight: 800; 
+            color: var(--text-1); 
+            display: flex; 
+            align-items: center; 
+            gap: 8px; 
+            letter-spacing: -0.2px;
+        }
 
         .day-mode-bar { background: var(--surface); border: 1px solid var(--border-glass); border-radius: 20px; padding: 12px 14px; margin: 0 20px 10px; box-shadow: var(--shadow); backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px); }
         .day-mode-toggle { display: flex; background: var(--border); padding: 4px; border-radius: 14px; gap: 4px; margin-bottom: 10px; }
@@ -746,12 +826,12 @@
             <div class="view-slider-inner" id="view-slider-inner">
                 <main id="view-dashboard" class="slider-page">
             <div class="date-nav">
-                <div class="date-arrow" onclick="changeDate(-1)">←</div>
+                <div class="date-arrow" onclick="changeDate(-1)">‹</div>
                 <div class="current-date-display" id="date-display">
                     <span id="date-text">--</span>
                     <span id="date-icon" style="font-size: 1.1rem;"></span>
                 </div>
-                <div class="date-arrow" onclick="changeDate(1)">→</div>
+                <div class="date-arrow" onclick="changeDate(1)">›</div>
             </div>
 
             <div class="day-mode-bar">
@@ -1500,15 +1580,31 @@ if ('serviceWorker' in navigator) {
             const dateKey = getKey(viewedDateObj);
             const mode = appData.dayModes[dateKey] || 'active';
             const icons = { 'active': '🔔', 'light': '🔅', 'silent': '🌙' };
-            const todayStr = getKey(new Date());
             
-            let label = viewedDateObj.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
-            if (dateKey === todayStr) label = "TODAY • " + label;
-
+            const today = new Date(); today.setHours(0,0,0,0);
+            const check = new Date(viewedDateObj); check.setHours(0,0,0,0);
+            const diffDays = Math.round((check - today) / (1000 * 60 * 60 * 24));
+            
+            let dateLabel = viewedDateObj.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
+            let statusLabel = "";
+            
+            if (diffDays === 0) {
+                statusLabel = "Today";
+            } else if (diffDays === -1) {
+                statusLabel = "Yesterday";
+            } else if (diffDays === 1) {
+                statusLabel = "Tomorrow";
+            } else {
+                statusLabel = viewedDateObj.toLocaleDateString('en-GB', { weekday: 'short' });
+            }
+            
+            const fullLabel = `${statusLabel}, ${dateLabel}`;
+            
             const display = document.getElementById('date-display');
-            document.getElementById('date-text').innerText = label;
+            document.getElementById('date-text').innerText = fullLabel;
             document.getElementById('date-icon').innerText = icons[mode];
-            display.style.color = (dateKey === todayStr) ? "var(--primary)" : "var(--text-1)";
+            
+            display.style.color = (diffDays === 0) ? "var(--primary)" : "var(--text-1)";
             
             updateDayModeUI();
             updateSleepUI();
