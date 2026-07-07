@@ -791,7 +791,7 @@ function logWeight(type) {
 }
 
 function updateAnalytics() {
-    const currentW = parseFloat(appData.weights[getKey(new Date())]?.am) || parseFloat(appData.startW) || 0;
+    const currentW = parseFloat(appData.weights[getKey(viewedDateObj)]?.am) || parseFloat(appData.startW) || 0;
     const hM = appData.height / 100;
     const bmi = (currentW / (hM * hM)).toFixed(1);
     
@@ -851,7 +851,7 @@ function updateAnalytics() {
     document.getElementById('sleep-advice').innerText = circadian.advice;
 
     // Hydration Efficiency calculations — always use TODAY's water data
-    const todayHydroKey = getKey(new Date());
+    const todayHydroKey = getKey(viewedDateObj);
     const waterLogs = appData.weights[todayHydroKey]?.waterLogs || [];
     const waterTotal = appData.weights[todayHydroKey]?.water || 0;
     const hydro = calculateHydrationEfficiency(waterLogs, waterTotal);
