@@ -69,7 +69,7 @@ export const DietPlanView: React.FC<DietPlanViewProps> = ({ onOpenGroceryModal }
   }, [viewedDate]);
 
   return (
-    <div className="slider-page" style={{ paddingTop: '15px' }}>
+    <div style={{ paddingTop: '12px', width: '100%' }}>
       {/* 1. Target & Variety Banner */}
       <div className="set-card" style={{ marginBottom: '15px', padding: '18px 20px' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>

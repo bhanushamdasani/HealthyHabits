@@ -182,7 +182,7 @@ export const SettingsView: React.FC = () => {
   const nextUpcomingTask = editorTasks.find((t) => timeToMinutes(t.t) > new Date().getHours() * 60 + new Date().getMinutes());
 
   return (
-    <div className="slider-page" style={{ paddingTop: '15px' }}>
+    <div style={{ paddingTop: '12px', width: '100%' }}>
       {/* 1. Cloud Sync & Profile Banner (iOS Inset) */}
       <div className="set-card" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px 20px' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>

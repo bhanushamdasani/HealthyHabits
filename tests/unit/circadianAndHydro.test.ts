@@ -2,23 +2,26 @@ import { describe, it, expect } from 'vitest';
 import { calculateCircadianConsistency } from '../../src/services/circadianEngine';
 import { calculateHydrationEfficiency } from '../../src/services/hydrationEngine';
 import { storageService } from '../../src/services/storageService';
+import { formatDateKey, addDays } from '../../src/utils/dateUtils';
 
 describe('Circadian Consistency Engine', () => {
   it('returns insufficient data if fewer than 3 sleep logs are recorded', () => {
+    const today = new Date();
     const res = calculateCircadianConsistency({
-      '2026-08-25': { bedtime: '22:30', waketime: '06:30' },
-      '2026-08-26': { bedtime: '22:35', waketime: '06:35' }
+      [formatDateKey(today)]: { bedtime: '22:30', waketime: '06:30' },
+      [formatDateKey(addDays(today, -1))]: { bedtime: '22:35', waketime: '06:35' }
     });
     expect(res.score).toBe('--');
     expect(res.label).toBe('CALC');
   });
 
   it('calculates EXCELLENT consistency when bedtime standard deviation is <= 30 mins', () => {
+    const today = new Date();
     const res = calculateCircadianConsistency({
-      '2026-08-20': { bedtime: '22:30', waketime: '06:30' },
-      '2026-08-21': { bedtime: '22:35', waketime: '06:35' },
-      '2026-08-22': { bedtime: '22:25', waketime: '06:25' },
-      '2026-08-23': { bedtime: '22:30', waketime: '06:30' }
+      [formatDateKey(today)]: { bedtime: '22:30', waketime: '06:30' },
+      [formatDateKey(addDays(today, -1))]: { bedtime: '22:35', waketime: '06:35' },
+      [formatDateKey(addDays(today, -2))]: { bedtime: '22:25', waketime: '06:25' },
+      [formatDateKey(addDays(today, -3))]: { bedtime: '22:30', waketime: '06:30' }
     });
     expect(res.label).toBe('EXCELLENT');
     expect(res.color).toBe('#34C759');

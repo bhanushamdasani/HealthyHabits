@@ -128,7 +128,7 @@ export const WorkoutPlanView: React.FC = () => {
   }, [workoutEnv, goal]);
 
   return (
-    <div className="slider-page" style={{ paddingTop: '15px' }}>
+    <div style={{ paddingTop: '12px', width: '100%' }}>
       {/* 1. Environment Switcher Pill (Home vs Gym) */}
       <div style={{ padding: '0 20px 12px' }}>
         <div

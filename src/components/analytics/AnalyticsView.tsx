@@ -235,7 +235,7 @@ export const AnalyticsView: React.FC = () => {
   }, [past7DaysData, store.user.goal, targets.targetProteinGrams, waterTotal, store.user.wakeTime]);
 
   return (
-    <div className="slider-page" style={{ paddingTop: '15px' }}>
+    <div style={{ paddingTop: '12px', width: '100%' }}>
       {/* 1. Top Health Intelligence Hero Gauge */}
       <div className="set-card" style={{ margin: '0 20px 14px', padding: '20px' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px' }}>
