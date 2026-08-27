@@ -57,14 +57,14 @@ export const BottomNavigation: React.FC = () => {
         backdropFilter: 'blur(30px) saturate(180%)',
         WebkitBackdropFilter: 'blur(30px) saturate(180%)',
         borderTop: '1px solid var(--border-glass)',
-        paddingTop: '6px',
-        paddingBottom: 'max(10px, env(safe-area-inset-bottom, 10px))',
-        paddingLeft: '8px',
-        paddingRight: '8px',
+        paddingTop: '5px',
+        paddingBottom: 'env(safe-area-inset-bottom, 6px)',
+        paddingLeft: '6px',
+        paddingRight: '6px',
         display: 'flex',
         justifyContent: 'space-around',
         alignItems: 'center',
-        boxShadow: '0 -4px 25px rgba(0, 0, 0, 0.18)',
+        boxShadow: '0 -2px 16px rgba(0, 0, 0, 0.08)',
         zIndex: 1000,
         position: 'relative'
       }}
@@ -87,9 +87,9 @@ export const BottomNavigation: React.FC = () => {
               flexDirection: 'column',
               alignItems: 'center',
               justifyContent: 'center',
-              gap: '2px',
-              padding: '6px 4px',
-              borderRadius: '16px',
+              gap: '1px',
+              padding: '4px 2px',
+              borderRadius: '12px',
               cursor: 'pointer',
               transition: 'all 0.22s cubic-bezier(0.34, 1.56, 0.64, 1)'
             }}
@@ -97,9 +97,10 @@ export const BottomNavigation: React.FC = () => {
             <span
               className="nav-icon"
               style={{
-                fontSize: '1.3rem',
+                fontSize: '1.2rem',
+                lineHeight: 1,
                 display: 'inline-block',
-                transform: isActive ? 'scale(1.12)' : 'scale(1)',
+                transform: isActive ? 'scale(1.1)' : 'scale(1)',
                 animation: isActive ? 'iconBounce 0.35s cubic-bezier(0.34, 1.56, 0.64, 1)' : 'none',
                 transition: 'transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1)'
               }}
@@ -109,9 +110,11 @@ export const BottomNavigation: React.FC = () => {
             <span
               className="nav-label"
               style={{
-                fontSize: '0.68rem',
+                fontSize: '0.66rem',
                 fontWeight: isActive ? 800 : 600,
-                letterSpacing: '-0.2px'
+                letterSpacing: '-0.2px',
+                lineHeight: 1.1,
+                marginTop: '1px'
               }}
             >
               {item.label}
