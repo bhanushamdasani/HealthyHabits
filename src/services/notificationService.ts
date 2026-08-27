@@ -100,24 +100,23 @@ class NotificationService {
 
     const alertData = getMotivationalAlert(task);
 
-    if (typeof window !== 'undefined' && 'navigator' in window && navigator.serviceWorker && navigator.serviceWorker.controller) {
-      navigator.serviceWorker.controller.postMessage({
-        type: 'SHOW_NOTIFICATION',
-        title: alertData.title,
-        body: alertData.body,
-        tag: uid,
-        icon: '/icon.png'
-      });
-    } else if (typeof window !== 'undefined' && 'Notification' in window && Notification.permission === 'granted') {
-      try {
-        new Notification(alertData.title, {
-          body: alertData.body,
-          tag: uid,
-          icon: '/icon.png'
+    // 1. Try Native Service Worker ShowNotification (iOS 16.4+ Lock Screen & Android Notification Shade)
+    if (typeof window !== 'undefined' && 'serviceWorker' in navigator) {
+      navigator.serviceWorker.ready
+        .then((registration) => {
+          registration.showNotification(alertData.title, {
+            body: alertData.body,
+            tag: uid,
+            icon: '/icon.png',
+            badge: '/icon.png',
+            vibrate: [200, 100, 200]
+          } as NotificationOptions);
+        })
+        .catch(() => {
+          this.fallbackNativeNotification(alertData.title, alertData.body, uid);
         });
-      } catch (e) {
-        console.warn('Native notification failed', e);
-      }
+    } else {
+      this.fallbackNativeNotification(alertData.title, alertData.body, uid);
     }
 
     if (onIslandNotify) {
@@ -126,9 +125,23 @@ class NotificationService {
     haptics.triumph();
   }
 
+  private fallbackNativeNotification(title: string, body: string, tag: string): void {
+    if (typeof window !== 'undefined' && 'Notification' in window && Notification.permission === 'granted') {
+      try {
+        new Notification(title, {
+          body,
+          tag,
+          icon: '/icon.png'
+        });
+      } catch (e) {
+        console.warn('Native notification fallback failed', e);
+      }
+    }
+  }
+
   public testNotification(nextTask?: ScheduleTask, onIslandNotify?: (msg: string) => void): void {
     haptics.medium();
-    if (onIslandNotify) onIslandNotify('Firing test alert in 5s...');
+    if (onIslandNotify) onIslandNotify('Firing native test alert in 5s...');
 
     setTimeout(() => {
       let alertData;
@@ -142,20 +155,22 @@ class NotificationService {
         };
       }
 
-      if (navigator.serviceWorker && navigator.serviceWorker.controller) {
-        navigator.serviceWorker.controller.postMessage({
-          type: 'SHOW_NOTIFICATION',
-          title: alertData.title,
-          body: alertData.body,
-          tag: 'test-alert',
-          icon: '/icon.png'
-        });
-      } else if (typeof Notification !== 'undefined' && Notification.permission === 'granted') {
-        try {
-          new Notification(alertData.title, { body: alertData.body, icon: '/icon.png' });
-        } catch (e) {
-          console.warn('Native notification fallback', e);
-        }
+      if (typeof window !== 'undefined' && 'serviceWorker' in navigator) {
+        navigator.serviceWorker.ready
+          .then((registration) => {
+            registration.showNotification(alertData.title, {
+              body: alertData.body,
+              tag: 'test-alert',
+              icon: '/icon.png',
+              badge: '/icon.png',
+              vibrate: [200, 100, 200]
+            } as NotificationOptions);
+          })
+          .catch(() => {
+            this.fallbackNativeNotification(alertData.title, alertData.body, 'test-alert');
+          });
+      } else {
+        this.fallbackNativeNotification(alertData.title, alertData.body, 'test-alert');
       }
 
       if (onIslandNotify) {
