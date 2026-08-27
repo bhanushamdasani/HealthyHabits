@@ -55,15 +55,16 @@ export const BottomNavigation: React.FC = () => {
       aria-label="Main Navigation"
       style={{
         position: 'absolute',
-        bottom: '22px',
+        bottom: 'max(14px, env(safe-area-inset-bottom, 14px))',
         left: '50%',
         transform: 'translateX(-50%)',
-        background: 'rgba(20, 22, 30, 0.85)',
+        width: 'min(calc(100% - 24px), 430px)',
+        background: 'rgba(20, 22, 30, 0.88)',
         backdropFilter: 'blur(45px) saturate(200%)',
         WebkitBackdropFilter: 'blur(45px) saturate(200%)',
         border: '1px solid rgba(255, 255, 255, 0.14)',
         borderRadius: '34px',
-        padding: '6px 10px',
+        padding: '5px 6px',
         display: 'flex',
         justifyContent: 'space-around',
         alignItems: 'center',
@@ -87,14 +88,17 @@ export const BottomNavigation: React.FC = () => {
             className={`nav-item ${isActive ? 'active' : ''}`}
             aria-label={item.label}
             style={{
+              flex: 1,
+              minWidth: 0,
               background: isActive ? 'var(--primary-dim)' : 'transparent',
               color: isActive ? 'var(--primary)' : 'var(--text-2)',
               border: 'none',
               display: 'flex',
               flexDirection: 'column',
               alignItems: 'center',
+              justifyContent: 'center',
               gap: '2px',
-              padding: '6px 14px',
+              padding: '6px clamp(4px, 2vw, 12px)',
               borderRadius: '20px',
               cursor: 'pointer',
               transition: 'all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1)'
