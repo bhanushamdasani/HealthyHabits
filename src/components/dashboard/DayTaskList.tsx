@@ -120,7 +120,7 @@ export const DayTaskList: React.FC<DayTaskListProps> = ({
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
-          padding: '0 20px 10px',
+          padding: '0 clamp(12px, 3.5vw, 18px) 10px',
           marginTop: '4px'
         }}
       >

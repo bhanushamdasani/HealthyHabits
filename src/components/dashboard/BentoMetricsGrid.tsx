@@ -34,7 +34,7 @@ export const BentoMetricsGrid: React.FC<BentoMetricsGridProps> = ({
   const targets = calculateNutritionTargets(store.user);
 
   return (
-    <div style={{ padding: '0 20px 14px' }}>
+    <div style={{ padding: '0 clamp(12px, 3.5vw, 18px) 14px' }}>
       {/* 1. Modular Bento Grid (Minimalist, Functional & Adaptive) */}
       <div
         style={{
