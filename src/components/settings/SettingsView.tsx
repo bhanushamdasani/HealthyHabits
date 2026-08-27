@@ -481,7 +481,7 @@ export const SettingsView: React.FC = () => {
       <div className="set-card">
         <h3 style={{ marginTop: 0, fontSize: '1.1rem', fontWeight: 800 }}>Smart Reminders & Chime</h3>
         <p style={{ fontSize: '0.8rem', color: 'var(--text-2)', marginBottom: '15px' }}>
-          Alerts fire 30 minutes before your rituals.
+          Dual Encouraging Alerts: 60m prep notification + 10m urgent motivational alert before every ritual.
         </p>
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>

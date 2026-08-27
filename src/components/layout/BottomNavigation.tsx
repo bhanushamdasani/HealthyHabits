@@ -53,19 +53,18 @@ export const BottomNavigation: React.FC = () => {
       style={{
         width: '100%',
         flexShrink: 0,
+        height: 'calc(50px + env(safe-area-inset-bottom, 0px))',
+        paddingBottom: 'env(safe-area-inset-bottom, 0px)',
+        paddingLeft: '6px',
+        paddingRight: '6px',
         background: 'var(--surface-solid)',
-        backdropFilter: 'blur(40px) saturate(200%)',
-        WebkitBackdropFilter: 'blur(40px) saturate(200%)',
+        backdropFilter: 'blur(35px) saturate(190%)',
+        WebkitBackdropFilter: 'blur(35px) saturate(190%)',
         borderTop: '0.5px solid var(--border-glass)',
-        /* top content: icon + label = ~44px, bottom: only the real safe-area */
-        paddingTop: '6px',
-        paddingBottom: 'calc(6px + env(safe-area-inset-bottom, 0px))',
-        paddingLeft: '4px',
-        paddingRight: '4px',
         display: 'flex',
         justifyContent: 'space-around',
-        alignItems: 'flex-start',
-        boxShadow: '0 -0.5px 0 var(--border-glass)',
+        alignItems: 'center',
+        boxSizing: 'border-box',
         zIndex: 1000,
         position: 'relative'
       }}
@@ -80,6 +79,7 @@ export const BottomNavigation: React.FC = () => {
             aria-label={item.label}
             style={{
               flex: 1,
+              height: '50px',
               minWidth: 0,
               background: 'transparent',
               color: isActive ? 'var(--primary)' : 'var(--text-2)',
@@ -87,19 +87,20 @@ export const BottomNavigation: React.FC = () => {
               display: 'flex',
               flexDirection: 'column',
               alignItems: 'center',
-              justifyContent: 'flex-start',
+              justifyContent: 'center',
               gap: '2px',
-              padding: '4px 2px 2px',
+              padding: 0,
               cursor: 'pointer',
+              WebkitTapHighlightColor: 'transparent',
               transition: 'color 0.2s ease'
             }}
           >
             <span
               style={{
-                fontSize: '1.5rem',
+                fontSize: '1.3rem',
                 lineHeight: 1,
                 display: 'block',
-                transform: isActive ? 'scale(1.08)' : 'scale(1)',
+                transform: isActive ? 'scale(1.1)' : 'scale(1)',
                 animation: isActive ? 'iconBounce 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)' : 'none',
                 transition: 'transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1)'
               }}
@@ -108,9 +109,9 @@ export const BottomNavigation: React.FC = () => {
             </span>
             <span
               style={{
-                fontSize: '0.6rem',
-                fontWeight: isActive ? 700 : 500,
-                letterSpacing: '-0.1px',
+                fontSize: '0.64rem',
+                fontWeight: isActive ? 800 : 600,
+                letterSpacing: '-0.2px',
                 lineHeight: 1,
                 color: isActive ? 'var(--primary)' : 'var(--text-2)'
               }}

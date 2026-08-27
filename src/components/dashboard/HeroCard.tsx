@@ -101,7 +101,7 @@ export const HeroCard: React.FC = () => {
   return (
     <div
       style={{
-        margin: '0 20px 14px',
+        margin: '0 clamp(12px, 3.5vw, 18px) 12px',
         background: isLight
           ? 'linear-gradient(135deg, rgba(255, 255, 255, 0.92) 0%, rgba(244, 247, 252, 0.95) 100%)'
           : 'linear-gradient(135deg, rgba(28, 28, 30, 0.95) 0%, rgba(14, 16, 24, 0.95) 100%)',
@@ -111,8 +111,8 @@ export const HeroCard: React.FC = () => {
         boxShadow: isLight
           ? '0 12px 35px rgba(0, 0, 0, 0.06), inset 0 1px 1px #ffffff'
           : '0 16px 40px rgba(0, 0, 0, 0.4), inset 0 1px 1px rgba(255, 255, 255, 0.2)',
-        borderRadius: '28px',
-        padding: '20px 22px',
+        borderRadius: '24px',
+        padding: '16px clamp(14px, 3.5vw, 20px)',
         color: isLight ? '#111827' : '#ffffff',
         position: 'relative',
         transition: 'all 0.35s ease'

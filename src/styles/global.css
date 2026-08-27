@@ -9,22 +9,12 @@
   padding: 0;
 }
 
-html {
-  /* Use fill-available for iOS Safari, dvh for modern browsers */
-  height: -webkit-fill-available;
-  height: 100dvh;
-  overflow: hidden;
-  background-color: var(--app-bg);
-}
-
-body {
+html, body {
   width: 100%;
   height: 100%;
-  /* fallback for old iOS */
-  min-height: -webkit-fill-available;
-  overflow: hidden;
   margin: 0;
   padding: 0;
+  overflow: hidden;
   font-family: var(--font-sans);
   background-color: var(--app-bg);
   color: var(--text-1);
@@ -88,8 +78,7 @@ body {
 .app-container {
   width: 100%;
   max-width: 100%;
-  /* Strict height: fill the full physical screen on every device */
-  height: 100vh;
+  height: 100%;
   height: 100dvh;
   background-color: var(--app-bg);
   color: var(--text-1);
@@ -97,7 +86,6 @@ body {
   transition: background 0.35s ease, color 0.35s ease;
   display: flex;
   flex-direction: column;
-  /* overflow hidden on container only – not html/body */
   overflow: hidden;
   z-index: 1;
   margin: 0 auto;
@@ -106,7 +94,7 @@ body {
 /* Centered Desktop Layout (Tablets / Laptops > 768px) */
 @media (min-width: 769px) {
   .app-container {
-    max-width: 430px;
+    max-width: 440px;
     box-shadow: 0 0 80px rgba(0, 0, 0, 0.5);
     border-left: 1px solid var(--border-glass);
     border-right: 1px solid var(--border-glass);

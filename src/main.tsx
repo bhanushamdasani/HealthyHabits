@@ -6,9 +6,15 @@ import './styles/global.css';
 // Register Service Worker for PWA Offline & Background Notifications
 if ('serviceWorker' in navigator && import.meta.env.PROD) {
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/sw.js').catch((err) => {
-      console.warn('Service worker registration failed', err);
-    });
+    navigator.serviceWorker
+      .register('/sw.js')
+      .then((reg) => {
+        // Automatically check for new updates
+        reg.update().catch(() => {});
+      })
+      .catch((err) => {
+        console.warn('Service worker registration failed', err);
+      });
   });
 }
 
