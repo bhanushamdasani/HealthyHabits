@@ -48,29 +48,25 @@ export const BottomNavigation: React.FC = () => {
 
   return (
     <nav
-      className={`nav-bar ${isCompact ? 'compact-nav' : ''}`}
-      onClick={() => {
-        if (isCompact) setIsCompact(false);
-      }}
+      className="ios-tab-bar"
       aria-label="Main Navigation"
       style={{
-        position: 'absolute',
-        bottom: 'max(14px, env(safe-area-inset-bottom, 14px))',
-        left: '50%',
-        transform: 'translateX(-50%)',
-        width: 'min(calc(100% - 24px), 430px)',
-        background: 'rgba(20, 22, 30, 0.88)',
-        backdropFilter: 'blur(45px) saturate(200%)',
-        WebkitBackdropFilter: 'blur(45px) saturate(200%)',
-        border: '1px solid rgba(255, 255, 255, 0.14)',
-        borderRadius: '34px',
-        padding: '5px 6px',
+        width: '100%',
+        flexShrink: 0,
+        background: 'var(--surface-solid)',
+        backdropFilter: 'blur(30px) saturate(180%)',
+        WebkitBackdropFilter: 'blur(30px) saturate(180%)',
+        borderTop: '1px solid var(--border-glass)',
+        paddingTop: '6px',
+        paddingBottom: 'max(10px, env(safe-area-inset-bottom, 10px))',
+        paddingLeft: '8px',
+        paddingRight: '8px',
         display: 'flex',
         justifyContent: 'space-around',
         alignItems: 'center',
-        boxShadow: '0 20px 45px rgba(0, 0, 0, 0.42), inset 0 1px 1px rgba(255, 255, 255, 0.25)',
+        boxShadow: '0 -4px 25px rgba(0, 0, 0, 0.18)',
         zIndex: 1000,
-        transition: 'all 0.35s cubic-bezier(0.16, 1, 0.3, 1)'
+        position: 'relative'
       }}
     >
       {navItems.map((item) => {
@@ -78,13 +74,7 @@ export const BottomNavigation: React.FC = () => {
         return (
           <button
             key={item.id}
-            onClick={(e) => {
-              if (isCompact) {
-                e.stopPropagation();
-                setIsCompact(false);
-              }
-              handleNavClick(item.id);
-            }}
+            onClick={() => handleNavClick(item.id)}
             className={`nav-item ${isActive ? 'active' : ''}`}
             aria-label={item.label}
             style={{
@@ -98,20 +88,20 @@ export const BottomNavigation: React.FC = () => {
               alignItems: 'center',
               justifyContent: 'center',
               gap: '2px',
-              padding: '6px clamp(4px, 2vw, 12px)',
-              borderRadius: '20px',
+              padding: '6px 4px',
+              borderRadius: '16px',
               cursor: 'pointer',
-              transition: 'all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1)'
+              transition: 'all 0.22s cubic-bezier(0.34, 1.56, 0.64, 1)'
             }}
           >
             <span
               className="nav-icon"
               style={{
-                fontSize: '1.25rem',
+                fontSize: '1.3rem',
                 display: 'inline-block',
-                transform: isActive ? 'scale(1.15)' : 'scale(1)',
+                transform: isActive ? 'scale(1.12)' : 'scale(1)',
                 animation: isActive ? 'iconBounce 0.35s cubic-bezier(0.34, 1.56, 0.64, 1)' : 'none',
-                transition: 'transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1)'
+                transition: 'transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1)'
               }}
             >
               {item.icon}
@@ -120,7 +110,7 @@ export const BottomNavigation: React.FC = () => {
               className="nav-label"
               style={{
                 fontSize: '0.68rem',
-                fontWeight: 800,
+                fontWeight: isActive ? 800 : 600,
                 letterSpacing: '-0.2px'
               }}
             >

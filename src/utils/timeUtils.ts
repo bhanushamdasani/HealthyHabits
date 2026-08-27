@@ -44,20 +44,32 @@ export function formatTime12h(time24: string): string {
 }
 
 /**
- * Calculates sleep duration in hours from 24h bedtime and waketime strings.
+ * Calculates sleep duration in hours from 12h or 24h bedtime and waketime strings.
  */
 export function calculateSleepDurationHours(bedtime: string, waketime: string): number {
-  if (!bedtime || !waketime) return 0;
-  const [bH, bM] = bedtime.split(':').map(Number);
-  const [wH, wM] = waketime.split(':').map(Number);
+  if (!bedtime || !waketime) return 8.0;
 
-  const bedDate = new Date(2000, 0, 1, bH, bM);
-  let wakeDate = new Date(2000, 0, 1, wH, wM);
+  const getMinutes = (str: string): number => {
+    const s = String(str).trim();
+    if (s.toUpperCase().includes('AM') || s.toUpperCase().includes('PM')) {
+      return timeToMinutes(s);
+    }
+    const [hStr, mStr] = s.split(':');
+    const h = parseInt(hStr, 10) || 0;
+    const m = parseInt(mStr, 10) || 0;
+    return h * 60 + m;
+  };
 
-  if (wakeDate < bedDate) {
-    wakeDate = new Date(2000, 0, 2, wH, wM);
+  const bedMins = getMinutes(bedtime);
+  let wakeMins = getMinutes(waketime);
+
+  if (wakeMins <= bedMins) {
+    wakeMins += 1440; // Crosses midnight into next day
   }
-  return (wakeDate.getTime() - bedDate.getTime()) / (1000 * 60 * 60);
+
+  const diffMins = wakeMins - bedMins;
+  const hours = diffMins / 60;
+  return isNaN(hours) ? 8.0 : Math.round(hours * 10) / 10;
 }
 
 /**
