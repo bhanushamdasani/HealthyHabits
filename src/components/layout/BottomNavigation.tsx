@@ -54,17 +54,18 @@ export const BottomNavigation: React.FC = () => {
         width: '100%',
         flexShrink: 0,
         background: 'var(--surface-solid)',
-        backdropFilter: 'blur(30px) saturate(180%)',
-        WebkitBackdropFilter: 'blur(30px) saturate(180%)',
-        borderTop: '1px solid var(--border-glass)',
-        paddingTop: '5px',
-        paddingBottom: 'env(safe-area-inset-bottom, 6px)',
-        paddingLeft: '6px',
-        paddingRight: '6px',
+        backdropFilter: 'blur(40px) saturate(200%)',
+        WebkitBackdropFilter: 'blur(40px) saturate(200%)',
+        borderTop: '0.5px solid var(--border-glass)',
+        /* top content: icon + label = ~44px, bottom: only the real safe-area */
+        paddingTop: '6px',
+        paddingBottom: 'calc(6px + env(safe-area-inset-bottom, 0px))',
+        paddingLeft: '4px',
+        paddingRight: '4px',
         display: 'flex',
         justifyContent: 'space-around',
-        alignItems: 'center',
-        boxShadow: '0 -2px 16px rgba(0, 0, 0, 0.08)',
+        alignItems: 'flex-start',
+        boxShadow: '0 -0.5px 0 var(--border-glass)',
         zIndex: 1000,
         position: 'relative'
       }}
@@ -80,41 +81,38 @@ export const BottomNavigation: React.FC = () => {
             style={{
               flex: 1,
               minWidth: 0,
-              background: isActive ? 'var(--primary-dim)' : 'transparent',
+              background: 'transparent',
               color: isActive ? 'var(--primary)' : 'var(--text-2)',
               border: 'none',
               display: 'flex',
               flexDirection: 'column',
               alignItems: 'center',
-              justifyContent: 'center',
-              gap: '1px',
-              padding: '4px 2px',
-              borderRadius: '12px',
+              justifyContent: 'flex-start',
+              gap: '2px',
+              padding: '4px 2px 2px',
               cursor: 'pointer',
-              transition: 'all 0.22s cubic-bezier(0.34, 1.56, 0.64, 1)'
+              transition: 'color 0.2s ease'
             }}
           >
             <span
-              className="nav-icon"
               style={{
-                fontSize: '1.2rem',
+                fontSize: '1.5rem',
                 lineHeight: 1,
-                display: 'inline-block',
-                transform: isActive ? 'scale(1.1)' : 'scale(1)',
-                animation: isActive ? 'iconBounce 0.35s cubic-bezier(0.34, 1.56, 0.64, 1)' : 'none',
-                transition: 'transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1)'
+                display: 'block',
+                transform: isActive ? 'scale(1.08)' : 'scale(1)',
+                animation: isActive ? 'iconBounce 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)' : 'none',
+                transition: 'transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1)'
               }}
             >
               {item.icon}
             </span>
             <span
-              className="nav-label"
               style={{
-                fontSize: '0.66rem',
-                fontWeight: isActive ? 800 : 600,
-                letterSpacing: '-0.2px',
-                lineHeight: 1.1,
-                marginTop: '1px'
+                fontSize: '0.6rem',
+                fontWeight: isActive ? 700 : 500,
+                letterSpacing: '-0.1px',
+                lineHeight: 1,
+                color: isActive ? 'var(--primary)' : 'var(--text-2)'
               }}
             >
               {item.label}

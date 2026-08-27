@@ -64,29 +64,46 @@ class NotificationService {
       if (history[uid] === true) return;
       if (!task.reminder) return;
       if (mode === 'light' && !lightDayTypes.includes(task.type)) return;
-      if (this.firedNotificationKeys.has(uid)) return;
 
       const taskMins = timeToMinutes(task.t);
-      const alertMins = taskMins - 30; // 30 mins early reminder
+      const exactMs = msUntilTime(task.t);
 
-      if (alertMins > nowMins) {
-        const exactTimeMs = msUntilTime(task.t);
-        const notifyTimeMs = exactTimeMs - 30 * 60 * 1000;
+      // ── NOTIFICATION 1: 60 min early warning ───────────────────────────────
+      const earlyUid = `${uid}-early`;
+      const earlyMins = taskMins - 60;
+      const earlyMs = exactMs - 60 * 60 * 1000;
 
-        if (notifyTimeMs > 0) {
-          const timeoutId = window.setTimeout(() => {
-            this.fireNotification(task, uid, onIslandNotify);
-          }, notifyTimeMs);
-
-          this.activeTimers.push({
-            id: timeoutId,
-            task,
-            time: task.t
-          });
+      if (!this.firedNotificationKeys.has(earlyUid)) {
+        if (earlyMs > 0 && earlyMins > nowMins) {
+          // schedule future
+          const tid = window.setTimeout(() => {
+            this.fireNotification(task, earlyUid, 'early', onIslandNotify);
+          }, earlyMs);
+          this.activeTimers.push({ id: tid, task, time: task.t });
+        } else if (earlyMins <= nowMins && taskMins > nowMins) {
+          // we're in the 60-min window: fire immediately (once)
+          this.firedNotificationKeys.add(earlyUid);
+          setTimeout(() => this.fireNotification(task, earlyUid, 'early', onIslandNotify), 500);
         }
-      } else if (alertMins <= nowMins && taskMins > nowMins && !this.firedNotificationKeys.has(uid)) {
-        this.firedNotificationKeys.add(uid);
-        setTimeout(() => this.fireNotification(task, uid, onIslandNotify), 500);
+      }
+
+      // ── NOTIFICATION 2: 10 min urgent alert ────────────────────────────────
+      const urgentUid = `${uid}-urgent`;
+      const urgentMins = taskMins - 10;
+      const urgentMs = exactMs - 10 * 60 * 1000;
+
+      if (!this.firedNotificationKeys.has(urgentUid)) {
+        if (urgentMs > 0 && urgentMins > nowMins) {
+          // schedule future
+          const tid = window.setTimeout(() => {
+            this.fireNotification(task, urgentUid, 'urgent', onIslandNotify);
+          }, urgentMs);
+          this.activeTimers.push({ id: tid, task, time: task.t });
+        } else if (urgentMins <= nowMins && taskMins > nowMins) {
+          // we're in the 10-min window: fire immediately (once)
+          this.firedNotificationKeys.add(urgentUid);
+          setTimeout(() => this.fireNotification(task, urgentUid, 'urgent', onIslandNotify), 1500);
+        }
       }
     });
 
@@ -94,13 +111,19 @@ class NotificationService {
     return this.activeTimers;
   }
 
-  public fireNotification(task: ScheduleTask, uid: string, onIslandNotify?: (msg: string) => void): void {
+  public fireNotification(
+    task: ScheduleTask,
+    uid: string,
+    stage: 'early' | 'urgent' = 'early',
+    onIslandNotify?: (msg: string) => void
+  ): void {
     if (this.firedNotificationKeys.has(uid)) return;
     this.firedNotificationKeys.add(uid);
 
-    const alertData = getMotivationalAlert(task);
+    const alertData = getMotivationalAlert(task, stage);
+    const minutesBefore = stage === 'early' ? 60 : 10;
 
-    // 1. Try Native Service Worker ShowNotification (iOS 16.4+ Lock Screen & Android Notification Shade)
+    // Primary: Service Worker showNotification → appears in iOS/Android notification center + lock screen
     if (typeof window !== 'undefined' && 'serviceWorker' in navigator) {
       navigator.serviceWorker.ready
         .then((registration) => {
@@ -109,75 +132,98 @@ class NotificationService {
             tag: uid,
             icon: '/icon.png',
             badge: '/icon.png',
-            vibrate: [200, 100, 200]
+            vibrate: stage === 'urgent' ? [200, 100, 200, 100, 300] : [150, 100, 150],
+            requireInteraction: stage === 'urgent', // urgent stays until dismissed
           } as NotificationOptions);
         })
         .catch(() => {
-          this.fallbackNativeNotification(alertData.title, alertData.body, uid);
+          this.fallbackNotification(alertData.title, alertData.body, uid, stage === 'urgent');
         });
     } else {
-      this.fallbackNativeNotification(alertData.title, alertData.body, uid);
+      this.fallbackNotification(alertData.title, alertData.body, uid, stage === 'urgent');
     }
 
     if (onIslandNotify) {
-      onIslandNotify(`🔥 ${task.act} in 30 min`);
+      onIslandNotify(
+        stage === 'urgent'
+          ? `🚨 ${task.act} in 10 min!`
+          : `⏰ ${task.act} in 60 min`
+      );
     }
-    haptics.triumph();
+
+    if (stage === 'urgent') {
+      haptics.triumph();
+    } else {
+      haptics.medium();
+    }
+
+    console.log(`[NotificationService] Fired "${stage}" alert (${minutesBefore}min before) for: ${task.act}`);
   }
 
-  private fallbackNativeNotification(title: string, body: string, tag: string): void {
+  private fallbackNotification(title: string, body: string, tag: string, requireInteraction = false): void {
     if (typeof window !== 'undefined' && 'Notification' in window && Notification.permission === 'granted') {
       try {
         new Notification(title, {
           body,
           tag,
-          icon: '/icon.png'
+          icon: '/icon.png',
+          requireInteraction
         });
       } catch (e) {
-        console.warn('Native notification fallback failed', e);
+        console.warn('Fallback Notification failed', e);
       }
     }
   }
 
   public testNotification(nextTask?: ScheduleTask, onIslandNotify?: (msg: string) => void): void {
     haptics.medium();
-    if (onIslandNotify) onIslandNotify('Firing native test alert in 5s...');
+    if (onIslandNotify) onIslandNotify('🔔 Test alert fires in 5s (then 10s)...');
 
+    // First alert: early stage at 5s
     setTimeout(() => {
-      let alertData;
-      if (nextTask) {
-        alertData = getMotivationalAlert(nextTask);
-        alertData.title = `🔔 Preview: ${alertData.title}`;
-      } else {
-        alertData = {
-          title: '🏆 You crushed today!',
-          body: "All rituals complete. Rest, recover, and come back stronger tomorrow. You're building a real streak."
-        };
-      }
+      const earlyData = nextTask
+        ? getMotivationalAlert(nextTask, 'early')
+        : { title: '⏰ Ritual in 60 min — get ready', body: 'Small wins compound into massive life results. Prepare for your next ritual.' };
 
-      if (typeof window !== 'undefined' && 'serviceWorker' in navigator) {
-        navigator.serviceWorker.ready
-          .then((registration) => {
-            registration.showNotification(alertData.title, {
-              body: alertData.body,
-              tag: 'test-alert',
-              icon: '/icon.png',
-              badge: '/icon.png',
-              vibrate: [200, 100, 200]
-            } as NotificationOptions);
-          })
-          .catch(() => {
-            this.fallbackNativeNotification(alertData.title, alertData.body, 'test-alert');
-          });
-      } else {
-        this.fallbackNativeNotification(alertData.title, alertData.body, 'test-alert');
-      }
-
-      if (onIslandNotify) {
-        onIslandNotify(`🔔 ${alertData.title}: ${alertData.body.slice(0, 45)}...`);
-      }
-      haptics.triumph();
+      this.showNativeNotification(earlyData.title, earlyData.body, 'test-early', [150, 100, 150], false);
+      if (onIslandNotify) onIslandNotify(`⏰ ${earlyData.title}`);
     }, 5000);
+
+    // Second alert: urgent stage at 10s
+    setTimeout(() => {
+      const urgentData = nextTask
+        ? getMotivationalAlert(nextTask, 'urgent')
+        : { title: '🚨 Ritual in 10 min — show up!', body: "Discipline is choosing your future self over comfort. Time to act. This is your moment." };
+
+      this.showNativeNotification(urgentData.title, urgentData.body, 'test-urgent', [200, 100, 200, 100, 300], true);
+      if (onIslandNotify) onIslandNotify(`🚨 ${urgentData.title}`);
+      haptics.triumph();
+    }, 10000);
+  }
+
+  private showNativeNotification(
+    title: string,
+    body: string,
+    tag: string,
+    vibrate: number[],
+    requireInteraction: boolean
+  ): void {
+    if (typeof window !== 'undefined' && 'serviceWorker' in navigator) {
+      navigator.serviceWorker.ready
+        .then((reg) => {
+          reg.showNotification(title, {
+            body,
+            tag,
+            icon: '/icon.png',
+            badge: '/icon.png',
+            vibrate,
+            requireInteraction
+          } as NotificationOptions);
+        })
+        .catch(() => this.fallbackNotification(title, body, tag, requireInteraction));
+    } else {
+      this.fallbackNotification(title, body, tag, requireInteraction);
+    }
   }
 }
 

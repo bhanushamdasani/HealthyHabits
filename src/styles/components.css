@@ -48,10 +48,9 @@
 .view-slider-outer {
   flex: 1;
   width: 100%;
-  height: 100%;
   position: relative;
   overflow: hidden;
-  min-height: 0;
+  min-height: 0;        /* critical: allows flex child to shrink below content size */
 }
 
 .view-slider-inner {
@@ -65,11 +64,12 @@
   overflow-y: auto;
   overflow-x: hidden;
   -webkit-overflow-scrolling: touch;
-  padding-bottom: 24px;
+  /* Extra bottom padding so content clears nav bar on older phones */
+  padding-bottom: 16px;
 }
 
 .slider-page::-webkit-scrollbar {
-  width: 5px;
+  width: 3px;
 }
 .slider-page::-webkit-scrollbar-thumb {
   background: var(--border-glass);

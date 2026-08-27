@@ -5,35 +5,49 @@ export interface NotificationPayload {
   body: string;
 }
 
-export function getMotivationalAlert(task: ScheduleTask): NotificationPayload {
+/** stage: 'early' = 60 min warning, 'urgent' = 10 min warning */
+export function getMotivationalAlert(
+  task: ScheduleTask,
+  stage: 'early' | 'urgent' = 'early'
+): NotificationPayload {
   const act = (task.act || '').toLowerCase();
-  const food = task.instr || '';
+  const food = task.instr || task.act || '';
   const type = task.type || '';
   const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
   const todayDay = days[new Date().getDay()];
   const hour = new Date().getHours();
   const timeGreet = hour < 12 ? 'morning' : hour < 17 ? 'afternoon' : 'evening';
 
-  let title = '';
-  let body = '';
-
+  // ─── WAKE UP / ALARM ─────────────────────────────────────────────────────────
   if (act.includes('wake') || act.includes('alarm')) {
-    title = `🌅 Rise up, it's ${todayDay}!`;
-    const opts = [
-      `Your body just spent 8 hours repairing. Now move it. Start with: ${food}.`,
-      `Morning cortisol peak = maximum fat burn. Get up and seize it! ${food} awaits.`,
-      `Every champion wakes before their excuses do. Your ${todayDay} starts NOW.`
-    ];
-    body = opts[Math.floor(Math.random() * opts.length)];
-  } else if (act.includes('sleep') || act.includes('bed') || act.includes('lights')) {
-    title = `🌙 ${todayDay} Wind-Down`;
-    const opts = [
-      `Growth hormone releases when you sleep — don't skip recovery. Lights out: ${food}.`,
-      `Your ${todayDay} was earned. Now let your muscles repair. Sleep tight.`,
-      `Tomorrow's performance is built tonight. Follow: ${food}. Sleep is the real gain.`
-    ];
-    body = opts[Math.floor(Math.random() * opts.length)];
-  } else if (
+    if (stage === 'early') {
+      return {
+        title: `🌤️ Wake-up in 60 min — ${todayDay} awaits`,
+        body: `Start winding down your sleep. Lay out your clothes, fill your water bottle. Today is going to be different.`
+      };
+    }
+    return {
+      title: `🌅 10 min to rise — you've got this!`,
+      body: `"Win the morning, win the day." Your ${todayDay} protocol starts NOW. First move: ${food}.`
+    };
+  }
+
+  // ─── SLEEP / BED ─────────────────────────────────────────────────────────────
+  if (act.includes('sleep') || act.includes('bed') || act.includes('lights')) {
+    if (stage === 'early') {
+      return {
+        title: `🌙 Wind-down in 60 min`,
+        body: `Dim screens, sip warm water, breathe slowly. Growth hormone only releases in quality sleep. Prepare: ${food}.`
+      };
+    }
+    return {
+      title: `😴 Time to power down — 10 min left`,
+      body: `Your muscles repair, your mind resets, your streak is protected — all in your sleep. Lights out: ${food}.`
+    };
+  }
+
+  // ─── MEAL ────────────────────────────────────────────────────────────────────
+  if (
     type === 'meal' ||
     act.includes('breakfast') ||
     act.includes('lunch') ||
@@ -41,14 +55,20 @@ export function getMotivationalAlert(task: ScheduleTask): NotificationPayload {
     act.includes('snack') ||
     act.includes('meal')
   ) {
-    title = `🍽️ ${todayDay}'s Fuel Block`;
-    const opts = [
-      `Your kitchen > Zomato 🔥 Chef you is plating "${food}" right now. No delivery fee. No junk oils. Pure gains.`,
-      `"${food}" loading in 30 mins. Rated ⭐⭐⭐⭐⭐ by your metabolism. Swiggy can't touch this.`,
-      `Skip the delivery app today. "${food}" is the real high-performance meal for this ${timeGreet}. Fuel up! 🥗`
-    ];
-    body = opts[Math.floor(Math.random() * opts.length)];
-  } else if (
+    if (stage === 'early') {
+      return {
+        title: `🍽️ Meal prep time — 60 min away`,
+        body: `Start prepping "${food}" so you're not reaching for junk. Your metabolism is counting on you this ${timeGreet}.`
+      };
+    }
+    return {
+      title: `⚡ 10 min — Fuel your engine`,
+      body: `"${food}" is your ${todayDay} performance food. Skip Zomato, own your nutrition, protect your gains. Plate up now! 🥗`
+    };
+  }
+
+  // ─── WORKOUT ─────────────────────────────────────────────────────────────────
+  if (
     type === 'workout' ||
     act.includes('gym') ||
     act.includes('cardio') ||
@@ -56,35 +76,65 @@ export function getMotivationalAlert(task: ScheduleTask): NotificationPayload {
     act.includes('walk') ||
     act.includes('yoga')
   ) {
-    title = `💪 ${todayDay} Sweat Block`;
-    const opts = [
-      `"${food}" — the only ${todayDay} rep that counts. No shortcuts. No excuses. Just results.`,
-      `Your future self is watching you right now. Will you show up for "${food}"? 30 mins. Go.`,
-      `Dopamine, serotonin, endorphins — all unlocked by "${food}". Your ${todayDay} reward starts after this.`
-    ];
-    body = opts[Math.floor(Math.random() * opts.length)];
-  } else if (
+    if (stage === 'early') {
+      return {
+        title: `🏋️ Workout in 60 min — get ready`,
+        body: `Have your water ready, wear something that makes you feel powerful. "${food}" awaits on ${todayDay}. No negotiation.`
+      };
+    }
+    return {
+      title: `💪 Move in 10 min — no excuses now`,
+      body: `Dopamine, confidence, strength — all unlocked by "${food}" right now. Your future self will thank you. Let's GO. 🔥`
+    };
+  }
+
+  // ─── HYDRATION ───────────────────────────────────────────────────────────────
+  if (
     act.includes('water') ||
     act.includes('lemon') ||
     act.includes('acv') ||
     act.includes('hydrat')
   ) {
-    title = `💧 Hydration Check`;
-    const opts = [
-      `Your cells are 70% water. Don't let them shrivel on a ${todayDay}. Drink: ${food}.`,
-      `Dehydrated brain = foggy thinking. 30 second fix: "${food}". Do it now.`,
-      `Optimal blood flow, clear skin, fast metabolism — all from sipping "${food}" consistently.`
-    ];
-    body = opts[Math.floor(Math.random() * opts.length)];
-  } else {
-    title = `⚡ Ritual Unlocked`;
-    const opts = [
-      `"${task.act}" in 30 mins. Small daily wins compound into massive life results. Ready?`,
-      `This ${todayDay} ${timeGreet} block matters: "${task.act} — ${food}". Show up.`,
-      `Discipline is choosing your future self over your present comfort. Time: ${task.t}. Task: ${task.act}.`
-    ];
-    body = opts[Math.floor(Math.random() * opts.length)];
+    if (stage === 'early') {
+      return {
+        title: `💧 Hydration check in 60 min`,
+        body: `Every cell in your body is 70% water. Dehydration = brain fog, fatigue, cravings. Fill your bottle: ${food}.`
+      };
+    }
+    return {
+      title: `🚰 10 min — Drink up, warrior`,
+      body: `"${food}" — 30 seconds, massive payoff. Clearer skin, sharper focus, better metabolism. Right now. Do it.`
+    };
   }
 
-  return { title, body };
+  // ─── BREATHING / MEDITATION ──────────────────────────────────────────────────
+  if (
+    act.includes('breath') ||
+    act.includes('meditat') ||
+    act.includes('mindful') ||
+    act.includes('relax')
+  ) {
+    if (stage === 'early') {
+      return {
+        title: `🧘 Mindfulness in 60 min`,
+        body: `Find a quiet spot. "${food}" reduces cortisol, sharpens focus, and adds years to your life. Worth it.`
+      };
+    }
+    return {
+      title: `🌬️ 10 min — Breathe & reset now`,
+      body: `2 minutes of "${food}" activates your parasympathetic system. Stress melts. Clarity returns. Begin.`
+    };
+  }
+
+  // ─── GENERIC FALLBACK ────────────────────────────────────────────────────────
+  if (stage === 'early') {
+    return {
+      title: `⏰ "${task.act}" in 60 min — prepare`,
+      body: `Small habits done consistently build unstoppable momentum. Get ready for this ${todayDay} ${timeGreet} block.`
+    };
+  }
+  return {
+    title: `🎯 10 min — Show up for "${task.act}"`,
+    body: `Discipline is choosing your future self over your present comfort. Time: ${task.t}. This is your moment.`
+  };
 }
