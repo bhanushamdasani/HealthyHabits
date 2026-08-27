@@ -22,17 +22,13 @@ html, body {
   padding: 0;
   overflow: hidden;
   font-family: var(--font-sans);
-  background-color: #000000;
+  background-color: var(--app-bg);
   color: var(--text-1);
   -webkit-user-select: none;
   user-select: none;
   overscroll-behavior: none;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-}
-
-[data-theme="light"] body {
-  background-color: #eef1f6;
 }
 
 /* Ambient Backdrops with Organic Fluid Motion */
@@ -82,11 +78,7 @@ html, body {
   justify-content: center;
   align-items: stretch;
   overflow: hidden;
-  background-color: #000000;
-}
-
-[data-theme="light"] #root {
-  background-color: #eef1f6;
+  background-color: var(--app-bg);
 }
 
 .app-container {
@@ -108,7 +100,7 @@ html, body {
 /* Centered Desktop Layout (Tablets / Laptops > 768px) */
 @media (min-width: 769px) {
   .app-container {
-    max-width: 480px;
+    max-width: 440px;
     box-shadow: 0 0 80px rgba(0, 0, 0, 0.5);
     border-left: 1px solid var(--border-glass);
     border-right: 1px solid var(--border-glass);
