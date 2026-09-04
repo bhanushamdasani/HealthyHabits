@@ -76,6 +76,39 @@
   }
 }
 
+@keyframes activeNearbyBorderPulse {
+  0%, 100% {
+    border-color: rgba(0, 113, 227, 0.9);
+    box-shadow: 0 0 0 1px rgba(0, 113, 227, 0.4), 0 8px 24px rgba(0, 113, 227, 0.25), inset 0 0 14px rgba(0, 113, 227, 0.1);
+  }
+  50% {
+    border-color: rgba(0, 113, 227, 1);
+    box-shadow: 0 0 0 2px rgba(0, 113, 227, 0.7), 0 12px 32px rgba(0, 113, 227, 0.45), inset 0 0 20px rgba(0, 113, 227, 0.2);
+  }
+}
+
+@keyframes pulseDot {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.4);
+    opacity: 0.6;
+  }
+}
+
+@keyframes overdueBorderPulse {
+  0%, 100% {
+    border-color: rgba(255, 149, 0, 0.6);
+    box-shadow: 0 4px 16px rgba(255, 149, 0, 0.15);
+  }
+  50% {
+    border-color: rgba(255, 149, 0, 0.9);
+    box-shadow: 0 6px 22px rgba(255, 149, 0, 0.3);
+  }
+}
+
 /* 3. Mindful Breathing & Ring */
 @keyframes breatheAura {
   0% {

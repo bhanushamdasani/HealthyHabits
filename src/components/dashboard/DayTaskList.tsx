@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
 import { usePlanner } from '../../context/PlannerContext';
 import { TaskCard } from './TaskCard';
 import { formatDateKey } from '../../utils/dateUtils';
@@ -23,6 +23,20 @@ export const DayTaskList: React.FC<DayTaskListProps> = ({
     toggleTask,
     deleteOneOffTask
   } = usePlanner();
+
+  // 30-second live clock ticker to keep time-proximity calculations dynamically reactive
+  const [currentMins, setCurrentMins] = useState(() => {
+    const d = new Date();
+    return d.getHours() * 60 + d.getMinutes();
+  });
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const d = new Date();
+      setCurrentMins(d.getHours() * 60 + d.getMinutes());
+    }, 30000);
+    return () => clearInterval(interval);
+  }, []);
 
   const dateKey = formatDateKey(viewedDate);
   const todayKey = formatDateKey(new Date());
@@ -83,18 +97,11 @@ export const DayTaskList: React.FC<DayTaskListProps> = ({
     return combined.sort((a, b) => timeToMinutes(a.t) - timeToMinutes(b.t));
   }, [recurringTasks, oneOffTasks, dayDiet]);
 
-  // Determine live active task index today
-  const now = new Date();
-  const nowMins = now.getHours() * 60 + now.getMinutes();
-  let liveTaskId: string | null = null;
-  if (isViewingToday) {
-    for (const t of combinedTasks) {
-      if (timeToMinutes(t.t) > nowMins) {
-        liveTaskId = t.id;
-        break;
-      }
-    }
-  }
+  // Find the single upcoming task relative to the current clock time today
+  const upcomingTask = useMemo(() => {
+    if (!isViewingToday) return null;
+    return combinedTasks.find((t) => timeToMinutes(t.t) >= currentMins) || combinedTasks[0] || null;
+  }, [isViewingToday, combinedTasks, currentMins]);
 
   return (
     <div className="task-list-section">
@@ -103,6 +110,7 @@ export const DayTaskList: React.FC<DayTaskListProps> = ({
         {weekdays.map((w) => (
           <button
             key={w.id}
+            type="button"
             className={`tab-btn ${activeDayTab === w.id ? 'active' : ''}`}
             onClick={() => setActiveDayTab(w.id)}
           >
@@ -117,34 +125,35 @@ export const DayTaskList: React.FC<DayTaskListProps> = ({
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
-          padding: '0 clamp(12px, 3.5vw, 18px) 10px',
-          marginTop: '4px'
+          padding: '0 clamp(12px, 3.5vw, 18px) 8px',
+          marginTop: '2px'
         }}
       >
         <div>
-          <h2 style={{ fontSize: '1.25rem', fontWeight: 900, color: 'var(--text-1)', letterSpacing: '-0.3px', margin: 0 }}>
+          <h2 style={{ fontSize: '1.15rem', fontWeight: 900, color: 'var(--text-1)', letterSpacing: '-0.3px', margin: 0 }}>
             Today's Rituals
           </h2>
-          <span style={{ fontSize: '0.75rem', color: 'var(--text-2)', fontWeight: 600 }}>
+          <span style={{ fontSize: '0.74rem', color: 'var(--text-2)', fontWeight: 600 }}>
             {combinedTasks.filter((t) => store.history[`${dateKey}-${t.id}`]).length} of {combinedTasks.length} Completed
           </span>
         </div>
 
         <button
+          type="button"
           onClick={onOpenOneOffSheet}
           style={{
             background: 'var(--primary)',
             color: '#ffffff',
             border: 'none',
-            padding: '8px 14px',
-            borderRadius: '16px',
-            fontSize: '0.78rem',
+            padding: '7px 14px',
+            borderRadius: '14px',
+            fontSize: '0.76rem',
             fontWeight: 800,
             cursor: 'pointer',
-            boxShadow: '0 4px 12px var(--primary-dim)'
+            boxShadow: '0 3px 10px var(--primary-dim)'
           }}
         >
-          + Add Today's Task
+          + Add Task
         </button>
       </div>
 
@@ -152,6 +161,8 @@ export const DayTaskList: React.FC<DayTaskListProps> = ({
       <div className="task-list" style={{ paddingBottom: '20px' }}>
         {combinedTasks.map((task) => {
           const isDone = !!store.history[`${dateKey}-${task.id}`];
+          const isUpcoming = isViewingToday && task.id === upcomingTask?.id;
+
           return (
             <TaskCard
               key={task.id}
@@ -160,7 +171,7 @@ export const DayTaskList: React.FC<DayTaskListProps> = ({
               dateKey={dateKey}
               dayMode={dayMode}
               lightDayTypes={store.lightDayTypes}
-              isLiveActive={task.id === liveTaskId}
+              isUpcoming={isUpcoming}
               onToggle={() => toggleTask(task.id)}
               onDeleteOneOff={!task.isRecurring ? () => deleteOneOffTask(task.id) : undefined}
               onOpenTaskSupport={() => onOpenTaskSupport(task)}
@@ -174,10 +185,10 @@ export const DayTaskList: React.FC<DayTaskListProps> = ({
               textAlign: 'center',
               padding: '30px 20px',
               color: 'var(--text-2)',
-              fontSize: '0.9rem'
+              fontSize: '0.88rem'
             }}
           >
-            No scheduled tasks for this day. Tap "+ Add Today's Task" to schedule an activity!
+            No scheduled tasks for this day. Tap "+ Add Task" to schedule an activity!
           </div>
         )}
       </div>

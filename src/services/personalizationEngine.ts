@@ -102,6 +102,10 @@ export function generatePersonalizedSchedule(profile: UserProfile): WeeklySchedu
     workoutMins = wakeMins + 390; // 1:30 PM
   }
 
+  const isPcosFocus =
+    (profile.femaleConsiderations || []).includes('pcos') ||
+    (profile.femaleConsiderations || []).includes('pcod');
+
   days.forEach((day) => {
     const isWorkoutDay = (profile.workoutDays || []).includes(day);
     const dayTasks: ScheduleTask[] = [];
@@ -111,8 +115,10 @@ export function generatePersonalizedSchedule(profile: UserProfile): WeeklySchedu
       id: `t_${day}_0`,
       t: minutesToTime(wakeMins),
       act: 'Wake Up & Hydrate',
-      instr: '500ml Warm Water + ½ Lemon (Optional 1 tsp ACV)',
-      rule: 'Prime Metabolism',
+      instr: isPcosFocus
+        ? '500ml Warm Water + 1 tsp Soaked Methi (Fenugreek) or Cinnamon'
+        : '500ml Warm Water + ½ Lemon (Optional 1 tsp ACV)',
+      rule: isPcosFocus ? 'Insulin Sensitivity & Hormone Reset' : 'Prime Metabolism',
       type: 'hack',
       reminder: true,
       isRecurring: true
@@ -123,9 +129,11 @@ export function generatePersonalizedSchedule(profile: UserProfile): WeeklySchedu
       dayTasks.push({
         id: `t_${day}_workout`,
         t: minutesToTime(workoutMins),
-        act: 'Morning Training',
-        instr: 'Full Body / Resistance Session (45m)',
-        rule: 'Show Up & Execute',
+        act: isPcosFocus ? 'Hormone-Balance Training' : 'Morning Training',
+        instr: isPcosFocus
+          ? 'Low-Cortisol Strength / Glute & Resistance Circuit (35m)'
+          : 'Full Body / Resistance Session (45m)',
+        rule: isPcosFocus ? 'GLUT-4 Muscle Translocation' : 'Show Up & Execute',
         type: 'workout',
         reminder: true,
         isRecurring: true
@@ -174,7 +182,7 @@ export function generatePersonalizedSchedule(profile: UserProfile): WeeklySchedu
       t: minutesToTime(lunchMins + 25),
       act: 'Movement',
       instr: "'Shatapavali' Walk (10-15 Mins Gentle Stride)",
-      rule: 'DO NOT SIT IMMEDIATELY',
+      rule: isPcosFocus ? 'Blunts Glucose & Protects Insulin' : 'DO NOT SIT IMMEDIATELY',
       type: 'workout',
       reminder: true,
       isRecurring: true
@@ -185,8 +193,10 @@ export function generatePersonalizedSchedule(profile: UserProfile): WeeklySchedu
       id: `t_${day}_snack`,
       t: minutesToTime(snackMins),
       act: 'Afternoon Fuel',
-      instr: 'Chana Sattu Drink / Sprouts / Almonds + Green Tea',
-      rule: 'Steady Energy',
+      instr: isPcosFocus
+        ? 'Spearmint Tea + Roasted Makhana / Handful of Soaked Almonds'
+        : 'Chana Sattu Drink / Sprouts / Almonds + Green Tea',
+      rule: isPcosFocus ? 'Anti-Androgen & Satiety' : 'Steady Energy',
       type: 'meal',
       reminder: true,
       isRecurring: true

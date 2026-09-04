@@ -587,5 +587,156 @@ export const CURATED_WORKOUT_DATABASE: Record<string, WorkoutRoutine> = {
       }
     ],
     cooldown: ['2 mins Overhead Lat Stretch', '2 mins Standing Quad Stretch']
+  },
+
+  // ==========================================
+  // 🌸 PCOS / PCOD HORMONE & INSULIN PROTOCOLS
+  // ==========================================
+  home_pcos_hormone_balance: {
+    id: 'w_home_pcos_hormone_balance',
+    name: '🌸 PCOS/PCOD Low-Cortisol Strength & Hormone Balance (Home)',
+    splitType: 'home_calisthenics',
+    estimatedDurationMins: 30,
+    warmup: [
+      '2 mins Cat-Cow & Pelvic Tilts (Relieves pelvic tension)',
+      '2 mins Standing Hip Openers & Gentle March',
+      '15 Bodyweight Glute Bridges'
+    ],
+    exercises: [
+      {
+        id: 'ex_pcos_glute_bridge',
+        name: 'Single-Leg & Double Glute Bridge (Slow Tempo)',
+        targetMuscle: 'Glutes, Hamstrings, Pelvic Floor',
+        equipment: 'bodyweight',
+        sets: 3,
+        reps: '15-18 reps (2s hold)',
+        restSeconds: 45,
+        instructions: [
+          'Lie on back with knees bent and feet flat on floor hip-width apart.',
+          'Drive through heels to lift hips until thighs and torso align.',
+          'Hold and squeeze glutes at the top for 2 full seconds before lowering.'
+        ],
+        techniqueTips: ['Do not hyperextend lower back', 'Keep ribs pulled down'],
+        easierAlternative: 'Standard Glute Bridge',
+        harderProgression: 'Elevated Feet Glute Bridge'
+      },
+      {
+        id: 'ex_pcos_goblet_squat',
+        name: 'Tempo Goblet / Chair Squats',
+        targetMuscle: 'Quadriceps, Glutes, Core (Insulin Receptor Activation)',
+        equipment: 'dumbbells',
+        sets: 3,
+        reps: '12-15 reps',
+        restSeconds: 60,
+        instructions: [
+          'Hold a light dumbbell or water bottle at chest level.',
+          'Sit hips back and down to chair height in a controlled 3-second descent.',
+          'Drive up smoothly without jarring the joints.'
+        ],
+        techniqueTips: ['Keep heels grounded', 'Breathe out on the way up'],
+        easierAlternative: 'Bodyweight Box Squats',
+        harderProgression: '1.5 Rep Pause Squats'
+      },
+      {
+        id: 'ex_pcos_band_pullaparts',
+        name: 'Band / Towel Scapular Retractions',
+        targetMuscle: 'Upper Back, Rhomboids, Postural Chains',
+        equipment: 'resistance_bands',
+        sets: 3,
+        reps: '15 reps',
+        restSeconds: 45,
+        instructions: [
+          'Hold resistance band or towel at shoulder height with straight arms.',
+          'Pull outward by squeezing shoulder blades together behind your heart.',
+          'Return slowly under control.'
+        ],
+        techniqueTips: ['Keep shoulders away from ears', 'No shrugging'],
+        easierAlternative: 'Wall Angels',
+        harderProgression: 'Prone Cobra Holds'
+      },
+      {
+        id: 'ex_pcos_deadbug',
+        name: 'Pelvic-Braced Deadbug (Low-Cortisol Core)',
+        targetMuscle: 'Deep Transverse Abdominis, Pelvic Stability',
+        equipment: 'bodyweight',
+        sets: 3,
+        reps: '10 reps each side',
+        restSeconds: 45,
+        instructions: [
+          'Lie flat on back with arms extended up and knees bent at 90 degrees.',
+          'Slowly lower opposite arm and leg toward floor while keeping lower back pressed flat.',
+          'Return and repeat on opposite side.'
+        ],
+        techniqueTips: ['Never let lower back arch off the mat', 'Exhale during extension'],
+        easierAlternative: 'Toe Taps on Floor',
+        harderProgression: 'Deadbug with Yoga Block Squeeze'
+      }
+    ],
+    cooldown: [
+      '2 mins Child’s Pose with Deep Diaphragmatic Breathing',
+      '2 mins Reclined Butterfly Pose (Supta Baddha Konasana)',
+      '1 min Supine Spinal Twist each side'
+    ]
+  },
+
+  gym_pcos_insulin_sensitize: {
+    id: 'w_gym_pcos_insulin_sensitize',
+    name: '🌸 PCOS/PCOD Resistance & GLUT-4 Translocation (Gym)',
+    splitType: 'full_body',
+    estimatedDurationMins: 40,
+    warmup: [
+      '5 mins Incline Treadmill Steady Walk (Zone 2)',
+      '2 mins World’s Greatest Stretch',
+      '15 Bodyweight Air Squats'
+    ],
+    exercises: [
+      {
+        id: 'ex_pcos_leg_press',
+        name: 'Leg Press / Dumbbell Romanian Deadlift',
+        targetMuscle: 'Glutes, Hamstrings, Major Skeletal Muscle Mass',
+        equipment: 'gym_machines',
+        sets: 3,
+        reps: '12-15 reps (Moderate Load)',
+        restSeconds: 75,
+        instructions: [
+          'Position feet shoulder-width on platform.',
+          'Lower sled smoothly to 90-degree knee bend, avoiding rounding the lower back.',
+          'Drive through whole foot to press up without locking knees.'
+        ],
+        techniqueTips: ['Moderate weights that allow smooth control', 'Keeps cortisol low while maximizing GLUT-4 receptors']
+      },
+      {
+        id: 'ex_pcos_lat_pulldown',
+        name: 'Neutral-Grip Lat Pulldown',
+        targetMuscle: 'Latissimus Dorsi, Rhomboids, Biceps',
+        equipment: 'gym_machines',
+        sets: 3,
+        reps: '12 reps',
+        restSeconds: 60,
+        instructions: [
+          'Grip attachment, sit tall with chest lifted.',
+          'Drive elbows straight down to ribcage level and squeeze shoulder blades.'
+        ],
+        techniqueTips: ['Control the upward return for 3 seconds']
+      },
+      {
+        id: 'ex_pcos_seated_cable_row',
+        name: 'Seated Cable Row to Belly Button',
+        targetMuscle: 'Mid-Back, Trapezius, Core',
+        equipment: 'gym_machines',
+        sets: 3,
+        reps: '12-15 reps',
+        restSeconds: 60,
+        instructions: [
+          'Sit tall with knees slightly bent, pull handle toward navel.',
+          'Hold contraction for 1 second before extending arms.'
+        ],
+        techniqueTips: ['Keep torso upright without swinging']
+      }
+    ],
+    cooldown: [
+      '3 mins Low-Intensity Steady Incline Walk',
+      '2 mins Hamstring & Hip Flexor Stretches'
+    ]
   }
 };

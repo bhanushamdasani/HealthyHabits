@@ -59,19 +59,19 @@ export const WorkoutPlanView: React.FC = () => {
   const cancelRestTimer = () => {
     haptics.tap();
     if (timerRef.current) clearInterval(timerRef.current);
-    setRestSecondsRemaining(0);
-    setActiveRestExId(null);
   };
 
   // Home Routines List
   const homeRoutines = [
+    { key: 'home_pcos_hormone_balance', label: '🌸 PCOS/PCOD Hormone Strength', badge: 'Low Cortisol' },
     { key: 'home_fat_loss_hiit', label: '🔥 Fat Burn HIIT & Core', badge: 'Weight Loss' },
     { key: 'home_muscle_calisthenics', label: '💪 Calisthenics Muscle Builder', badge: 'Hypertrophy' },
-    { key: 'home_light_mobility', label: '🌸 Light Mobility & PCOS Reset', badge: 'Low Cortisol' }
+    { key: 'home_light_mobility', label: '🧘 Light Mobility & Recovery', badge: 'Active Rest' }
   ];
 
   // Gym Routines List
   const gymRoutines = [
+    { key: 'gym_pcos_insulin_sensitize', label: '🌸 PCOS/PCOD Resistance & GLUT-4', badge: 'Hormone Care' },
     { key: 'gym_fat_loss_push_pull', label: '🔥 Metabolic Compound & Cardio', badge: 'Weight Loss' },
     { key: 'ppl_push', label: 'Push (Chest/Shoulders/Tri)', badge: 'Hypertrophy' },
     { key: 'ppl_pull', label: 'Pull (Back/Biceps/Rear Delt)', badge: 'Hypertrophy' },
@@ -85,7 +85,7 @@ export const WorkoutPlanView: React.FC = () => {
   useEffect(() => {
     if (workoutEnv === 'home') {
       if (isPcos) {
-        setSelectedRoutineKey('home_light_mobility');
+        setSelectedRoutineKey('home_pcos_hormone_balance');
       } else if (goal === 'fat_loss') {
         setSelectedRoutineKey('home_fat_loss_hiit');
       } else if (goal === 'muscle_gain') {
@@ -94,7 +94,9 @@ export const WorkoutPlanView: React.FC = () => {
         setSelectedRoutineKey('home_fat_loss_hiit');
       }
     } else {
-      if (goal === 'fat_loss') {
+      if (isPcos) {
+        setSelectedRoutineKey('gym_pcos_insulin_sensitize');
+      } else if (goal === 'fat_loss') {
         setSelectedRoutineKey('gym_fat_loss_push_pull');
       } else {
         const dayOfWeek = viewedDate.getDay();
