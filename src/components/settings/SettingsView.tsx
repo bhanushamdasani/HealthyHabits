@@ -28,11 +28,25 @@ export const SettingsView: React.FC = () => {
   const to12Hour = (timeStr: string): string => formatTime12h(timeStr);
 
   // Profile Form State
-  const [profileForm, setProfileForm] = useState({
+  const [profileForm, setProfileForm] = useState<{
+    name: string;
+    heightCm: number | string;
+    startWeightKg: number | string;
+    age: number | string;
+    gender: Gender;
+    activityLevel: ActivityLevel;
+    goal: UserGoal;
+    lifestyle: LifestyleType;
+    wakeTime24: string;
+    sleepTime24: string;
+    chimeEnabled: boolean;
+    pcosFocus: boolean;
+    ironFocus: boolean;
+  }>({
     name: store.user.name || '',
-    heightCm: store.user.heightCm || 170,
-    startWeightKg: store.user.startWeightKg || 65,
-    age: store.user.age || 24,
+    heightCm: store.user.heightCm ?? 170,
+    startWeightKg: store.user.startWeightKg ?? 65,
+    age: store.user.age ?? 24,
     gender: store.user.gender || 'male',
     activityLevel: store.user.activityLevel || 1.375,
     goal: store.user.goal || 'consistency',
@@ -309,8 +323,14 @@ export const SettingsView: React.FC = () => {
             <input
               type="number"
               className="sm-input"
+              placeholder="170"
               value={profileForm.heightCm}
-              onChange={(e) => setProfileForm({ ...profileForm, heightCm: Number(e.target.value) })}
+              onChange={(e) =>
+                setProfileForm({
+                  ...profileForm,
+                  heightCm: e.target.value === '' ? '' : Number(e.target.value)
+                })
+              }
             />
           </div>
           <div style={{ flex: 1 }}>
@@ -318,8 +338,14 @@ export const SettingsView: React.FC = () => {
             <input
               type="number"
               className="sm-input"
+              placeholder="65"
               value={profileForm.startWeightKg}
-              onChange={(e) => setProfileForm({ ...profileForm, startWeightKg: Number(e.target.value) })}
+              onChange={(e) =>
+                setProfileForm({
+                  ...profileForm,
+                  startWeightKg: e.target.value === '' ? '' : Number(e.target.value)
+                })
+              }
             />
           </div>
         </div>
@@ -330,8 +356,14 @@ export const SettingsView: React.FC = () => {
             <input
               type="number"
               className="sm-input"
+              placeholder="24"
               value={profileForm.age}
-              onChange={(e) => setProfileForm({ ...profileForm, age: Number(e.target.value) })}
+              onChange={(e) =>
+                setProfileForm({
+                  ...profileForm,
+                  age: e.target.value === '' ? '' : Number(e.target.value)
+                })
+              }
             />
           </div>
           <div style={{ flex: 1 }}>

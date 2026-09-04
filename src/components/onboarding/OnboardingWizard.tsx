@@ -14,15 +14,15 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({ onComplete }
 
   // Form State
   const [name, setName] = useState('');
-  const [age, setAge] = useState<number>(24);
+  const [age, setAge] = useState<number | string>(24);
   const [gender, setGender] = useState<Gender>('male');
 
   const [heightMode, setHeightMode] = useState<'cm' | 'ft'>('cm');
-  const [heightCm, setHeightCm] = useState<number>(170);
-  const [heightFt, setHeightFt] = useState<number>(5);
-  const [heightIn, setHeightIn] = useState<number>(7);
-  const [weightKg, setWeightKg] = useState<number>(65);
-  const [goalWeightKg, setGoalWeightKg] = useState<number>(60);
+  const [heightCm, setHeightCm] = useState<number | string>(170);
+  const [heightFt, setHeightFt] = useState<number | string>(5);
+  const [heightIn, setHeightIn] = useState<number | string>(7);
+  const [weightKg, setWeightKg] = useState<number | string>(65);
+  const [goalWeightKg, setGoalWeightKg] = useState<number | string>(60);
 
   const [activity, setActivity] = useState<ActivityLevel>(1.375);
   const [goal, setGoal] = useState<UserGoal>('fat_loss');
@@ -41,8 +41,8 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({ onComplete }
         return;
       }
     } else if (targetStep === 3) {
-      const computedHeight = heightMode === 'cm' ? heightCm : heightFt * 30.48 + heightIn * 2.54;
-      if (!computedHeight || !weightKg) {
+      const computedHeight = heightMode === 'cm' ? Number(heightCm) : Number(heightFt) * 30.48 + Number(heightIn) * 2.54;
+      if (!computedHeight || !Number(weightKg)) {
         showIsland('Please specify height and weight');
         return;
       }
@@ -52,20 +52,27 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({ onComplete }
 
   const handleFinish = () => {
     haptics.triumph();
-    const finalHeight = Math.round(heightMode === 'cm' ? heightCm : heightFt * 30.48 + heightIn * 2.54);
+    const finalHeight = Math.round(
+      heightMode === 'cm'
+        ? Number(heightCm) || 170
+        : (Number(heightFt) || 5) * 30.48 + (Number(heightIn) || 7) * 2.54
+    );
 
     const femaleCons: FemaleHealthConsideration[] = [];
     if (pcosFocus) femaleCons.push('pcos');
     if (ironFocus) femaleCons.push('iron_focus');
+
+    const numWeight = Number(weightKg) || 65;
+    const numGoalWeight = Number(goalWeightKg) || (goal === 'fat_loss' ? numWeight - 5 : numWeight);
 
     const profileData = {
       name: name.trim() || 'Warrior',
       age: Number(age) || 24,
       gender,
       heightCm: finalHeight,
-      startWeightKg: Number(weightKg) || 65,
-      currentWeightKg: Number(weightKg) || 65,
-      goalWeightKg: Number(goalWeightKg) || (goal === 'fat_loss' ? Number(weightKg) - 5 : Number(weightKg)),
+      startWeightKg: numWeight,
+      currentWeightKg: numWeight,
+      goalWeightKg: numGoalWeight,
       activityLevel: activity,
       goal,
       lifestyle,
@@ -190,8 +197,9 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({ onComplete }
                 <input
                   type="number"
                   className="ios-input-control"
+                  placeholder="24"
                   value={age}
-                  onChange={(e) => setAge(Number(e.target.value))}
+                  onChange={(e) => setAge(e.target.value === '' ? '' : Number(e.target.value))}
                 />
               </div>
 
@@ -266,8 +274,9 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({ onComplete }
                 <input
                   type="number"
                   className="ios-input-control"
+                  placeholder="170"
                   value={heightCm}
-                  onChange={(e) => setHeightCm(Number(e.target.value))}
+                  onChange={(e) => setHeightCm(e.target.value === '' ? '' : Number(e.target.value))}
                 />
               </div>
             ) : (
@@ -277,8 +286,9 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({ onComplete }
                   <input
                     type="number"
                     className="ios-input-control"
+                    placeholder="5"
                     value={heightFt}
-                    onChange={(e) => setHeightFt(Number(e.target.value))}
+                    onChange={(e) => setHeightFt(e.target.value === '' ? '' : Number(e.target.value))}
                   />
                 </div>
                 <div className="ios-input-box" style={{ flex: 1 }}>
@@ -286,8 +296,9 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({ onComplete }
                   <input
                     type="number"
                     className="ios-input-control"
+                    placeholder="7"
                     value={heightIn}
-                    onChange={(e) => setHeightIn(Number(e.target.value))}
+                    onChange={(e) => setHeightIn(e.target.value === '' ? '' : Number(e.target.value))}
                   />
                 </div>
               </div>
@@ -299,8 +310,9 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({ onComplete }
                 <input
                   type="number"
                   className="ios-input-control"
+                  placeholder="65"
                   value={weightKg}
-                  onChange={(e) => setWeightKg(Number(e.target.value))}
+                  onChange={(e) => setWeightKg(e.target.value === '' ? '' : Number(e.target.value))}
                 />
               </div>
 
@@ -309,8 +321,9 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({ onComplete }
                 <input
                   type="number"
                   className="ios-input-control"
+                  placeholder="60"
                   value={goalWeightKg}
-                  onChange={(e) => setGoalWeightKg(Number(e.target.value))}
+                  onChange={(e) => setGoalWeightKg(e.target.value === '' ? '' : Number(e.target.value))}
                 />
               </div>
             </div>
