@@ -27,7 +27,10 @@ export const GroceryListModal: React.FC<GroceryListModalProps> = ({ isOpen = tru
   if (!isOpen) return null;
 
   const { store, showIsland } = usePlanner();
-  const rawList = useMemo(() => generateWeeklyGroceryList(store.user), [store.user]);
+  const rawList = useMemo(
+    () => generateWeeklyGroceryList(store.user, new Date(), store.dietPlan, store.dateDietOverrides),
+    [store.user, store.dietPlan, store.dateDietOverrides]
+  );
 
   const [checkedMap, setCheckedMap] = useState<Record<string, boolean>>({});
   const [selectedCategory, setSelectedCategory] = useState<string>('all');

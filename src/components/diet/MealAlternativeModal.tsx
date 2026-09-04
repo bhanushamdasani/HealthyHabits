@@ -146,9 +146,17 @@ export const MealAlternativeModal: React.FC<MealAlternativeModalProps> = ({
           {alternatives.map((alt) => (
             <div
               key={alt.id}
+              role="button"
+              tabIndex={0}
               onClick={() => {
                 haptics.success();
                 onSelectAlternative(alt);
+              }}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  haptics.success();
+                  onSelectAlternative(alt);
+                }
               }}
               style={{
                 background: 'var(--surface)',
@@ -156,8 +164,10 @@ export const MealAlternativeModal: React.FC<MealAlternativeModalProps> = ({
                 borderRadius: '18px',
                 padding: '14px 16px',
                 cursor: 'pointer',
-                transition: 'all 0.2s ease',
-                boxShadow: 'var(--shadow-sm)'
+                transition: 'all 0.15s ease',
+                boxShadow: 'var(--shadow-sm)',
+                userSelect: 'none',
+                WebkitTapHighlightColor: 'transparent'
               }}
               onMouseEnter={(e) => (e.currentTarget.style.borderColor = 'var(--primary)')}
               onMouseLeave={(e) => (e.currentTarget.style.borderColor = 'var(--border-glass)')}
@@ -195,13 +205,19 @@ export const MealAlternativeModal: React.FC<MealAlternativeModalProps> = ({
                 </div>
 
                 <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    haptics.success();
+                    onSelectAlternative(alt);
+                  }}
                   style={{
                     background: 'var(--primary)',
                     color: '#ffffff',
                     border: 'none',
-                    padding: '6px 14px',
+                    padding: '8px 16px',
                     borderRadius: '10px',
-                    fontSize: '0.75rem',
+                    fontSize: '0.78rem',
                     fontWeight: 800,
                     cursor: 'pointer',
                     flexShrink: 0

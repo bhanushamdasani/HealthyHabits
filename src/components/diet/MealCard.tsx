@@ -255,19 +255,28 @@ export const MealCard: React.FC<MealCardProps> = ({
         </a>
 
         <button
-          onClick={onOpenSwapModal}
+          type="button"
+          onClick={(e) => {
+            e.stopPropagation();
+            haptics.tap();
+            onOpenSwapModal();
+          }}
           style={{
             background: 'var(--primary-dim)',
-            border: 'none',
+            border: '1px solid rgba(0, 113, 227, 0.2)',
             color: 'var(--primary)',
-            padding: '6px 12px',
+            padding: '7px 14px',
             borderRadius: '10px',
-            fontSize: '0.75rem',
+            fontSize: '0.78rem',
             fontWeight: 800,
-            cursor: 'pointer'
+            cursor: 'pointer',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '4px'
           }}
         >
-          🔄 Swap
+          <span>🔄</span>
+          <span>Swap</span>
         </button>
       </div>
     </div>

@@ -123,7 +123,7 @@ export function getMealPlanForDate(
 }
 
 /**
- * Replaces a meal in a single day plan and recalculates day totals.
+ * Replaces a meal in a single day plan and recalculates day totals safely.
  */
 export function replaceSingleDayMeal(
   dayPlan: DayDietPlan,
@@ -131,10 +131,23 @@ export function replaceSingleDayMeal(
   replacement: CuratedMeal,
   snackIdx: number = 0
 ): DayDietPlan {
+  if (!dayPlan) {
+    return {
+      breakfast: slot === 'breakfast' ? replacement : CURATED_MEAL_DATABASE[0],
+      lunch: slot === 'lunch' ? replacement : CURATED_MEAL_DATABASE[1],
+      dinner: slot === 'dinner' ? replacement : CURATED_MEAL_DATABASE[2],
+      snacks: slot === 'snack' ? [replacement] : [CURATED_MEAL_DATABASE[3]],
+      totalCalories: replacement?.estimatedNutrition?.calories || 400,
+      totalProtein: replacement?.estimatedNutrition?.proteinGrams || 15
+    };
+  }
+
   const updated = JSON.parse(JSON.stringify(dayPlan)) as DayDietPlan;
 
   if (slot === 'snack') {
-    if (!updated.snacks) updated.snacks = [];
+    if (!updated.snacks || !Array.isArray(updated.snacks)) {
+      updated.snacks = [];
+    }
     if (updated.snacks[snackIdx]) {
       updated.snacks[snackIdx] = replacement;
     } else {
@@ -144,20 +157,24 @@ export function replaceSingleDayMeal(
     updated[slot] = replacement;
   }
 
-  const snacksTotalCal = (updated.snacks || []).reduce((sum, s) => sum + s.estimatedNutrition.calories, 0);
-  const snacksTotalProt = (updated.snacks || []).reduce((sum, s) => sum + s.estimatedNutrition.proteinGrams, 0);
+  const snacksTotalCal = (updated.snacks || []).reduce(
+    (sum, s) => sum + (s?.estimatedNutrition?.calories || 0),
+    0
+  );
+  const snacksTotalProt = (updated.snacks || []).reduce(
+    (sum, s) => sum + (s?.estimatedNutrition?.proteinGrams || 0),
+    0
+  );
 
-  updated.totalCalories =
-    updated.breakfast.estimatedNutrition.calories +
-    updated.lunch.estimatedNutrition.calories +
-    updated.dinner.estimatedNutrition.calories +
-    snacksTotalCal;
+  const bfCal = updated.breakfast?.estimatedNutrition?.calories || 0;
+  const bfProt = updated.breakfast?.estimatedNutrition?.proteinGrams || 0;
+  const lunchCal = updated.lunch?.estimatedNutrition?.calories || 0;
+  const lunchProt = updated.lunch?.estimatedNutrition?.proteinGrams || 0;
+  const dinnerCal = updated.dinner?.estimatedNutrition?.calories || 0;
+  const dinnerProt = updated.dinner?.estimatedNutrition?.proteinGrams || 0;
 
-  updated.totalProtein =
-    updated.breakfast.estimatedNutrition.proteinGrams +
-    updated.lunch.estimatedNutrition.proteinGrams +
-    updated.dinner.estimatedNutrition.proteinGrams +
-    snacksTotalProt;
+  updated.totalCalories = bfCal + lunchCal + dinnerCal + snacksTotalCal;
+  updated.totalProtein = bfProt + lunchProt + dinnerProt + snacksTotalProt;
 
   return updated;
 }

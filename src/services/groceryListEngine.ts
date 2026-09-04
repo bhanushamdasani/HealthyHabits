@@ -96,13 +96,18 @@ export function normalizeIngredientName(name: string): { normalized: string; cat
 /**
  * Generates an organized, realistic 7-Day (1-Week) Grocery Checklist tailored to the user's active profile and meals.
  */
-export function generateWeeklyGroceryList(profile: UserProfile, startDate: Date = new Date()): CategorizedGroceryList {
+export function generateWeeklyGroceryList(
+  profile: UserProfile,
+  startDate: Date = new Date(),
+  dietPlan?: any,
+  dateDietOverrides?: Record<string, any>
+): CategorizedGroceryList {
   const itemsMap = new Map<string, { category: GroceryItem['category']; unit: string; meals: Set<string> }>();
 
   // Iterate over exactly the next 7 calendar days
   for (let i = 0; i < 7; i++) {
     const d = addDays(startDate, i);
-    const dayPlan = getMealPlanForDate(d, profile);
+    const dayPlan = getMealPlanForDate(d, profile, dietPlan, dateDietOverrides);
 
     const meals: CuratedMeal[] = [
       dayPlan.breakfast,

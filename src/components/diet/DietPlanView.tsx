@@ -54,8 +54,8 @@ export const DietPlanView: React.FC<DietPlanViewProps> = ({ onOpenGroceryModal }
 
   // Dynamic 15-day non-repeating meal plan for currently viewed calendar date
   const dayPlan = useMemo(() => {
-    return getMealPlanForDate(viewedDate, store.user, store.dietPlan);
-  }, [viewedDate, store.user, store.dietPlan]);
+    return getMealPlanForDate(viewedDate, store.user, store.dietPlan, store.dateDietOverrides);
+  }, [viewedDate, store.user, store.dietPlan, store.dateDietOverrides]);
 
   // Fetch scheduled meal tasks from user's active schedule for the viewed day
   const dayScheduleTasks = store.schedule[activeDayName] || [];
@@ -385,7 +385,8 @@ export const DietPlanView: React.FC<DietPlanViewProps> = ({ onOpenGroceryModal }
               activeDayName,
               activeSwapTarget.slot,
               replacement,
-              activeSwapTarget.snackIdx
+              activeSwapTarget.snackIdx,
+              viewedDate
             );
             setActiveSwapTarget(null);
           }}

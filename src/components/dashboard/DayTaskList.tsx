@@ -44,8 +44,8 @@ export const DayTaskList: React.FC<DayTaskListProps> = ({
 
   // Seamlessly fetch today's exact 15-day / PCOS tailored diet plan
   const dayDiet = useMemo(() => {
-    return getMealPlanForDate(viewedDate, store.user);
-  }, [viewedDate, store.user]);
+    return getMealPlanForDate(viewedDate, store.user, store.dietPlan, store.dateDietOverrides);
+  }, [viewedDate, store.user, store.dietPlan, store.dateDietOverrides]);
 
   // Dynamically blend the personalized diet plan directly into the daily tasks timeline cleanly
   const combinedTasks = useMemo(() => {
