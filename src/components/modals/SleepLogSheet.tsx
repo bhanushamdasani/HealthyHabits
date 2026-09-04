@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { usePlanner } from '../../context/PlannerContext';
 import { formatDateKey } from '../../utils/dateUtils';
-import { formatTime24h } from '../../utils/timeUtils';
+import { formatTime12h } from '../../utils/timeUtils';
+import { ModernClockPicker } from '../ui/ModernClockPicker';
 
 interface SleepLogSheetProps {
   isOpen: boolean;
@@ -13,16 +14,16 @@ export const SleepLogSheet: React.FC<SleepLogSheetProps> = ({ isOpen, onClose })
   const dateKey = formatDateKey(viewedDate);
   const existing = store.sleepLogs[dateKey];
 
-  const [bedtime, setBedtime] = useState('22:30');
-  const [waketime, setWaketime] = useState('06:30');
+  const [bedtime, setBedtime] = useState('10:30 PM');
+  const [waketime, setWaketime] = useState('06:30 AM');
 
   useEffect(() => {
     if (existing) {
-      setBedtime(formatTime24h(existing.bedtime || '22:30'));
-      setWaketime(formatTime24h(existing.waketime || '06:30'));
+      setBedtime(formatTime12h(existing.bedtime || '10:30 PM'));
+      setWaketime(formatTime12h(existing.waketime || '06:30 AM'));
     } else {
-      setBedtime(formatTime24h(store.user.sleepTime || '22:30'));
-      setWaketime(formatTime24h(store.user.wakeTime || '06:30'));
+      setBedtime(formatTime12h(store.user.sleepTime || '10:00 PM'));
+      setWaketime(formatTime12h(store.user.wakeTime || '06:00 AM'));
     }
   }, [existing, isOpen, store.user.sleepTime, store.user.wakeTime]);
 
@@ -36,29 +37,25 @@ export const SleepLogSheet: React.FC<SleepLogSheetProps> = ({ isOpen, onClose })
   return (
     <>
       <div className="sheet-backdrop active" onClick={onClose} />
-      <div className="bottom-sheet active">
-        <div className="sheet-drag-handle" />
-        <h3 style={{ margin: 0, fontWeight: 800 }}>Log Circadian Sleep</h3>
+      <div className="bottom-sheet active" style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+        <div className="sheet-drag-handle" style={{ marginBottom: '2px' }} />
+        <h3 style={{ margin: 0, fontWeight: 900, fontSize: '1.2rem' }}>Log Circadian Sleep</h3>
 
-        <span className="sm-label">Bedtime</span>
-        <input
-          type="time"
-          className="sm-input"
+        <ModernClockPicker
+          label="Bedtime (Lights Out)"
+          icon="🌙"
           value={bedtime}
-          onChange={(e) => setBedtime(e.target.value)}
-          style={{ padding: '10px' }}
+          onChange={(t) => setBedtime(t)}
         />
 
-        <span className="sm-label">Wake Up Time</span>
-        <input
-          type="time"
-          className="sm-input"
+        <ModernClockPicker
+          label="Wake Up Time"
+          icon="☀️"
           value={waketime}
-          onChange={(e) => setWaketime(e.target.value)}
-          style={{ padding: '10px' }}
+          onChange={(t) => setWaketime(t)}
         />
 
-        <button className="btn-primary" onClick={handleSave}>
+        <button className="btn-primary" onClick={handleSave} style={{ marginTop: '6px' }}>
           Save Sleep Log
         </button>
       </div>

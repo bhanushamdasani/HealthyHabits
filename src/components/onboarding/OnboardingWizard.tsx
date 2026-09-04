@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { usePlanner } from '../../context/PlannerContext';
 import { Gender, ActivityLevel, UserGoal, LifestyleType, FemaleHealthConsideration } from '../../types';
 import { generatePersonalizedSchedule } from '../../services/personalizationEngine';
+import { ModernClockPicker } from '../ui/ModernClockPicker';
 import { haptics } from '../../utils/haptics';
 
 interface OnboardingWizardProps {
@@ -99,7 +100,7 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({ onComplete }
     <div
       id="onboarding"
       style={{
-        position: 'absolute',
+        position: 'fixed',
         top: 0,
         left: 0,
         width: '100%',
@@ -108,10 +109,12 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({ onComplete }
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
-        background: 'rgba(0, 0, 0, 0.7)',
+        background: 'rgba(0, 0, 0, 0.75)',
         backdropFilter: 'blur(20px)',
         WebkitBackdropFilter: 'blur(20px)',
-        padding: '20px'
+        padding: '16px 12px',
+        overflowY: 'auto',
+        WebkitOverflowScrolling: 'touch'
       }}
     >
       <div
@@ -119,12 +122,15 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({ onComplete }
         style={{
           background: 'var(--surface-solid)',
           border: '1px solid var(--border-glass)',
-          borderRadius: '34px',
-          padding: '28px 24px',
-          boxShadow: '0 25px 60px rgba(0, 0, 0, 0.45)',
+          borderRadius: '28px',
+          padding: 'clamp(20px, 5vw, 28px) clamp(16px, 4vw, 24px)',
+          boxShadow: '0 25px 60px rgba(0, 0, 0, 0.5)',
           width: '100%',
-          maxWidth: '440px',
-          position: 'relative'
+          maxWidth: '460px',
+          maxHeight: 'calc(100dvh - 32px)',
+          overflowY: 'auto',
+          position: 'relative',
+          margin: 'auto'
         }}
       >
         {/* Top Header Row with Stepper Dots & Skip */}
@@ -374,26 +380,20 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({ onComplete }
               </p>
             </div>
 
-            <div style={{ display: 'flex', gap: '10px' }}>
-              <div className="ios-input-box" style={{ flex: 1 }}>
-                <span className="ios-input-label">Wake Time</span>
-                <input
-                  type="text"
-                  className="ios-input-control"
-                  value={wakeTime}
-                  onChange={(e) => setWakeTime(e.target.value)}
-                />
-              </div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+              <ModernClockPicker
+                label="Circadian Wake Up Time"
+                icon="☀️"
+                value={wakeTime}
+                onChange={(t) => setWakeTime(t)}
+              />
 
-              <div className="ios-input-box" style={{ flex: 1 }}>
-                <span className="ios-input-label">Sleep Target</span>
-                <input
-                  type="text"
-                  className="ios-input-control"
-                  value={sleepTime}
-                  onChange={(e) => setSleepTime(e.target.value)}
-                />
-              </div>
+              <ModernClockPicker
+                label="Sleep Target (Lights Out)"
+                icon="🌙"
+                value={sleepTime}
+                onChange={(t) => setSleepTime(t)}
+              />
             </div>
 
             {/* Workout Location Selector */}
