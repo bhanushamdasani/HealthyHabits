@@ -11,17 +11,16 @@
 
 html, body {
   width: 100%;
-  min-height: 100dvh;
   height: 100%;
   margin: 0;
   padding: 0;
-  overflow-x: hidden;
+  overflow: hidden;
   font-family: var(--font-sans);
   background-color: var(--app-bg);
   color: var(--text-1);
   -webkit-user-select: none;
   user-select: none;
-  overscroll-behavior-y: none;
+  overscroll-behavior: none;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -75,20 +74,18 @@ img, svg, picture, video, canvas {
 /* Root App Wrapper & Container */
 #root {
   width: 100%;
-  min-height: 100dvh;
   height: 100%;
   display: flex;
   justify-content: center;
   align-items: stretch;
-  overflow-x: hidden;
+  overflow: hidden;
   background-color: var(--app-bg);
 }
 
 .app-container {
   width: 100%;
   max-width: 100%;
-  min-height: 100dvh;
-  height: 100dvh;
+  height: 100%;
   background-color: var(--app-bg);
   color: var(--text-1);
   position: relative;

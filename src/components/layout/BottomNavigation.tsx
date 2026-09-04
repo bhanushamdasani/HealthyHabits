@@ -25,10 +25,10 @@ export const BottomNavigation: React.FC = () => {
       style={{
         width: '100%',
         flexShrink: 0,
-        height: '56px',
-        paddingBottom: 'env(safe-area-inset-bottom, 0px)',
-        paddingLeft: '12px',
-        paddingRight: '12px',
+        paddingTop: '6px',
+        paddingBottom: 'max(8px, env(safe-area-inset-bottom, 8px))',
+        paddingLeft: 'clamp(8px, 2.5vw, 16px)',
+        paddingRight: 'clamp(8px, 2.5vw, 16px)',
         background: 'var(--surface-solid)',
         backdropFilter: 'blur(30px) saturate(180%)',
         WebkitBackdropFilter: 'blur(30px) saturate(180%)',
@@ -52,10 +52,10 @@ export const BottomNavigation: React.FC = () => {
             aria-label={item.label}
             style={{
               flex: 1,
-              height: '44px',
               minWidth: 0,
+              padding: '6px 2px',
               background: isActive ? 'var(--primary-dim)' : 'transparent',
-              borderRadius: '14px',
+              borderRadius: '12px',
               color: isActive ? 'var(--primary)' : 'var(--text-2)',
               border: 'none',
               display: 'flex',
@@ -63,7 +63,6 @@ export const BottomNavigation: React.FC = () => {
               alignItems: 'center',
               justifyContent: 'center',
               gap: '2px',
-              padding: '4px 0',
               cursor: 'pointer',
               WebkitTapHighlightColor: 'transparent',
               transition: 'all 0.2s cubic-bezier(0.16, 1, 0.3, 1)'
@@ -71,8 +70,8 @@ export const BottomNavigation: React.FC = () => {
           >
             <span
               style={{
-                fontSize: '1.2rem',
-                lineHeight: 1,
+                fontSize: '1.25rem',
+                lineHeight: 1.1,
                 display: 'block',
                 transform: isActive ? 'scale(1.08)' : 'scale(1)',
                 transition: 'transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1)'
@@ -82,7 +81,7 @@ export const BottomNavigation: React.FC = () => {
             </span>
             <span
               style={{
-                fontSize: '0.65rem',
+                fontSize: '0.68rem',
                 fontWeight: isActive ? 800 : 600,
                 letterSpacing: '-0.2px',
                 lineHeight: 1,
