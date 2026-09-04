@@ -23,6 +23,8 @@ export const BottomNavigation: React.FC = () => {
       className="ios-tab-bar"
       aria-label="Main Navigation"
       style={{
+        position: 'sticky',
+        bottom: 0,
         width: '100%',
         flexShrink: 0,
         paddingTop: '6px',
@@ -38,7 +40,7 @@ export const BottomNavigation: React.FC = () => {
         alignItems: 'center',
         boxSizing: 'border-box',
         zIndex: 1000,
-        position: 'relative'
+        marginTop: 'auto'
       }}
     >
       {navItems.map((item) => {
