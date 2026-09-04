@@ -42,12 +42,12 @@ export const MealCard: React.FC<MealCardProps> = ({
           : isCompleted
           ? '1px solid rgba(52, 199, 89, 0.4)'
           : '1px solid var(--border-glass)',
-        borderRadius: '22px',
-        padding: '16px 18px',
-        marginBottom: '14px',
-        boxShadow: windowStatus?.isCurrent ? '0 8px 24px var(--primary-dim)' : 'var(--shadow)',
+        borderRadius: '18px',
+        padding: '12px 15px',
+        marginBottom: '10px',
+        boxShadow: windowStatus?.isCurrent ? '0 6px 18px var(--primary-dim)' : 'var(--shadow-sm)',
         position: 'relative',
-        transition: 'all 0.25s ease'
+        transition: 'all 0.2s ease'
       }}
     >
       {/* Top Header: Slot Title + Time + Window Badge + Calories */}

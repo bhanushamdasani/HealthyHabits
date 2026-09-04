@@ -92,19 +92,6 @@ export const DietPlanView: React.FC<DietPlanViewProps> = ({ onOpenGroceryModal }
   const isLunchDone = lunchTask ? !!store.history[`${activeDateKey}-${lunchTask.id}`] : false;
   const isDinnerDone = dinnerTask ? !!store.history[`${activeDateKey}-${dinnerTask.id}`] : false;
 
-  // Contextual Daily Nutrition Tip
-  const dailyTip = useMemo(() => {
-    const dayIndex = Math.abs(viewedDate.getDate() + viewedDate.getMonth() * 30) % 5;
-    const tips = [
-      '💡 Fiber-First Rule: Eat fresh cucumber/salad 5 mins before meals to blunt glucose absorption by up to 35%.',
-      '💡 Chewing Architecture: Chew each bite 20-25 times to stimulate cephalic GLP-1 and satiety peptides.',
-      '💡 Post-Meal Walk: A brisk 10-minute walk after lunch/dinner clears up to 40% of postprandial glucose spike.',
-      '💡 Hydration Buffer: Avoid drinking large glasses of chilled water during meals; hydrate 30 mins before or after.',
-      '💡 Casein Window: Dairy casein and tofu at dinner provide slow-release amino acids throughout your sleep cycle.'
-    ];
-    return tips[dayIndex];
-  }, [viewedDate]);
-
   return (
     <div style={{ paddingTop: '12px', width: '100%' }}>
       {/* 1. Target & Variety Banner */}
@@ -212,15 +199,15 @@ export const DietPlanView: React.FC<DietPlanViewProps> = ({ onOpenGroceryModal }
       </div>
 
       {/* 2. 15-Day Horizontal Calendar Day Strip */}
-      <div style={{ padding: '0 20px 8px', fontSize: '0.8rem', fontWeight: 800, color: 'var(--text-2)' }}>
-        15-DAY CALENDAR SCHEDULE (NO REPEATS)
+      <div style={{ padding: '0 clamp(12px, 3.5vw, 18px) 6px', fontSize: '0.74rem', fontWeight: 800, color: 'var(--text-2)', letterSpacing: '0.3px' }}>
+        15-DAY MEAL HORIZON (NO REPEATS)
       </div>
       <div
         className="tabs"
         style={{
           display: 'flex',
           gap: '8px',
-          padding: '0 20px 14px',
+          padding: '0 clamp(12px, 3.5vw, 18px) 10px',
           overflowX: 'auto',
           scrollSnapType: 'x mandatory'
         }}
@@ -237,25 +224,25 @@ export const DietPlanView: React.FC<DietPlanViewProps> = ({ onOpenGroceryModal }
               style={{
                 flexShrink: 0,
                 scrollSnapAlign: 'start',
-                minWidth: '58px',
-                padding: '10px 8px',
-                borderRadius: '16px',
+                minWidth: '54px',
+                padding: '8px 6px',
+                borderRadius: '14px',
                 border: isSelected ? '2px solid var(--primary)' : '1px solid var(--border-glass)',
                 background: isSelected ? 'var(--primary)' : 'var(--surface)',
                 color: isSelected ? '#ffffff' : 'var(--text-1)',
                 display: 'flex',
                 flexDirection: 'column',
                 alignItems: 'center',
-                gap: '4px',
+                gap: '2px',
                 cursor: 'pointer',
-                boxShadow: isSelected ? '0 4px 15px var(--primary-dim)' : 'none',
+                boxShadow: isSelected ? '0 3px 12px var(--primary-dim)' : 'none',
                 transition: 'all 0.2s ease'
               }}
             >
-              <span style={{ fontSize: '0.65rem', fontWeight: 800, textTransform: 'uppercase', opacity: isSelected ? 1 : 0.7 }}>
+              <span style={{ fontSize: '0.62rem', fontWeight: 800, textTransform: 'uppercase', opacity: isSelected ? 1 : 0.7 }}>
                 {day.label}
               </span>
-              <span style={{ fontSize: '1.1rem', fontWeight: 900 }}>
+              <span style={{ fontSize: '1rem', fontWeight: 900 }}>
                 {day.dayNum}
               </span>
             </button>
@@ -263,24 +250,8 @@ export const DietPlanView: React.FC<DietPlanViewProps> = ({ onOpenGroceryModal }
         })}
       </div>
 
-      {/* 3. Daily Context Tip Card */}
-      <div
-        style={{
-          margin: '0 20px 14px',
-          background: 'var(--surface-2)',
-          border: '1px solid var(--border-glass)',
-          borderRadius: '16px',
-          padding: '12px 16px',
-          fontSize: '0.8rem',
-          color: 'var(--text-1)',
-          lineHeight: 1.4
-        }}
-      >
-        {dailyTip}
-      </div>
-
-      {/* 4. Selected Day's Meals */}
-      <div style={{ padding: '0 20px calc(140px + env(safe-area-inset-bottom))' }}>
+      {/* 3. Selected Day's Meals */}
+      <div style={{ padding: '0 clamp(12px, 3.5vw, 18px) 24px' }}>
         <div
           style={{
             display: 'flex',

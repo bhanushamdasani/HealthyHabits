@@ -1,29 +1,14 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { usePlanner } from '../../context/PlannerContext';
 import { useTheme } from '../../context/ThemeContext';
 import { formatDateKey, DAYS_OF_WEEK } from '../../utils/dateUtils';
 import { timeToMinutes } from '../../utils/timeUtils';
-import { getRandomQuote } from '../../data/quotes';
+import { calculateStreak } from '../../services/streakEngine';
 import { haptics } from '../../utils/haptics';
 
 export const HeroCard: React.FC = () => {
   const { store, viewedDate, toggleTask, showIsland, triggerConfettiAnimation } = usePlanner();
   const { theme } = useTheme();
-  const [isBreathing, setIsBreathing] = useState(false);
-  const [quote, setQuote] = useState('');
-  const [, setTicker] = useState(0);
-
-  useEffect(() => {
-    setQuote(getRandomQuote());
-  }, []);
-
-  // 60-second ticker to update live countdowns
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setTicker((prev) => prev + 1);
-    }, 60000);
-    return () => clearInterval(interval);
-  }, []);
 
   const dateKey = formatDateKey(viewedDate);
   const todayKey = formatDateKey(new Date());
@@ -37,10 +22,19 @@ export const HeroCard: React.FC = () => {
     return list.sort((a, b) => timeToMinutes(a.t) - timeToMinutes(b.t));
   }, [recurringTasks, oneOffTasks]);
 
+  const streakInfo = useMemo(() => {
+    return calculateStreak(
+      store.history,
+      store.schedule,
+      store.dayModes,
+      store.dateTasks,
+      0
+    );
+  }, [store.history, store.schedule, store.dayModes, store.dateTasks]);
+
   // Completion calculation
   const doneCount = combinedTasks.filter((t) => store.history[`${dateKey}-${t.id}`]).length;
   const pct = combinedTasks.length > 0 ? Math.round((doneCount / combinedTasks.length) * 100) : 0;
-  const strokeOffset = 125.6 - (125.6 * pct) / 100;
 
   // Trigger celebration on 100%
   useEffect(() => {
@@ -62,38 +56,26 @@ export const HeroCard: React.FC = () => {
     }
   }
 
-  let heroBadge = '⏱️ Next Ritual';
-  let heroTime = '--:--';
-  let heroTitle = 'Syncing Timeline...';
-  let heroDesc = 'Organizing today’s metabolic schedule';
-  let countdownText = '';
+  let heroBadge = 'Next Ritual';
+  let heroTime = activeTask ? activeTask.t : '--:--';
+  let heroTitle = activeTask ? activeTask.act : 'Daily Protocol Done';
+  let heroDesc = activeTask ? activeTask.instr : 'All scheduled tasks completed for today.';
 
   if (!isViewingToday) {
-    heroBadge = '📅 Calendar Log';
+    heroBadge = 'Calendar Record';
     heroTime = `${doneCount}/${combinedTasks.length}`;
-    heroTitle = pct === 100 ? 'Day Fully Completed' : 'Historical Overview';
-    heroDesc = 'Inspecting habits and protocol records for this date.';
-  } else if (activeTask) {
-    heroBadge = '⏱️ Next Ritual';
-    heroTime = activeTask.t;
-    heroTitle = activeTask.act;
-    heroDesc = activeTask.instr;
-    const diff = timeToMinutes(activeTask.t) - nowMins;
-    if (diff > 0) {
-      const h = Math.floor(diff / 60);
-      const m = diff % 60;
-      countdownText = h > 0 ? `In ${h}h ${m}m` : `In ${m}m`;
-    }
-  } else if (pct === 100) {
-    heroBadge = '🏆 Day Complete';
+    heroTitle = pct === 100 ? 'Day Fully Completed' : 'Daily Progress';
+    heroDesc = 'Inspecting historical log for this date.';
+  } else if (!activeTask && pct === 100) {
+    heroBadge = 'Completed';
     heroTime = '100%';
-    heroTitle = 'Daily Protocol Accomplished';
-    heroDesc = 'All scheduled tasks completed. Deep nocturnal restoration awaits.';
-  } else {
-    heroBadge = '🌙 Wind-Down';
+    heroTitle = 'Protocol Accomplished';
+    heroDesc = 'All daily rituals achieved. Rest and recover.';
+  } else if (!activeTask) {
+    heroBadge = 'Wind-Down';
     heroTime = store.user.sleepTime || '10:00 PM';
     heroTitle = 'Evening Rest Window';
-    heroDesc = 'Prepare for restorative sleep to recharge your metabolic rhythm.';
+    heroDesc = 'Prepare for restorative nocturnal sleep.';
   }
 
   const isLight = theme === 'light';
@@ -101,130 +83,153 @@ export const HeroCard: React.FC = () => {
   return (
     <div
       style={{
-        margin: '0 clamp(12px, 3.5vw, 18px) 12px',
+        margin: '0 clamp(12px, 3.5vw, 18px) 10px',
         background: isLight
-          ? 'linear-gradient(135deg, rgba(255, 255, 255, 0.92) 0%, rgba(244, 247, 252, 0.95) 100%)'
-          : 'linear-gradient(135deg, rgba(28, 28, 30, 0.95) 0%, rgba(14, 16, 24, 0.95) 100%)',
-        backdropFilter: 'blur(35px) saturate(190%)',
-        WebkitBackdropFilter: 'blur(35px) saturate(190%)',
+          ? 'linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(246, 248, 252, 0.95) 100%)'
+          : 'linear-gradient(135deg, rgba(28, 30, 40, 0.95) 0%, rgba(16, 18, 26, 0.95) 100%)',
+        backdropFilter: 'blur(30px) saturate(180%)',
+        WebkitBackdropFilter: 'blur(30px) saturate(180%)',
         border: isLight ? '1px solid rgba(0, 0, 0, 0.08)' : '1px solid var(--border-glass)',
         boxShadow: isLight
-          ? '0 12px 35px rgba(0, 0, 0, 0.06), inset 0 1px 1px #ffffff'
-          : '0 16px 40px rgba(0, 0, 0, 0.4), inset 0 1px 1px rgba(255, 255, 255, 0.2)',
-        borderRadius: '24px',
-        padding: '16px clamp(14px, 3.5vw, 20px)',
+          ? '0 8px 24px rgba(0, 0, 0, 0.04)'
+          : '0 12px 30px rgba(0, 0, 0, 0.35)',
+        borderRadius: '20px',
+        padding: '14px 16px',
         color: isLight ? '#111827' : '#ffffff',
-        position: 'relative',
-        transition: 'all 0.35s ease'
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        gap: '12px'
       }}
     >
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-        <div style={{ flex: 1, paddingRight: '12px' }}>
-          {/* Status Badge */}
-          <div
+      <div style={{ flex: 1, minWidth: 0 }}>
+        {/* Top meta pill */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '3px' }}>
+          <span
             style={{
-              fontSize: '0.72rem',
+              fontSize: '0.68rem',
               fontWeight: 800,
               color: 'var(--primary)',
               textTransform: 'uppercase',
-              letterSpacing: '0.8px',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '6px',
-              marginBottom: '4px'
+              letterSpacing: '0.5px',
+              background: 'var(--primary-dim)',
+              padding: '2px 7px',
+              borderRadius: '6px'
             }}
           >
-            <span>{heroBadge}</span>
-            {countdownText && (
-              <span
-                style={{
-                  background: 'var(--primary-dim)',
-                  color: 'var(--primary)',
-                  padding: '2px 8px',
-                  borderRadius: '8px',
-                  fontSize: '0.68rem',
-                  fontWeight: 800
-                }}
-              >
-                {countdownText}
-              </span>
-            )}
-          </div>
-
-          {/* Time / Status Headline */}
-          <div
+            {heroBadge}
+          </span>
+          <span
             style={{
-              fontSize: '2rem',
-              fontWeight: 900,
-              letterSpacing: '-0.5px',
-              fontVariantNumeric: 'tabular-nums',
-              color: isLight ? '#111827' : '#ffffff'
+              fontSize: '0.72rem',
+              fontWeight: 800,
+              color: isLight ? '#4b5563' : 'var(--text-2)'
             }}
           >
             {heroTime}
-          </div>
-
-          <div
-            style={{
-              fontWeight: 800,
-              fontSize: '1.05rem',
-              color: isLight ? '#1f2937' : '#ffffff',
-              marginTop: '2px'
-            }}
-          >
-            {heroTitle}
-          </div>
-
-          <div
-            style={{
-              fontSize: '0.82rem',
-              color: isLight ? '#4b5563' : 'rgba(255, 255, 255, 0.65)',
-              marginTop: '3px',
-              lineHeight: 1.4
-            }}
-          >
-            {heroDesc}
-          </div>
+          </span>
+          {streakInfo.streak > 0 && (
+            <span
+              style={{
+                fontSize: '0.68rem',
+                fontWeight: 800,
+                color: '#FF9500',
+                background: 'rgba(255, 149, 0, 0.12)',
+                padding: '2px 6px',
+                borderRadius: '6px'
+              }}
+            >
+              🔥 {streakInfo.streak}d streak
+            </span>
+          )}
         </div>
+
+        {/* Headline */}
+        <div
+          style={{
+            fontWeight: 800,
+            fontSize: '1rem',
+            color: isLight ? '#111827' : '#ffffff',
+            whiteSpace: 'nowrap',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis'
+          }}
+        >
+          {heroTitle}
+        </div>
+
+        {/* Short Instruction */}
+        <div
+          style={{
+            fontSize: '0.76rem',
+            color: isLight ? '#6b7280' : 'var(--text-2)',
+            whiteSpace: 'nowrap',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            marginTop: '1px'
+          }}
+        >
+          {heroDesc}
+        </div>
+      </div>
+
+      {/* Right side: Progress Ring / Action */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexShrink: 0 }}>
+        {activeTask && isViewingToday && !store.history[`${dateKey}-${activeTask.id}`] && (
+          <button
+            type="button"
+            onClick={() => {
+              haptics.medium();
+              toggleTask(activeTask.id);
+            }}
+            style={{
+              background: 'var(--primary)',
+              border: 'none',
+              color: '#ffffff',
+              padding: '7px 12px',
+              borderRadius: '12px',
+              fontSize: '0.74rem',
+              fontWeight: 800,
+              cursor: 'pointer',
+              boxShadow: '0 3px 10px var(--primary-dim)',
+              transition: 'transform 0.15s ease'
+            }}
+          >
+            ✓ Done
+          </button>
+        )}
 
         {/* Circular Progress Gauge */}
         <div
-          onClick={() => {
-            haptics.tap();
-            setIsBreathing((b) => !b);
-          }}
           style={{
             position: 'relative',
-            width: '68px',
-            height: '68px',
-            flexShrink: 0,
-            cursor: 'pointer'
+            width: '46px',
+            height: '46px',
+            flexShrink: 0
           }}
-          title="Tap to toggle breathing guide"
         >
-          <svg width="68" height="68" viewBox="0 0 44 44">
+          <svg width="46" height="46" viewBox="0 0 44 44">
             <circle
               cx="22"
               cy="22"
-              r="20"
+              r="19"
               fill="none"
-              stroke={isLight ? 'rgba(0, 0, 0, 0.08)' : 'rgba(255, 255, 255, 0.12)'}
-              strokeWidth="4"
+              stroke={isLight ? 'rgba(0, 0, 0, 0.08)' : 'rgba(255, 255, 255, 0.1)'}
+              strokeWidth="3.5"
             />
             <circle
               cx="22"
               cy="22"
-              r="20"
+              r="19"
               fill="none"
-              stroke={isBreathing ? '#34C759' : 'var(--primary)'}
-              strokeWidth="4"
-              strokeDasharray="125.6"
-              strokeDashoffset={isBreathing ? 0 : strokeOffset}
+              stroke={pct === 100 ? '#34C759' : 'var(--primary)'}
+              strokeWidth="3.5"
+              strokeDasharray="119.4"
+              strokeDashoffset={119.4 - (119.4 * pct) / 100}
               strokeLinecap="round"
               transform="rotate(-90 22 22)"
               style={{
-                transition: isBreathing ? 'none' : 'stroke-dashoffset 0.6s ease',
-                animation: isBreathing ? 'mindfulPacer 8s ease-in-out infinite' : 'none'
+                transition: 'stroke-dashoffset 0.5s ease'
               }}
             />
           </svg>
@@ -234,63 +239,14 @@ export const HeroCard: React.FC = () => {
               top: '50%',
               left: '50%',
               transform: 'translate(-50%, -50%)',
-              fontSize: isBreathing ? '1.2rem' : '0.85rem',
+              fontSize: '0.72rem',
               fontWeight: 900,
               color: isLight ? '#111827' : '#ffffff'
             }}
           >
-            {isBreathing ? '🧘' : `${pct}%`}
+            {pct}%
           </div>
         </div>
-      </div>
-
-      {/* Quote / Fast Complete Footer */}
-      <div
-        style={{
-          marginTop: '16px',
-          paddingTop: '12px',
-          borderTop: isLight ? '1px solid rgba(0, 0, 0, 0.06)' : '1px solid rgba(255, 255, 255, 0.1)',
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center'
-        }}
-      >
-        <div
-          style={{
-            fontSize: '0.75rem',
-            color: isLight ? '#6b7280' : 'rgba(255, 255, 255, 0.6)',
-            fontStyle: 'italic',
-            flex: 1,
-            lineHeight: 1.3
-          }}
-        >
-          "{quote}"
-        </div>
-
-        {activeTask && !store.history[`${dateKey}-${activeTask.id}`] && (
-          <button
-            onClick={() => {
-              haptics.medium();
-              toggleTask(activeTask.id);
-            }}
-            style={{
-              background: 'var(--primary)',
-              border: 'none',
-              color: '#ffffff',
-              padding: '6px 14px',
-              borderRadius: '12px',
-              fontSize: '0.75rem',
-              fontWeight: 800,
-              cursor: 'pointer',
-              marginLeft: '12px',
-              flexShrink: 0,
-              boxShadow: '0 4px 12px var(--primary-dim)',
-              transition: 'all 0.2s ease'
-            }}
-          >
-            ✓ Complete
-          </button>
-        )}
       </div>
     </div>
   );

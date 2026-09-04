@@ -1,34 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { usePlanner } from '../../context/PlannerContext';
 import { haptics } from '../../utils/haptics';
 
 export const BottomNavigation: React.FC = () => {
   const { currentView, setCurrentView } = usePlanner();
-  const [isCompact, setIsCompact] = useState(false);
-
-  useEffect(() => {
-    let lastScroll = 0;
-    const handleScroll = (e: Event) => {
-      const target = e.target as HTMLElement;
-      if (!target || !target.scrollTop) return;
-      const st = target.scrollTop;
-      if (Math.abs(st - lastScroll) > 25) {
-        if (st > lastScroll && st > 80) {
-          setIsCompact(true);
-        } else {
-          setIsCompact(false);
-        }
-        lastScroll = st;
-      }
-    };
-
-    const containers = document.querySelectorAll('.slider-page');
-    containers.forEach((c) => c.addEventListener('scroll', handleScroll, { passive: true }));
-
-    return () => {
-      containers.forEach((c) => c.removeEventListener('scroll', handleScroll));
-    };
-  }, [currentView]);
 
   const navItems = [
     { id: 'dashboard', label: 'Rituals', icon: '🔥' },
@@ -40,9 +15,6 @@ export const BottomNavigation: React.FC = () => {
 
   const handleNavClick = (id: typeof currentView) => {
     haptics.tap();
-    if (isCompact) {
-      setIsCompact(false);
-    }
     setCurrentView(id);
   };
 
@@ -53,16 +25,16 @@ export const BottomNavigation: React.FC = () => {
       style={{
         width: '100%',
         flexShrink: 0,
-        height: 'calc(50px + env(safe-area-inset-bottom, 0px))',
+        height: '56px',
         paddingBottom: 'env(safe-area-inset-bottom, 0px)',
-        paddingLeft: '6px',
-        paddingRight: '6px',
+        paddingLeft: '12px',
+        paddingRight: '12px',
         background: 'var(--surface-solid)',
-        backdropFilter: 'blur(35px) saturate(190%)',
-        WebkitBackdropFilter: 'blur(35px) saturate(190%)',
-        borderTop: '0.5px solid var(--border-glass)',
+        backdropFilter: 'blur(30px) saturate(180%)',
+        WebkitBackdropFilter: 'blur(30px) saturate(180%)',
+        borderTop: '1px solid var(--border-glass)',
         display: 'flex',
-        justifyContent: 'space-around',
+        justifyContent: 'space-between',
         alignItems: 'center',
         boxSizing: 'border-box',
         zIndex: 1000,
@@ -74,14 +46,16 @@ export const BottomNavigation: React.FC = () => {
         return (
           <button
             key={item.id}
+            type="button"
             onClick={() => handleNavClick(item.id)}
             className={`nav-item ${isActive ? 'active' : ''}`}
             aria-label={item.label}
             style={{
               flex: 1,
-              height: '50px',
+              height: '44px',
               minWidth: 0,
-              background: 'transparent',
+              background: isActive ? 'var(--primary-dim)' : 'transparent',
+              borderRadius: '14px',
               color: isActive ? 'var(--primary)' : 'var(--text-2)',
               border: 'none',
               display: 'flex',
@@ -89,19 +63,18 @@ export const BottomNavigation: React.FC = () => {
               alignItems: 'center',
               justifyContent: 'center',
               gap: '2px',
-              padding: 0,
+              padding: '4px 0',
               cursor: 'pointer',
               WebkitTapHighlightColor: 'transparent',
-              transition: 'color 0.2s ease'
+              transition: 'all 0.2s cubic-bezier(0.16, 1, 0.3, 1)'
             }}
           >
             <span
               style={{
-                fontSize: '1.3rem',
+                fontSize: '1.2rem',
                 lineHeight: 1,
                 display: 'block',
-                transform: isActive ? 'scale(1.1)' : 'scale(1)',
-                animation: isActive ? 'iconBounce 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)' : 'none',
+                transform: isActive ? 'scale(1.08)' : 'scale(1)',
                 transition: 'transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1)'
               }}
             >
@@ -109,7 +82,7 @@ export const BottomNavigation: React.FC = () => {
             </span>
             <span
               style={{
-                fontSize: '0.64rem',
+                fontSize: '0.65rem',
                 fontWeight: isActive ? 800 : 600,
                 letterSpacing: '-0.2px',
                 lineHeight: 1,

@@ -46,13 +46,13 @@ export const TaskCard: React.FC<TaskCardProps> = ({
       style={{
         background: isDone ? 'var(--surface-2)' : 'var(--surface)',
         border: '1px solid var(--border-glass)',
-        borderRadius: '24px',
-        padding: '16px 18px',
+        borderRadius: '18px',
+        padding: '12px 14px',
         display: 'flex',
         alignItems: 'center',
-        gap: '14px',
-        boxShadow: isDone ? 'none' : 'var(--shadow)',
-        transition: 'all 0.25s cubic-bezier(0.16, 1, 0.3, 1)',
+        gap: '12px',
+        boxShadow: isDone ? 'none' : 'var(--shadow-sm)',
+        transition: 'all 0.2s ease',
         cursor: 'pointer',
         position: 'relative'
       }}
@@ -69,20 +69,20 @@ export const TaskCard: React.FC<TaskCardProps> = ({
         aria-checked={isDone}
         tabIndex={0}
         style={{
-          width: '32px',
-          height: '32px',
+          width: '26px',
+          height: '26px',
           borderRadius: '50%',
           border: isDone ? '2px solid #34C759' : '2px solid var(--border-glass)',
-          background: isDone ? '#34C759' : 'var(--surface-2)',
+          background: isDone ? '#34C759' : 'transparent',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
           flexShrink: 0,
-          boxShadow: isDone ? '0 0 14px rgba(52, 199, 89, 0.4)' : 'none',
-          transition: 'all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1)'
+          boxShadow: isDone ? '0 0 10px rgba(52, 199, 89, 0.3)' : 'none',
+          transition: 'all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1)'
         }}
       >
-        {isDone && <span style={{ color: '#ffffff', fontSize: '1rem', fontWeight: 900 }}>✓</span>}
+        {isDone && <span style={{ color: '#ffffff', fontSize: '0.82rem', fontWeight: 900 }}>✓</span>}
       </div>
 
       {/* Task Content Details */}
