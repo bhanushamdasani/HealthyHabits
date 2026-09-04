@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { soundService } from '../../services/soundService';
 import { haptics } from '../../utils/haptics';
 
@@ -19,10 +20,20 @@ export const BreathingModal: React.FC<BreathingModalProps> = ({ isOpen, onClose 
     if (!isOpen) {
       setIsActive(false);
       setSessionSeconds(120);
+      document.body.style.overflow = '';
       return;
     }
+    document.body.style.overflow = 'hidden';
     setIsActive(true);
-  }, [isOpen]);
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose();
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => {
+      document.body.style.overflow = '';
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [isOpen, onClose]);
 
   useEffect(() => {
     if (!isActive || !isOpen) return;
@@ -73,7 +84,7 @@ export const BreathingModal: React.FC<BreathingModalProps> = ({ isOpen, onClose 
   const mins = Math.floor(sessionSeconds / 60);
   const secs = sessionSeconds % 60;
 
-  return (
+  return createPortal(
     <>
       <div className="sheet-backdrop active" onClick={onClose} style={{ zIndex: 4000 }} />
       <div
@@ -171,6 +182,7 @@ export const BreathingModal: React.FC<BreathingModalProps> = ({ isOpen, onClose 
           </button>
         </div>
       </div>
-    </>
+    </>,
+    document.body
   );
 };

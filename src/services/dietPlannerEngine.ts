@@ -1,6 +1,7 @@
 import { UserProfile, SevenDayDietPlan, DayDietPlan, CuratedMeal, DayName } from '../types';
 import { CURATED_MEAL_DATABASE } from '../data/mealCatalog';
 import { calculateNutritionTargets } from './personalizationEngine';
+import { formatDateKey, getDayName } from '../utils/dateUtils';
 
 const ORDERED_DAYS: DayName[] = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'];
 
@@ -59,8 +60,24 @@ export function getEligibleMeals(profile: UserProfile): CuratedMeal[] {
 /**
  * Returns a deterministic, completely non-repeating 15-day meal plan for any specific calendar date,
  * strictly personalized to the user's Goal (Weight Loss / Muscle Gain / Consistency) and Gender considerations.
+ * Checks date overrides first, then 7-day custom plan, then 15-day non-repeating cycle.
  */
-export function getMealPlanForDate(date: Date, profile: UserProfile): DayDietPlan {
+export function getMealPlanForDate(
+  date: Date,
+  profile: UserProfile,
+  dietPlan?: SevenDayDietPlan,
+  dateDietOverrides?: Record<string, DayDietPlan>
+): DayDietPlan {
+  const dateKey = formatDateKey(date);
+  if (dateDietOverrides && dateDietOverrides[dateKey]) {
+    return dateDietOverrides[dateKey];
+  }
+
+  const dayName: DayName = getDayName(date);
+  if (dietPlan && dietPlan.days && dietPlan.days[dayName]) {
+    return dietPlan.days[dayName];
+  }
+
   const eligibleMeals = getEligibleMeals(profile);
   const breakfasts = eligibleMeals.filter((m) => m.mealType === 'breakfast');
   const lunches = eligibleMeals.filter((m) => m.mealType === 'lunch');
@@ -103,6 +120,46 @@ export function getMealPlanForDate(date: Date, profile: UserProfile): DayDietPla
     totalCalories,
     totalProtein
   };
+}
+
+/**
+ * Replaces a meal in a single day plan and recalculates day totals.
+ */
+export function replaceSingleDayMeal(
+  dayPlan: DayDietPlan,
+  slot: 'breakfast' | 'lunch' | 'dinner' | 'snack',
+  replacement: CuratedMeal,
+  snackIdx: number = 0
+): DayDietPlan {
+  const updated = JSON.parse(JSON.stringify(dayPlan)) as DayDietPlan;
+
+  if (slot === 'snack') {
+    if (!updated.snacks) updated.snacks = [];
+    if (updated.snacks[snackIdx]) {
+      updated.snacks[snackIdx] = replacement;
+    } else {
+      updated.snacks.push(replacement);
+    }
+  } else {
+    updated[slot] = replacement;
+  }
+
+  const snacksTotalCal = (updated.snacks || []).reduce((sum, s) => sum + s.estimatedNutrition.calories, 0);
+  const snacksTotalProt = (updated.snacks || []).reduce((sum, s) => sum + s.estimatedNutrition.proteinGrams, 0);
+
+  updated.totalCalories =
+    updated.breakfast.estimatedNutrition.calories +
+    updated.lunch.estimatedNutrition.calories +
+    updated.dinner.estimatedNutrition.calories +
+    snacksTotalCal;
+
+  updated.totalProtein =
+    updated.breakfast.estimatedNutrition.proteinGrams +
+    updated.lunch.estimatedNutrition.proteinGrams +
+    updated.dinner.estimatedNutrition.proteinGrams +
+    snacksTotalProt;
+
+  return updated;
 }
 
 /**
@@ -198,7 +255,7 @@ export function calculateVarietyScore(days: Record<DayName, DayDietPlan>): numbe
 }
 
 /**
- * Replaces a single meal slot with an alternative purpose-preserving option and updates macros.
+ * Replaces a single meal slot in a 7-day plan with an alternative purpose-preserving option and updates macros.
  */
 export function replaceMealInPlan(
   plan: SevenDayDietPlan,
@@ -211,30 +268,7 @@ export function replaceMealInPlan(
   const dayPlan = updatedPlan.days[day];
   if (!dayPlan) return plan;
 
-  if (slot === 'snack') {
-    if (dayPlan.snacks && dayPlan.snacks[snackIdx]) {
-      dayPlan.snacks[snackIdx] = replacement;
-    }
-  } else {
-    dayPlan[slot] = replacement;
-  }
-
-  // Recalculate day totals
-  const snacksTotalCal = (dayPlan.snacks || []).reduce((sum, s) => sum + s.estimatedNutrition.calories, 0);
-  const snacksTotalProt = (dayPlan.snacks || []).reduce((sum, s) => sum + s.estimatedNutrition.proteinGrams, 0);
-
-  dayPlan.totalCalories =
-    dayPlan.breakfast.estimatedNutrition.calories +
-    dayPlan.lunch.estimatedNutrition.calories +
-    dayPlan.dinner.estimatedNutrition.calories +
-    snacksTotalCal;
-
-  dayPlan.totalProtein =
-    dayPlan.breakfast.estimatedNutrition.proteinGrams +
-    dayPlan.lunch.estimatedNutrition.proteinGrams +
-    dayPlan.dinner.estimatedNutrition.proteinGrams +
-    snacksTotalProt;
-
+  updatedPlan.days[day] = replaceSingleDayMeal(dayPlan, slot, replacement, snackIdx);
   updatedPlan.varietyScore = calculateVarietyScore(updatedPlan.days);
   return updatedPlan;
 }
@@ -242,13 +276,26 @@ export function replaceMealInPlan(
 /**
  * Finds compatible purpose-preserving replacement candidates for a given meal.
  */
-export function getMealAlternatives(currentMeal: CuratedMeal): CuratedMeal[] {
+export function getMealAlternatives(currentMeal?: CuratedMeal): CuratedMeal[] {
+  if (!currentMeal) {
+    return CURATED_MEAL_DATABASE.slice(0, 6);
+  }
+
   const altIds = new Set(currentMeal.alternativeMealIds || []);
   const directMatches = CURATED_MEAL_DATABASE.filter((m) => altIds.has(m.id));
 
   const sameTypeMatches = CURATED_MEAL_DATABASE.filter(
-    (m) => m.mealType === currentMeal.mealType && m.id !== currentMeal.id && !altIds.has(m.id)
+    (m) =>
+      m.mealType === currentMeal.mealType &&
+      m.id !== currentMeal.id &&
+      !altIds.has(m.id)
   );
 
-  return [...directMatches, ...sameTypeMatches].slice(0, 6);
+  const results = [...directMatches, ...sameTypeMatches];
+  if (results.length === 0) {
+    return CURATED_MEAL_DATABASE.filter((m) => m.id !== currentMeal.id).slice(0, 6);
+  }
+
+  return results.slice(0, 8);
 }
+

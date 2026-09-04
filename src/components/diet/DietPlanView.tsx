@@ -2,10 +2,11 @@ import React, { useState, useMemo } from 'react';
 import { usePlanner } from '../../context/PlannerContext';
 import { MealCard } from './MealCard';
 import { MealAlternativeModal } from './MealAlternativeModal';
-import { CuratedMeal } from '../../types';
+import { CuratedMeal, DayName } from '../../types';
 import { calculateNutritionTargets } from '../../services/personalizationEngine';
 import { getMealPlanForDate } from '../../services/dietPlannerEngine';
-import { addDays, formatDateKey, getRelativeDateLabel } from '../../utils/dateUtils';
+import { addDays, formatDateKey, getRelativeDateLabel, getDayName } from '../../utils/dateUtils';
+import { timeToMinutes, minutesToTime, getTimeWindowStatus } from '../../utils/timeUtils';
 import { haptics } from '../../utils/haptics';
 
 interface DietPlanViewProps {
@@ -13,7 +14,7 @@ interface DietPlanViewProps {
 }
 
 export const DietPlanView: React.FC<DietPlanViewProps> = ({ onOpenGroceryModal }) => {
-  const { store, viewedDate, setViewedDate, replaceDietMeal, generateNewDietPlan } = usePlanner();
+  const { store, viewedDate, setViewedDate, replaceDietMeal, generateNewDietPlan, toggleTask } = usePlanner();
 
   const [activeSwapTarget, setActiveSwapTarget] = useState<{
     meal: CuratedMeal;
@@ -25,7 +26,7 @@ export const DietPlanView: React.FC<DietPlanViewProps> = ({ onOpenGroceryModal }
   const isPcos = (store.user.femaleConsiderations || []).includes('pcos') || (store.user.femaleConsiderations || []).includes('pcod');
   const isIron = (store.user.femaleConsiderations || []).includes('iron_focus');
 
-  // Compute 15-day continuous horizon starting from 3 days ago through next 11 days
+  // Compute 15-day continuous horizon starting from today
   const fifteenDaysHorizon = useMemo(() => {
     const today = new Date();
     today.setHours(12, 0, 0, 0);
@@ -48,12 +49,48 @@ export const DietPlanView: React.FC<DietPlanViewProps> = ({ onOpenGroceryModal }
   }, []);
 
   const activeDateKey = formatDateKey(viewedDate);
-  const { statusLabel, dateLabel } = getRelativeDateLabel(viewedDate);
+  const activeDayName: DayName = getDayName(viewedDate);
+  const { statusLabel, dateLabel, isToday } = getRelativeDateLabel(viewedDate);
 
   // Dynamic 15-day non-repeating meal plan for currently viewed calendar date
   const dayPlan = useMemo(() => {
-    return getMealPlanForDate(viewedDate, store.user);
-  }, [viewedDate, store.user]);
+    return getMealPlanForDate(viewedDate, store.user, store.dietPlan);
+  }, [viewedDate, store.user, store.dietPlan]);
+
+  // Fetch scheduled meal tasks from user's active schedule for the viewed day
+  const dayScheduleTasks = store.schedule[activeDayName] || [];
+  const oneOffTasks = store.dateTasks[activeDateKey] || [];
+  const allDayTasks = [...dayScheduleTasks, ...oneOffTasks];
+
+  const wakeMins = store.user.wakeTime ? timeToMinutes(store.user.wakeTime) : 360;
+  const sleepMins = store.user.sleepTime ? timeToMinutes(store.user.sleepTime) : 1320;
+
+  // Extract scheduled times or fallback to calculated biological windows
+  const breakfastTask = allDayTasks.find((t) => t.type === 'meal' && t.act.toLowerCase().includes('breakfast')) ||
+    allDayTasks.find((t) => t.act.toLowerCase().includes('breakfast'));
+  const lunchTask = allDayTasks.find((t) => t.type === 'meal' && t.act.toLowerCase().includes('lunch')) ||
+    allDayTasks.find((t) => t.act.toLowerCase().includes('lunch'));
+  const dinnerTask = allDayTasks.find((t) => t.type === 'meal' && t.act.toLowerCase().includes('dinner')) ||
+    allDayTasks.find((t) => t.act.toLowerCase().includes('dinner'));
+  const snackTasks = allDayTasks.filter((t) => t.type === 'meal' && (t.act.toLowerCase().includes('snack') || t.act.toLowerCase().includes('fuel')));
+
+  const breakfastTime = breakfastTask?.t || minutesToTime(wakeMins + 90);
+  const lunchTime = lunchTask?.t || minutesToTime(wakeMins + 330);
+  const dinnerTime = dinnerTask?.t || minutesToTime(Math.min(sleepMins - 120, wakeMins + 720));
+  const snackTime1 = snackTasks[0]?.t || minutesToTime(wakeMins + 540);
+  const snackTime2 = snackTasks[1]?.t || minutesToTime(wakeMins + 660);
+
+  // Status windows
+  const bfWindow = getTimeWindowStatus(breakfastTime, isToday);
+  const lunchWindow = getTimeWindowStatus(lunchTime, isToday);
+  const dinnerWindow = getTimeWindowStatus(dinnerTime, isToday);
+  const snackWindow1 = getTimeWindowStatus(snackTime1, isToday);
+  const snackWindow2 = getTimeWindowStatus(snackTime2, isToday);
+
+  // Task completion statuses
+  const isBfDone = breakfastTask ? !!store.history[`${activeDateKey}-${breakfastTask.id}`] : false;
+  const isLunchDone = lunchTask ? !!store.history[`${activeDateKey}-${lunchTask.id}`] : false;
+  const isDinnerDone = dinnerTask ? !!store.history[`${activeDateKey}-${dinnerTask.id}`] : false;
 
   // Contextual Daily Nutrition Tip
   const dailyTip = useMemo(() => {
@@ -260,9 +297,14 @@ export const DietPlanView: React.FC<DietPlanViewProps> = ({ onOpenGroceryModal }
           </span>
         </div>
 
+        {/* Breakfast Card */}
         <MealCard
-          slotTitle="Breakfast (8:00 AM)"
+          slotTitle="Breakfast"
+          scheduledTime={breakfastTime}
           meal={dayPlan.breakfast}
+          windowStatus={bfWindow}
+          isCompleted={isBfDone}
+          onToggleCompleted={breakfastTask ? () => toggleTask(breakfastTask.id) : undefined}
           onOpenSwapModal={() =>
             setActiveSwapTarget({
               meal: dayPlan.breakfast,
@@ -271,9 +313,14 @@ export const DietPlanView: React.FC<DietPlanViewProps> = ({ onOpenGroceryModal }
           }
         />
 
+        {/* Lunch Card */}
         <MealCard
-          slotTitle="Lunch (1:00 PM)"
+          slotTitle="Lunch"
+          scheduledTime={lunchTime}
           meal={dayPlan.lunch}
+          windowStatus={lunchWindow}
+          isCompleted={isLunchDone}
+          onToggleCompleted={lunchTask ? () => toggleTask(lunchTask.id) : undefined}
           onOpenSwapModal={() =>
             setActiveSwapTarget({
               meal: dayPlan.lunch,
@@ -282,9 +329,14 @@ export const DietPlanView: React.FC<DietPlanViewProps> = ({ onOpenGroceryModal }
           }
         />
 
+        {/* Dinner Card */}
         <MealCard
-          slotTitle="Dinner (8:00 PM)"
+          slotTitle="Dinner"
+          scheduledTime={dinnerTime}
           meal={dayPlan.dinner}
+          windowStatus={dinnerWindow}
+          isCompleted={isDinnerDone}
+          onToggleCompleted={dinnerTask ? () => toggleTask(dinnerTask.id) : undefined}
           onOpenSwapModal={() =>
             setActiveSwapTarget({
               meal: dayPlan.dinner,
@@ -293,32 +345,44 @@ export const DietPlanView: React.FC<DietPlanViewProps> = ({ onOpenGroceryModal }
           }
         />
 
-        {(dayPlan.snacks || []).map((snack, idx) => (
-          <MealCard
-            key={idx}
-            slotTitle={`Mid-Day / Evening Fuel ${idx + 1}`}
-            meal={snack}
-            onOpenSwapModal={() =>
-              setActiveSwapTarget({
-                meal: snack,
-                slot: 'snack',
-                snackIdx: idx
-              })
-            }
-          />
-        ))}
+        {/* Snack Cards */}
+        {(dayPlan.snacks || []).map((snack, idx) => {
+          const sTime = idx === 0 ? snackTime1 : snackTime2;
+          const sWindow = idx === 0 ? snackWindow1 : snackWindow2;
+          const sTask = snackTasks[idx];
+          const isSnackDone = sTask ? !!store.history[`${activeDateKey}-${sTask.id}`] : false;
+
+          return (
+            <MealCard
+              key={idx}
+              slotTitle={`Mid-Day / Evening Fuel ${idx + 1}`}
+              scheduledTime={sTime}
+              meal={snack}
+              windowStatus={sWindow}
+              isCompleted={isSnackDone}
+              onToggleCompleted={sTask ? () => toggleTask(sTask.id) : undefined}
+              onOpenSwapModal={() =>
+                setActiveSwapTarget({
+                  meal: snack,
+                  slot: 'snack',
+                  snackIdx: idx
+                })
+              }
+            />
+          );
+        })}
       </div>
 
       {/* Alternative Swap Modal */}
       {activeSwapTarget && (
         <MealAlternativeModal
           currentMeal={activeSwapTarget.meal}
-          day={'mon'}
+          day={activeDayName}
           slot={activeSwapTarget.slot}
           snackIdx={activeSwapTarget.snackIdx}
           onSelectAlternative={(replacement) => {
             replaceDietMeal(
-              'mon',
+              activeDayName,
               activeSwapTarget.slot,
               replacement,
               activeSwapTarget.snackIdx
@@ -331,3 +395,4 @@ export const DietPlanView: React.FC<DietPlanViewProps> = ({ onOpenGroceryModal }
     </div>
   );
 };
+

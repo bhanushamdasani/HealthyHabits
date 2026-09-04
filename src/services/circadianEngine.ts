@@ -1,5 +1,6 @@
 import { SleepLogEntry } from '../types';
 import { formatDateKey } from '../utils/dateUtils';
+import { timeToMinutes } from '../utils/timeUtils';
 
 export interface CircadianResult {
   score: number | string;
@@ -9,7 +10,7 @@ export interface CircadianResult {
 }
 
 /**
- * Computes circadian sleep consistency score based on bedtime variance (standard deviation in minutes) over 7 days.
+ * Computes circadian sleep consistency score based on bedtime variance (standard deviation in minutes) over 7-14 days.
  */
 export function calculateCircadianConsistency(
   sleepLogs: Record<string, SleepLogEntry>
@@ -26,14 +27,14 @@ export function calculateCircadianConsistency(
   const bedtimes: number[] = [];
   const d = new Date();
 
-  for (let i = 0; i < 7; i++) {
+  for (let i = 0; i < 14; i++) {
     const k = formatDateKey(d);
     const log = sleepLogs[k];
     if (log && log.bedtime) {
-      const [h, m] = log.bedtime.split(':').map(Number);
-      if (!isNaN(h) && !isNaN(m)) {
-        // Minutes normalized relative to noon (to handle bedtimes before and after midnight seamlessly)
-        const minsFromNoon = ((h + 12) % 24) * 60 + m;
+      const minsFromMidnight = timeToMinutes(log.bedtime);
+      if (minsFromMidnight > 0 || log.bedtime.includes('00:') || log.bedtime.includes('12:00 AM')) {
+        // Minutes normalized relative to noon (720 mins) to handle bedtimes spanning midnight (e.g. 10 PM = 1320 -> +12h % 24)
+        const minsFromNoon = (minsFromMidnight + 720) % 1440;
         bedtimes.push(minsFromNoon);
       }
     }
@@ -86,3 +87,4 @@ export function calculateCircadianConsistency(
     advice: 'Your sleep schedule has high variance. Shift bedtime to within 30 minutes of your target to avoid circadian desynchronization.'
   };
 }
+

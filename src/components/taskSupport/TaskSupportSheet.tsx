@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { ScheduleTask } from '../../types';
 import { CURATED_MEAL_DATABASE } from '../../data/mealCatalog';
 import { CURATED_WORKOUT_DATABASE } from '../../data/workoutCatalog';
@@ -9,6 +10,20 @@ interface TaskSupportSheetProps {
 }
 
 export const TaskSupportSheet: React.FC<TaskSupportSheetProps> = ({ task, onClose }) => {
+  useEffect(() => {
+    if (task) {
+      document.body.style.overflow = 'hidden';
+      const handleKeyDown = (e: KeyboardEvent) => {
+        if (e.key === 'Escape') onClose();
+      };
+      window.addEventListener('keydown', handleKeyDown);
+      return () => {
+        document.body.style.overflow = '';
+        window.removeEventListener('keydown', handleKeyDown);
+      };
+    }
+  }, [task, onClose]);
+
   if (!task) return null;
 
   // 1. Try to find matching meal
@@ -32,7 +47,7 @@ export const TaskSupportSheet: React.FC<TaskSupportSheetProps> = ({ task, onClos
   const youtubeUrl = `https://www.youtube.com/results?search_query=${query}`;
   const googleUrl = `https://www.google.com/search?q=${query}`;
 
-  return (
+  return createPortal(
     <>
       <div className="sheet-backdrop active" onClick={onClose} style={{ zIndex: 3200 }} />
       <div
@@ -220,6 +235,7 @@ export const TaskSupportSheet: React.FC<TaskSupportSheetProps> = ({ task, onClos
           </a>
         </div>
       </div>
-    </>
+    </>,
+    document.body
   );
 };

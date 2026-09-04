@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { usePlanner } from '../../context/PlannerContext';
 import { formatDateKey } from '../../utils/dateUtils';
+import { formatTime24h } from '../../utils/timeUtils';
 
 interface SleepLogSheetProps {
   isOpen: boolean;
@@ -12,18 +13,18 @@ export const SleepLogSheet: React.FC<SleepLogSheetProps> = ({ isOpen, onClose })
   const dateKey = formatDateKey(viewedDate);
   const existing = store.sleepLogs[dateKey];
 
-  const [bedtime, setBedtime] = useState('');
-  const [waketime, setWaketime] = useState('');
+  const [bedtime, setBedtime] = useState('22:30');
+  const [waketime, setWaketime] = useState('06:30');
 
   useEffect(() => {
     if (existing) {
-      setBedtime(existing.bedtime || '');
-      setWaketime(existing.waketime || '');
+      setBedtime(formatTime24h(existing.bedtime || '22:30'));
+      setWaketime(formatTime24h(existing.waketime || '06:30'));
     } else {
-      setBedtime('22:30');
-      setWaketime('06:30');
+      setBedtime(formatTime24h(store.user.sleepTime || '22:30'));
+      setWaketime(formatTime24h(store.user.wakeTime || '06:30'));
     }
-  }, [existing, isOpen]);
+  }, [existing, isOpen, store.user.sleepTime, store.user.wakeTime]);
 
   if (!isOpen) return null;
 

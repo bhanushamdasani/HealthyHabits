@@ -1,7 +1,7 @@
 import React from 'react';
 import { usePlanner } from '../../context/PlannerContext';
 import { formatDateKey } from '../../utils/dateUtils';
-import { calculateSleepDurationHours } from '../../utils/timeUtils';
+import { calculateSleepDurationHours, formatTime12h } from '../../utils/timeUtils';
 import { calculateNutritionTargets } from '../../services/personalizationEngine';
 import { haptics } from '../../utils/haptics';
 
@@ -25,7 +25,10 @@ export const BentoMetricsGrid: React.FC<BentoMetricsGridProps> = ({
   const waterTarget = 3000;
   const hydroPercent = Math.min(Math.round((waterConsumed / waterTarget) * 100), 100);
 
-  // Sleep hours calculation
+  // Sleep hours and displayed times calculation
+  const displayedBedtime = sleepRecord?.bedtime ? formatTime12h(sleepRecord.bedtime) : (store.user.sleepTime || '10:00 PM');
+  const displayedWaketime = sleepRecord?.waketime ? formatTime12h(sleepRecord.waketime) : (store.user.wakeTime || '06:00 AM');
+
   const sleepHours = sleepRecord
     ? calculateSleepDurationHours(sleepRecord.bedtime, sleepRecord.waketime)
     : calculateSleepDurationHours(store.user.sleepTime || '10:00 PM', store.user.wakeTime || '06:00 AM');
@@ -144,10 +147,10 @@ export const BentoMetricsGrid: React.FC<BentoMetricsGridProps> = ({
 
           <div style={{ margin: '10px 0' }}>
             <div style={{ fontSize: '1.05rem', fontWeight: 800, color: 'var(--text-1)' }}>
-              {store.user.sleepTime || '10:00 PM'}
+              {displayedBedtime}
             </div>
             <div style={{ fontSize: '0.72rem', color: 'var(--text-2)', marginTop: '2px' }}>
-              Wake: {store.user.wakeTime || '06:00 AM'}
+              Wake: {displayedWaketime}
             </div>
           </div>
 

@@ -47,34 +47,31 @@ export const DayTaskList: React.FC<DayTaskListProps> = ({
     return getMealPlanForDate(viewedDate, store.user);
   }, [viewedDate, store.user]);
 
-  const isPcos = (store.user.femaleConsiderations || []).includes('pcos') || (store.user.femaleConsiderations || []).includes('pcod');
-
-  // Dynamically blend the personalized diet plan directly into the daily tasks timeline
+  // Dynamically blend the personalized diet plan directly into the daily tasks timeline cleanly
   const combinedTasks = useMemo(() => {
     const combined = [
       ...recurringTasks.map((t) => {
         const taskCopy = { ...t, isRecurring: true };
         const actLower = t.act.toLowerCase();
 
+        // If the task is a meal slot and instruction is generic or unset, attach the curated meal name cleanly
         if (t.type === 'meal' || actLower.includes('breakfast') || actLower.includes('lunch') || actLower.includes('dinner') || actLower.includes('snack')) {
-          if (actLower.includes('breakfast') || actLower.includes('bf')) {
-            taskCopy.act = 'Breakfast';
-            taskCopy.instr = `${dayDiet.breakfast.name} (${dayDiet.breakfast.estimatedNutrition.calories} kcal • ${dayDiet.breakfast.estimatedNutrition.proteinGrams}g P)`;
-            taskCopy.rule = isPcos ? '🌸 PCOS Low-GI Protocol' : 'Prime Morning Energy';
-          } else if (actLower.includes('lunch')) {
-            taskCopy.act = 'Lunch';
-            taskCopy.instr = `${dayDiet.lunch.name} (${dayDiet.lunch.estimatedNutrition.calories} kcal • ${dayDiet.lunch.estimatedNutrition.proteinGrams}g P)`;
-            taskCopy.rule = isPcos ? '🌸 Low-GI Insulin Balance' : 'Sustained Focus Fuel';
-          } else if (actLower.includes('dinner')) {
-            taskCopy.act = 'Dinner';
-            taskCopy.instr = `${dayDiet.dinner.name} (${dayDiet.dinner.estimatedNutrition.calories} kcal • ${dayDiet.dinner.estimatedNutrition.proteinGrams}g P)`;
-            taskCopy.rule = isPcos ? '🌸 Zero Glucose Spike Dinner' : 'Slow Casein Rest';
-          } else if (actLower.includes('snack') || actLower.includes('pre') || actLower.includes('post') || actLower.includes('nap')) {
-            const snack = dayDiet.snacks[0];
-            if (snack) {
-              taskCopy.act = 'Mid-Day Fuel';
-              taskCopy.instr = `${snack.name} (${snack.estimatedNutrition.calories} kcal)`;
-              taskCopy.rule = isPcos ? '🌸 Hormonal Stability' : 'Metabolic Energy';
+          if (!t.instr || t.instr.includes('Chilla') || t.instr.includes('Roti') || t.instr.includes('Paneer') || t.instr.includes('Drink')) {
+            if (actLower.includes('breakfast') || actLower.includes('bf')) {
+              taskCopy.act = 'Breakfast';
+              taskCopy.instr = dayDiet.breakfast.name;
+            } else if (actLower.includes('lunch')) {
+              taskCopy.act = 'Lunch';
+              taskCopy.instr = dayDiet.lunch.name;
+            } else if (actLower.includes('dinner')) {
+              taskCopy.act = 'Dinner';
+              taskCopy.instr = dayDiet.dinner.name;
+            } else if (actLower.includes('snack') || actLower.includes('fuel')) {
+              const snack = dayDiet.snacks[0];
+              if (snack) {
+                taskCopy.act = 'Mid-Day Fuel';
+                taskCopy.instr = snack.name;
+              }
             }
           }
         }
@@ -84,7 +81,7 @@ export const DayTaskList: React.FC<DayTaskListProps> = ({
     ];
 
     return combined.sort((a, b) => timeToMinutes(a.t) - timeToMinutes(b.t));
-  }, [recurringTasks, oneOffTasks, dayDiet, isPcos]);
+  }, [recurringTasks, oneOffTasks, dayDiet]);
 
   // Determine live active task index today
   const now = new Date();

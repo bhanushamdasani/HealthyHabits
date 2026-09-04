@@ -14,7 +14,7 @@ import { formatDateKey, DAYS_OF_WEEK, getDayName, addDays } from '../utils/dateU
 import { soundService } from '../services/soundService';
 import { haptics } from '../utils/haptics';
 import { notificationService, ActiveTimerInfo } from '../services/notificationService';
-import { generateSevenDayDietPlan, replaceMealInPlan } from '../services/dietPlannerEngine';
+import { generateSevenDayDietPlan, replaceMealInPlan, replaceSingleDayMeal, getMealPlanForDate } from '../services/dietPlannerEngine';
 
 interface PlannerContextType {
   store: AppDataStore;
@@ -45,7 +45,7 @@ interface PlannerContextType {
   bulkToggleReminders: (type: TaskType, state: boolean) => void;
   updateLightDayTypes: (types: TaskType[]) => void;
   generateNewDietPlan: () => void;
-  replaceDietMeal: (day: DayName, slot: 'breakfast' | 'lunch' | 'dinner' | 'snack', replacement: CuratedMeal, snackIdx?: number) => void;
+  replaceDietMeal: (day: DayName, slot: 'breakfast' | 'lunch' | 'dinner' | 'snack', replacement: CuratedMeal, snackIdx?: number, targetDate?: Date) => void;
   resetWeeklyCheckboxes: () => void;
   hardResetApp: () => void;
   triggerConfettiAnimation: () => void;
@@ -399,19 +399,36 @@ export const PlannerProvider: React.FC<{ children: React.ReactNode }> = ({ child
     day: DayName,
     slot: 'breakfast' | 'lunch' | 'dinner' | 'snack',
     replacement: CuratedMeal,
-    snackIdx: number = 0
+    snackIdx: number = 0,
+    targetDate?: Date
   ) => {
     haptics.success();
+    const dateToUse = targetDate || viewedDate;
+    const dateKey = formatDateKey(dateToUse);
+
     updateAndSaveStore((prev) => {
-      if (!prev.dietPlan) return prev;
-      const updatedPlan = replaceMealInPlan(prev.dietPlan, day, slot, replacement, snackIdx);
+      // 1. Update single day plan for the viewed date
+      const currentDayPlan = getMealPlanForDate(dateToUse, prev.user, prev.dietPlan, prev.dateDietOverrides);
+      const updatedDayPlan = replaceSingleDayMeal(currentDayPlan, slot, replacement, snackIdx);
+      const newOverrides = {
+        ...(prev.dateDietOverrides || {}),
+        [dateKey]: updatedDayPlan
+      };
+
+      // 2. Also update 7-day base plan if present
+      let updatedPlan = prev.dietPlan;
+      if (updatedPlan) {
+        updatedPlan = replaceMealInPlan(updatedPlan, day, slot, replacement, snackIdx);
+      }
+
       return {
         ...prev,
-        dietPlan: updatedPlan
+        dietPlan: updatedPlan,
+        dateDietOverrides: newOverrides
       };
     });
     showIsland('Meal Swapped & Macros Updated');
-  }, [updateAndSaveStore, showIsland]);
+  }, [viewedDate, updateAndSaveStore, showIsland]);
 
   const resetWeeklyCheckboxes = useCallback(() => {
     haptics.delete();

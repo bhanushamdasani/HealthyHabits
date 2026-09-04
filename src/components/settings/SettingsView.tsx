@@ -3,7 +3,7 @@ import { usePlanner } from '../../context/PlannerContext';
 import { useTheme } from '../../context/ThemeContext';
 import { notificationService } from '../../services/notificationService';
 import { DayName, ScheduleTask, TaskType, Gender, LifestyleType, UserGoal, ActivityLevel, FemaleHealthConsideration } from '../../types';
-import { timeToMinutes, calculateSleepDurationHours } from '../../utils/timeUtils';
+import { timeToMinutes, calculateSleepDurationHours, formatTime24h, formatTime12h } from '../../utils/timeUtils';
 import { generatePersonalizedSchedule } from '../../services/personalizationEngine';
 import { AuthSheet } from '../modals/AuthSheet';
 import { haptics } from '../../utils/haptics';
@@ -24,26 +24,8 @@ export const SettingsView: React.FC = () => {
   const [isAuthOpen, setIsAuthOpen] = useState(false);
 
   // Time conversion helpers
-  const to24Hour = (time12h: string): string => {
-    const match = (time12h || '').match(/^(\d{1,2}):(\d{2})\s*(AM|PM)$/i);
-    if (!match) return '06:00';
-    let h = parseInt(match[1], 10);
-    const m = match[2];
-    const period = match[3].toUpperCase();
-    if (period === 'PM' && h < 12) h += 12;
-    if (period === 'AM' && h === 12) h = 0;
-    return `${String(h).padStart(2, '0')}:${m}`;
-  };
-
-  const to12Hour = (time24h: string): string => {
-    const [hStr, mStr] = (time24h || '06:00').split(':');
-    let h = parseInt(hStr, 10);
-    const m = mStr || '00';
-    const period = h >= 12 ? 'PM' : 'AM';
-    if (h > 12) h -= 12;
-    if (h === 0) h = 12;
-    return `${String(h).padStart(2, '0')}:${m} ${period}`;
-  };
+  const to24Hour = (timeStr: string): string => formatTime24h(timeStr);
+  const to12Hour = (timeStr: string): string => formatTime12h(timeStr);
 
   // Profile Form State
   const [profileForm, setProfileForm] = useState({

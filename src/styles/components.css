@@ -2,55 +2,13 @@
    HEALTHYHABITS MODERN DESIGN SYSTEM — COMPONENT STYLES (iOS 18 GLASS)
    ========================================================================== */
 
-/* iOS 18 Form Container Styles */
-.ios-input-box {
-  background: var(--surface);
-  border: 1px solid var(--border-glass);
-  border-radius: 18px;
-  padding: 10px 16px;
-  display: flex;
-  flex-direction: column;
-  box-shadow: inset 0 1px 2px rgba(0,0,0,0.02);
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
-}
-
-.ios-input-box:focus-within {
-  border-color: var(--primary);
-  box-shadow: 0 0 0 3px var(--primary-dim);
-}
-
-.ios-input-label {
-  font-size: 0.7rem;
-  font-weight: 800;
-  text-transform: uppercase;
-  color: var(--text-2);
-  letter-spacing: 0.5px;
-  margin-bottom: 2px;
-}
-
-.ios-input-control {
-  background: transparent;
-  border: none;
-  color: var(--text-1);
-  font-size: 1rem;
-  font-weight: 700;
-  outline: none;
-  font-family: inherit;
-  width: 100%;
-}
-
-.ios-input-control::placeholder {
-  color: var(--text-3);
-  font-weight: 500;
-}
-
 /* 1. View Slider & Layout */
 .view-slider-outer {
   flex: 1;
   width: 100%;
   position: relative;
   overflow: hidden;
-  min-height: 0;        /* critical: allows flex child to shrink below content size */
+  min-height: 0;
 }
 
 .view-slider-inner {
@@ -64,29 +22,43 @@
   overflow-y: auto;
   overflow-x: hidden;
   -webkit-overflow-scrolling: touch;
-  /* Extra bottom padding so content clears nav bar on older phones */
-  padding-bottom: 16px;
+  padding-bottom: 24px;
 }
 
 .slider-page::-webkit-scrollbar {
-  width: 3px;
+  width: 4px;
 }
 .slider-page::-webkit-scrollbar-thumb {
   background: var(--border-glass);
   border-radius: 4px;
 }
 
-/* 2. Date Navigator */
+/* 2. Unified Glassmorphism Card (Set Card) */
+.set-card {
+  margin: 0 clamp(12px, 3.5vw, 18px) 14px;
+  background: var(--surface);
+  border: 1px solid var(--border-glass);
+  border-radius: 22px;
+  padding: 16px 18px;
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(28px) saturate(180%);
+  -webkit-backdrop-filter: blur(28px) saturate(180%);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* 3. Date Navigator */
 .date-nav {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin: 10px clamp(12px, 3.5vw, 18px) 8px;
+  margin: 10px clamp(12px, 3.5vw, 18px) 10px;
   background: var(--surface);
   border: 1px solid var(--border-glass);
   border-radius: 20px;
   padding: 8px 14px;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+  box-shadow: var(--shadow-sm);
+  backdrop-filter: blur(25px);
+  -webkit-backdrop-filter: blur(25px);
 }
 
 .date-arrow {
@@ -99,10 +71,11 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.3rem;
+  font-size: 1.25rem;
   font-weight: 700;
   cursor: pointer;
-  transition: transform 0.2s ease, background 0.2s ease;
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.18s ease, background 0.18s ease;
 }
 
 .date-arrow:hover {
@@ -135,41 +108,20 @@
 
 .apply-week-btn:hover {
   background: var(--primary);
-  color: #fff;
+  color: #ffffff;
 }
 .apply-week-btn:active {
   transform: scale(0.96);
 }
 
-/* 4. Live Hero Card */
-.hero-card {
-  margin: 0 clamp(12px, 3.5vw, 18px) 12px;
-  border-radius: 28px;
-  padding: 20px clamp(16px, 4vw, 24px);
-  color: #ffffff;
-  position: relative;
-  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.15);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  transition: background 0.4s ease;
-}
-
-.hero-header-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-}
-
-.progress-ring.breathe-active {
-  animation: mindfulPacer 8s ease-in-out infinite;
-}
-
-/* 7. Tabs & Task List */
+/* 4. Tabs Strip */
 .tabs {
   display: flex;
   gap: 6px;
   padding: 0 clamp(12px, 3.5vw, 18px) 10px;
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
+  scroll-snap-type: x mandatory;
 }
 
 .tabs::-webkit-scrollbar {
@@ -180,50 +132,58 @@
   background: var(--surface);
   border: 1px solid var(--border-glass);
   color: var(--text-2);
-  padding: 8px 16px;
+  padding: 8px 15px;
   border-radius: 14px;
-  font-size: 0.85rem;
+  font-size: 0.82rem;
   font-weight: 700;
   cursor: pointer;
   white-space: nowrap;
-  transition: all 0.25s ease;
+  scroll-snap-align: start;
+  transition: all 0.22s ease;
+}
+
+.tab-btn:active {
+  transform: scale(0.96);
 }
 
 .tab-btn.active {
-  background: var(--text-1);
-  color: var(--app-bg);
-  border-color: var(--text-1);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  background: var(--primary);
+  color: #ffffff;
+  border-color: var(--primary);
+  box-shadow: 0 4px 14px var(--primary-dim);
 }
 
+/* 5. Daily Task List */
 .task-list {
   padding: 0 clamp(12px, 3.5vw, 18px);
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 10px;
 }
 
 .task-card {
   background: var(--surface);
   border: 1px solid var(--border-glass);
-  border-left: 5px solid var(--primary);
-  border-radius: 22px;
-  padding: 16px 18px;
+  border-left: 4px solid var(--primary);
+  border-radius: 20px;
+  padding: 14px 16px;
   display: flex;
   align-items: center;
-  gap: 14px;
-  box-shadow: var(--shadow);
-  transition: transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.22s ease, opacity 0.3s ease, background 0.3s ease;
+  gap: 12px;
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.2s ease, opacity 0.25s ease;
   cursor: pointer;
   position: relative;
+  backdrop-filter: blur(25px);
+  -webkit-backdrop-filter: blur(25px);
 }
 
 .task-card:hover {
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+  box-shadow: var(--shadow);
 }
 
 .task-card:active {
-  transform: scale(0.975);
+  transform: scale(0.98);
 }
 
 .task-card.task-workout {
@@ -233,7 +193,7 @@
   border-left-color: #34C759;
 }
 .task-card.task-hack {
-  border-left-color: #007AFF;
+  border-left-color: #0A84FF;
 }
 .task-card.task-custom {
   border-left-color: #AF52DE;
@@ -242,11 +202,6 @@
 .task-card.done {
   opacity: 0.55;
   background: var(--surface-2);
-}
-
-.task-card.done .task-body div:nth-child(2) {
-  text-decoration: line-through;
-  transition: text-decoration 0.2s ease;
 }
 
 .task-card.muted {
@@ -259,8 +214,8 @@
 }
 
 .check-circle {
-  width: 32px;
-  height: 32px;
+  width: 30px;
+  height: 30px;
   border-radius: 50%;
   border: 2px solid var(--border-glass);
   background: var(--surface-2);
@@ -268,38 +223,25 @@
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+  transition: all 0.22s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 .task-card.done .check-circle {
   background: #34C759;
   border-color: #34C759;
-  animation: checkPop 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) forwards, checkRipple 0.6s ease-out;
-  box-shadow: 0 0 12px rgba(52, 199, 89, 0.45);
+  box-shadow: 0 0 12px rgba(52, 199, 89, 0.4);
 }
 
 .task-card.done .check-circle::after {
   content: '✓';
   color: white;
-  font-size: 0.95rem;
+  font-size: 0.9rem;
   font-weight: 900;
 }
 
-.task-body {
-  flex: 1;
-}
-
-.time-badge {
-  font-size: 0.72rem;
-  font-weight: 800;
-  color: var(--primary);
-  display: inline-block;
-  margin-bottom: 2px;
-}
-
 .action-btn {
-  width: 34px;
-  height: 34px;
+  width: 32px;
+  height: 32px;
   border-radius: 50%;
   background: var(--surface-2);
   border: 1px solid var(--border-glass);
@@ -310,99 +252,24 @@
   text-decoration: none;
   font-size: 0.85rem;
   cursor: pointer;
-  transition: transform 0.2s ease;
+  transition: transform 0.18s ease;
 }
 
 .action-btn:active {
   transform: scale(0.9);
 }
 
-/* 8. Bottom Navigation Bar */
-.nav-bar {
-  position: absolute;
-  bottom: 20px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: calc(100% - 36px);
-  max-width: 440px;
-  background: var(--nav-glass);
-  backdrop-filter: blur(40px) saturate(180%);
-  -webkit-backdrop-filter: blur(40px) saturate(180%);
-  border: 1px solid var(--border-glass);
-  border-radius: 30px;
-  padding: 8px 12px;
-  display: flex;
-  justify-content: space-around;
-  align-items: center;
-  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.28);
-  z-index: 1000;
-  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.nav-bar.compact-nav {
-  padding: 6px 12px;
-  width: max-content;
-  gap: 12px;
-  border-radius: 30px;
-}
-
-.nav-bar.compact-nav .nav-label {
-  display: none;
-}
-
-.nav-item {
-  background: transparent;
-  border: none;
-  color: var(--text-2);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 3px;
-  padding: 6px 12px;
-  border-radius: 18px;
-  cursor: pointer;
-  transition: all 0.25s ease;
-}
-
-.nav-item:active {
-  transform: scale(0.92);
-}
-
-.nav-item.active {
-  color: var(--primary);
-  background: var(--primary-dim);
-}
-
-.nav-icon {
-  font-size: 1.2rem;
-}
-
-.nav-label {
-  font-size: 0.68rem;
-  font-weight: 800;
-}
-
-/* 9. iOS 18 Inset Card Groups & Clock Pickers */
-.set-card {
-  margin: 0 20px 14px;
-  background: var(--surface);
-  border: 1px solid var(--border-glass);
-  border-radius: 26px;
-  padding: 20px 22px;
-  box-shadow: var(--shadow);
-  backdrop-filter: blur(30px) saturate(160%);
-  -webkit-backdrop-filter: blur(30px) saturate(160%);
-}
-
+/* 6. Form Inputs & Clock Boxes */
 .ios-clock-box {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background: var(--border);
+  background: var(--surface-2);
   border: 1px solid var(--border-glass);
   border-radius: 18px;
   padding: 12px 16px;
-  margin-top: 6px;
+  margin-top: 8px;
+  box-shadow: var(--shadow-sm);
 }
 
 .ios-clock-input {
@@ -417,12 +284,18 @@
 }
 
 .ios-input-box {
-  background: var(--border);
+  background: var(--surface-2);
   border: 1px solid var(--border-glass);
   border-radius: 16px;
   padding: 10px 14px;
   display: flex;
   flex-direction: column;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.ios-input-box:focus-within {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px var(--primary-dim);
 }
 
 .ios-input-label {
@@ -441,6 +314,7 @@
   font-size: 0.95rem;
   font-weight: 700;
   outline: none;
+  font-family: inherit;
   width: 100%;
 }
 
@@ -456,14 +330,15 @@
 
 .sm-input {
   width: 100%;
-  background: var(--border);
+  background: var(--surface-2);
   border: 1px solid var(--border-glass);
   color: var(--text-1);
-  padding: 12px 14px;
-  border-radius: 16px;
-  font-size: 0.95rem;
+  padding: 11px 14px;
+  border-radius: 14px;
+  font-size: 0.92rem;
   font-weight: 600;
   outline: none;
+  font-family: inherit;
   transition: border-color 0.2s ease;
 }
 
@@ -473,12 +348,13 @@
 
 .bio-inputs {
   display: flex;
-  gap: 12px;
+  gap: 10px;
 }
 
 .mini-switch {
   display: flex;
-  background: var(--border);
+  background: var(--surface-2);
+  border: 1px solid var(--border-glass);
   border-radius: 14px;
   padding: 3px;
   gap: 3px;
@@ -490,19 +366,20 @@
   border: none;
   color: var(--text-2);
   padding: 6px;
-  border-radius: 12px;
+  border-radius: 10px;
   font-size: 0.75rem;
   font-weight: 800;
   cursor: pointer;
+  transition: all 0.2s ease;
 }
 
 .mini-opt.active.on {
   background: #34C759;
-  color: #fff;
+  color: #ffffff;
 }
 .mini-opt.active.off {
   background: #8E8E93;
-  color: #fff;
+  color: #ffffff;
 }
 
 .accordion-item {
@@ -514,7 +391,7 @@
 }
 
 .accordion-header {
-  padding: 14px 16px;
+  padding: 13px 16px;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -534,12 +411,13 @@
   background: var(--surface-2);
   border: 1px solid var(--border-glass);
   color: var(--text-1);
-  padding: 11px;
-  border-radius: 16px;
+  padding: 10px;
+  border-radius: 14px;
   font-size: 0.8rem;
   font-weight: 800;
   cursor: pointer;
-  transition: transform 0.2s ease;
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.18s ease;
 }
 
 .bulk-btn:active {
@@ -561,41 +439,7 @@
   font-weight: 600;
 }
 
-.queue-box {
-  margin-top: 10px;
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-.queue-item {
-  display: flex;
-  justify-content: space-between;
-  padding: 10px 14px;
-  background: var(--surface-2);
-  border-radius: 14px;
-  font-size: 0.82rem;
-  font-weight: 600;
-}
-
-/* 10. Analytics & Calendar */
-.cal-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 12px;
-}
-
-.cal-header button {
-  background: var(--surface-2);
-  border: 1px solid var(--border-glass);
-  color: var(--text-1);
-  width: 34px;
-  height: 34px;
-  border-radius: 50%;
-  cursor: pointer;
-}
-
+/* 7. Heatmap & Calendar Grid */
 .cal-grid {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
@@ -604,112 +448,56 @@
 }
 
 .cal-day-name {
-  font-size: 0.7rem;
+  font-size: 0.68rem;
   font-weight: 800;
-  color: var(--text-2);
+  color: var(--text-3);
   padding-bottom: 4px;
 }
 
 .cal-cell {
   aspect-ratio: 1;
-  border-radius: 12px;
+  border-radius: 10px;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 0.78rem;
   font-weight: 800;
   cursor: pointer;
-  transition: transform 0.2s ease;
+  transition: transform 0.18s ease;
 }
 
 .cal-cell:active {
-  transform: scale(0.9);
+  transform: scale(0.92);
+}
+
+.cal-cell.cal-empty {
+  opacity: 0;
+  pointer-events: none;
 }
 
 .cal-level-0 {
-  background: var(--border);
+  background: var(--surface-2);
   color: var(--text-2);
+  border: 1px solid var(--border-glass);
 }
 .cal-level-1 {
-  background: rgba(52, 199, 89, 0.3);
+  background: rgba(52, 199, 89, 0.25);
   color: var(--text-1);
 }
 .cal-level-2 {
-  background: rgba(52, 199, 89, 0.65);
-  color: #fff;
+  background: rgba(52, 199, 89, 0.6);
+  color: #ffffff;
 }
 .cal-level-3 {
   background: #34C759;
-  color: #fff;
+  color: #ffffff;
   box-shadow: 0 0 10px rgba(52, 199, 89, 0.4);
 }
 .cal-today {
   border: 2px solid var(--primary);
 }
 
-.bmi-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.bmi-val {
-  font-size: 2.2rem;
-  font-weight: 900;
-}
-
-.bmi-pill {
-  color: #fff;
-  padding: 4px 12px;
-  border-radius: 12px;
-  font-size: 0.75rem;
-  font-weight: 800;
-}
-
-.chart-wrap {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-end;
-  height: 100px;
-  margin-top: 15px;
-  padding-bottom: 8px;
-}
-
-.chart-col {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  height: 100%;
-  justify-content: flex-end;
-  gap: 6px;
-}
-
-.chart-bar {
-  width: 14px;
-  transition: height 0.4s ease;
-}
-
-.chart-label {
-  font-size: 0.7rem;
-  font-weight: 800;
-  color: var(--text-2);
-}
-
-.stat-row {
-  display: flex;
-  justify-content: space-between;
-  padding: 8px 0;
-  border-bottom: 1px solid var(--border);
-  font-size: 0.88rem;
-  font-weight: 600;
-}
-
-.stat-val {
-  font-weight: 800;
-}
-
-/* 11. Bottom Sheets & Modals */
+/* 8. Bottom Sheets & Modals */
 .sheet-backdrop {
   position: fixed;
   top: 0;
@@ -728,76 +516,29 @@
   left: 50%;
   transform: translateX(-50%);
   width: 100%;
-  max-width: 480px;
+  max-width: 520px;
   background: var(--surface-solid);
   border-top: 1px solid var(--border-glass);
-  border-radius: 32px 32px 0 0;
-  padding: 22px 24px 34px;
+  border-radius: 28px 28px 0 0;
+  padding: 20px 22px calc(24px + env(safe-area-inset-bottom, 12px));
   box-shadow: 0 -12px 45px rgba(0, 0, 0, 0.38);
   z-index: 2200;
 }
 
 .sheet-drag-handle {
-  width: 42px;
-  height: 5px;
+  width: 38px;
+  height: 4px;
   background: var(--text-3);
   opacity: 0.5;
-  border-radius: 3px;
-  margin: 0 auto 16px;
-}
-
-/* 12. Onboarding Wizard */
-.ob-card {
-  width: 100%;
-}
-
-.ob-dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: var(--border);
-  transition: all 0.3s ease;
-}
-
-.ob-dot.active {
-  width: 24px;
-  border-radius: 12px;
-  background: var(--primary);
-}
-
-.ob-input-container {
-  position: relative;
-  width: 100%;
-}
-
-.ob-input-field {
-  width: 100%;
-  background: var(--border);
-  border: 1px solid var(--border-glass);
-  color: var(--text-1);
-  padding: 22px 16px 8px;
-  border-radius: 16px;
-  font-size: 1rem;
-  font-weight: 700;
-  outline: none;
-  transition: border-color 0.2s ease;
-}
-
-.ob-floating-label {
-  position: absolute;
-  left: 16px;
-  top: 14px;
-  font-size: 0.72rem;
-  font-weight: 800;
-  color: var(--text-2);
-  text-transform: uppercase;
-  pointer-events: none;
-  transition: all 0.2s ease;
+  border-radius: 2px;
+  margin: 0 auto 14px;
 }
 
 .unit-switch {
   display: flex;
   border-radius: 14px;
+  background: var(--surface-2);
+  border: 1px solid var(--border-glass);
   padding: 4px;
   gap: 4px;
 }
@@ -816,5 +557,6 @@
 
 .unit-opt.active {
   background: var(--primary);
-  color: #fff;
+  color: #ffffff;
 }
+

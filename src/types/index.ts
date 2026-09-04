@@ -186,6 +186,7 @@ export interface AppDataStore {
   sleepLogs: Record<string, SleepLogEntry>; // `${date}`
   dateTasks: Record<string, ScheduleTask[]>; // `${date}`
   dietPlan?: SevenDayDietPlan;
+  dateDietOverrides?: Record<string, DayDietPlan>; // `${date}`: custom swapped day plan
   milestonesSeen: Record<number, boolean>;
   lastSyncedAt?: string;
 }

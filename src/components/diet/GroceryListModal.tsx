@@ -1,4 +1,5 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { usePlanner } from '../../context/PlannerContext';
 import { generateWeeklyGroceryList, GroceryItem } from '../../services/groceryListEngine';
 import { haptics } from '../../utils/haptics';
@@ -9,6 +10,20 @@ interface GroceryListModalProps {
 }
 
 export const GroceryListModal: React.FC<GroceryListModalProps> = ({ isOpen = true, onClose }) => {
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = 'hidden';
+      const handleKeyDown = (e: KeyboardEvent) => {
+        if (e.key === 'Escape') onClose();
+      };
+      window.addEventListener('keydown', handleKeyDown);
+      return () => {
+        document.body.style.overflow = '';
+        window.removeEventListener('keydown', handleKeyDown);
+      };
+    }
+  }, [isOpen, onClose]);
+
   if (!isOpen) return null;
 
   const { store, showIsland } = usePlanner();
@@ -101,7 +116,7 @@ export const GroceryListModal: React.FC<GroceryListModalProps> = ({ isOpen = tru
     setCheckedMap({});
   };
 
-  return (
+  return createPortal(
     <div
       style={{
         position: 'fixed',
@@ -396,6 +411,7 @@ export const GroceryListModal: React.FC<GroceryListModalProps> = ({ isOpen = tru
           ))}
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 };

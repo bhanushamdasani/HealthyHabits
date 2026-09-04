@@ -1,13 +1,31 @@
 import React, { useState } from 'react';
 import { CuratedMeal } from '../../types';
+import { haptics } from '../../utils/haptics';
 
 interface MealCardProps {
   slotTitle: string;
+  scheduledTime?: string;
   meal: CuratedMeal;
+  isCompleted?: boolean;
+  onToggleCompleted?: () => void;
+  windowStatus?: {
+    isCurrent: boolean;
+    isPast: boolean;
+    isUpcoming: boolean;
+    badgeText: string;
+  };
   onOpenSwapModal: () => void;
 }
 
-export const MealCard: React.FC<MealCardProps> = ({ slotTitle, meal, onOpenSwapModal }) => {
+export const MealCard: React.FC<MealCardProps> = ({
+  slotTitle,
+  scheduledTime,
+  meal,
+  isCompleted = false,
+  onToggleCompleted,
+  windowStatus,
+  onOpenSwapModal
+}) => {
   const [showRecipe, setShowRecipe] = useState(false);
 
   // Google AI Overview / Gemini Deep-Dive query
@@ -19,31 +37,69 @@ export const MealCard: React.FC<MealCardProps> = ({ slotTitle, meal, onOpenSwapM
     <div
       style={{
         background: 'var(--surface)',
-        border: '1px solid var(--border-glass)',
+        border: windowStatus?.isCurrent
+          ? '1.5px solid var(--primary)'
+          : isCompleted
+          ? '1px solid rgba(52, 199, 89, 0.4)'
+          : '1px solid var(--border-glass)',
         borderRadius: '22px',
         padding: '16px 18px',
-        marginBottom: '12px',
-        boxShadow: 'var(--shadow)',
-        position: 'relative'
+        marginBottom: '14px',
+        boxShadow: windowStatus?.isCurrent ? '0 8px 24px var(--primary-dim)' : 'var(--shadow)',
+        position: 'relative',
+        transition: 'all 0.25s ease'
       }}
     >
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-        <span
-          style={{
-            fontSize: '0.72rem',
-            fontWeight: 800,
-            textTransform: 'uppercase',
-            color: 'var(--primary)',
-            background: 'var(--primary-dim)',
-            padding: '3px 8px',
-            borderRadius: '6px'
-          }}
-        >
-          {slotTitle}
-        </span>
+      {/* Top Header: Slot Title + Time + Window Badge + Calories */}
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px', flexWrap: 'wrap', gap: '6px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <span
+            style={{
+              fontSize: '0.72rem',
+              fontWeight: 800,
+              textTransform: 'uppercase',
+              color: 'var(--primary)',
+              background: 'var(--primary-dim)',
+              padding: '3px 8px',
+              borderRadius: '6px'
+            }}
+          >
+            {slotTitle}
+          </span>
 
-        <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-          <span style={{ fontSize: '0.75rem', fontWeight: 800, color: 'var(--text-1)' }}>
+          {scheduledTime && (
+            <span
+              style={{
+                fontSize: '0.72rem',
+                fontWeight: 800,
+                color: 'var(--text-2)',
+                background: 'var(--surface-2)',
+                padding: '3px 8px',
+                borderRadius: '6px'
+              }}
+            >
+              ⏰ {scheduledTime}
+            </span>
+          )}
+
+          {windowStatus?.badgeText && (
+            <span
+              style={{
+                fontSize: '0.68rem',
+                fontWeight: 800,
+                background: windowStatus.isCurrent ? 'var(--primary)' : 'var(--surface-2)',
+                color: windowStatus.isCurrent ? '#ffffff' : 'var(--text-2)',
+                padding: '2px 7px',
+                borderRadius: '6px'
+              }}
+            >
+              {windowStatus.badgeText}
+            </span>
+          )}
+        </div>
+
+        <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
+          <span style={{ fontSize: '0.78rem', fontWeight: 800, color: 'var(--text-1)' }}>
             {meal.estimatedNutrition.calories} kcal
           </span>
           <span
@@ -61,14 +117,52 @@ export const MealCard: React.FC<MealCardProps> = ({ slotTitle, meal, onOpenSwapM
         </div>
       </div>
 
-      <div style={{ fontWeight: 800, fontSize: '1.05rem', color: 'var(--text-1)', marginBottom: '4px' }}>
-        {meal.name}
+      {/* Meal Title & Done Checkbox */}
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '10px', marginBottom: '6px' }}>
+        <div style={{ fontWeight: 800, fontSize: '1.08rem', color: isCompleted ? 'var(--text-2)' : 'var(--text-1)', textDecoration: isCompleted ? 'line-through' : 'none' }}>
+          {meal.name}
+        </div>
+
+        {onToggleCompleted && (
+          <button
+            onClick={() => {
+              haptics.medium();
+              onToggleCompleted();
+            }}
+            style={{
+              background: isCompleted ? '#34C759' : 'var(--surface-2)',
+              border: isCompleted ? 'none' : '1px solid var(--border-glass)',
+              color: isCompleted ? '#ffffff' : 'var(--text-2)',
+              borderRadius: '10px',
+              padding: '4px 10px',
+              fontSize: '0.72rem',
+              fontWeight: 800,
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '4px',
+              flexShrink: 0
+            }}
+          >
+            {isCompleted ? '✓ Eaten' : 'Log Meal'}
+          </button>
+        )}
       </div>
 
-      <div style={{ fontSize: '0.82rem', color: 'var(--text-2)', marginBottom: '10px', lineHeight: 1.35 }}>
+      {/* Macro Pills Bar */}
+      <div style={{ display: 'flex', gap: '10px', fontSize: '0.72rem', color: 'var(--text-2)', fontWeight: 700, marginBottom: '8px' }}>
+        <span>🍗 {meal.estimatedNutrition.proteinGrams}g Protein</span>
+        <span>🌾 {meal.estimatedNutrition.carbsGrams}g Carbs</span>
+        <span>🥑 {meal.estimatedNutrition.fatGrams}g Fat</span>
+        {meal.estimatedNutrition.fiberGrams ? <span>🥗 {meal.estimatedNutrition.fiberGrams}g Fiber</span> : null}
+      </div>
+
+      {/* Ingredients List */}
+      <div style={{ fontSize: '0.82rem', color: 'var(--text-2)', marginBottom: '12px', lineHeight: 1.4 }}>
         {meal.ingredients.map((i) => `${i.name} (${i.quantity})`).join(', ')}
       </div>
 
+      {/* Recipe Drawer */}
       {showRecipe && (
         <div
           className="fade-in"
@@ -83,7 +177,7 @@ export const MealCard: React.FC<MealCardProps> = ({ slotTitle, meal, onOpenSwapM
           }}
         >
           <div style={{ fontWeight: 800, marginBottom: '6px', color: 'var(--primary)' }}>
-            👨‍🍳 Step-by-Step Preparation:
+            👨‍🍳 Step-by-Step Preparation (~{meal.preparationTimeMins || 15} mins):
           </div>
           <ol style={{ paddingLeft: '18px', margin: '0 0 10px 0' }}>
             {meal.recipeInstructions.map((step, idx) => (
@@ -120,7 +214,8 @@ export const MealCard: React.FC<MealCardProps> = ({ slotTitle, meal, onOpenSwapM
         </div>
       )}
 
-      <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end' }}>
+      {/* Action Buttons */}
+      <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end', alignItems: 'center' }}>
         <button
           onClick={() => setShowRecipe((prev) => !prev)}
           style={{
@@ -178,3 +273,4 @@ export const MealCard: React.FC<MealCardProps> = ({ slotTitle, meal, onOpenSwapM
     </div>
   );
 };
+
