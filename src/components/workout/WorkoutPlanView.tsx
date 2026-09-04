@@ -132,7 +132,7 @@ export const WorkoutPlanView: React.FC = () => {
   return (
     <div style={{ paddingTop: '12px', width: '100%' }}>
       {/* 1. Environment Switcher Pill (Home vs Gym) */}
-      <div style={{ padding: '0 20px 12px' }}>
+      <div style={{ padding: '0 clamp(12px, 3.5vw, 24px) 12px' }}>
         <div
           style={{
             display: 'flex',
@@ -192,7 +192,7 @@ export const WorkoutPlanView: React.FC = () => {
       </div>
 
       {/* Routine Banner */}
-      <div className="set-card" style={{ margin: '0 20px 14px', padding: '18px 20px' }}>
+      <div className="set-card">
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '4px' }}>
           <div>
             <div style={{ fontSize: '0.72rem', fontWeight: 800, color: 'var(--primary)', textTransform: 'uppercase' }}>
@@ -224,15 +224,7 @@ export const WorkoutPlanView: React.FC = () => {
       </div>
 
       {/* Routine Tabs */}
-      <div
-        className="tabs"
-        style={{
-          display: 'flex',
-          gap: '8px',
-          padding: '0 20px 14px',
-          overflowX: 'auto'
-        }}
-      >
+      <div className="tabs">
         {activeRoutineList.map((r) => {
           const isActive = selectedRoutineKey === r.key;
           return (
@@ -271,7 +263,7 @@ export const WorkoutPlanView: React.FC = () => {
       {/* Contextual Training Tip */}
       <div
         style={{
-          margin: '0 20px 14px',
+          margin: '0 clamp(12px, 3.5vw, 24px) 14px',
           background: 'var(--surface-2)',
           border: '1px solid var(--border-glass)',
           borderRadius: '16px',
@@ -284,7 +276,7 @@ export const WorkoutPlanView: React.FC = () => {
         {workoutTip}
       </div>
 
-      <div style={{ padding: '0 20px' }}>
+      <div style={{ padding: '0 clamp(12px, 3.5vw, 24px)' }}>
         {/* Dynamic Warmup Section */}
         <div
           style={{

@@ -2,7 +2,7 @@
 @import './animations.css';
 @import './components.css';
 
-* {
+*, *::before, *::after {
   box-sizing: border-box;
   -webkit-tap-highlight-color: transparent;
   margin: 0;
@@ -11,18 +11,26 @@
 
 html, body {
   width: 100%;
+  min-height: 100dvh;
   height: 100%;
   margin: 0;
   padding: 0;
-  overflow: hidden;
+  overflow-x: hidden;
   font-family: var(--font-sans);
   background-color: var(--app-bg);
   color: var(--text-1);
   -webkit-user-select: none;
   user-select: none;
-  overscroll-behavior: none;
+  overscroll-behavior-y: none;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+/* Responsive Media Handling */
+img, svg, picture, video, canvas {
+  max-width: 100%;
+  height: auto;
+  display: block;
 }
 
 /* Ambient Backdrops with Subtle Fluid Motion */
@@ -37,26 +45,26 @@ html, body {
 }
 
 #ambient-glow-1 {
-  width: 480px;
-  height: 480px;
-  top: -140px;
-  left: -120px;
+  width: clamp(280px, 40vw, 520px);
+  height: clamp(280px, 40vw, 520px);
+  top: -120px;
+  left: -100px;
   background: var(--primary);
   animation: auraShift1 18s ease-in-out infinite alternate;
 }
 
 #ambient-glow-2 {
-  width: 500px;
-  height: 500px;
-  bottom: -160px;
-  right: -130px;
+  width: clamp(300px, 42vw, 540px);
+  height: clamp(300px, 42vw, 540px);
+  bottom: -140px;
+  right: -110px;
   background: #34C759;
   animation: auraShift2 24s ease-in-out infinite alternate-reverse;
 }
 
 #ambient-glow-3 {
-  width: 320px;
-  height: 320px;
+  width: clamp(200px, 30vw, 360px);
+  height: clamp(200px, 30vw, 360px);
   top: 40%;
   left: 30%;
   background: #8B5CF6;
@@ -67,18 +75,19 @@ html, body {
 /* Root App Wrapper & Container */
 #root {
   width: 100%;
+  min-height: 100dvh;
   height: 100%;
   display: flex;
   justify-content: center;
   align-items: stretch;
-  overflow: hidden;
+  overflow-x: hidden;
   background-color: var(--app-bg);
 }
 
 .app-container {
   width: 100%;
   max-width: 100%;
-  height: 100%;
+  min-height: 100dvh;
   height: 100dvh;
   background-color: var(--app-bg);
   color: var(--text-1);
@@ -91,10 +100,10 @@ html, body {
   margin: 0 auto;
 }
 
-/* Centered Responsive Desktop & Tablet Layout */
+/* Centered Adaptive Container Layout Across Breakpoints */
 @media (min-width: 640px) {
   .app-container {
-    max-width: 540px;
+    max-width: 720px;
     box-shadow: 0 0 70px rgba(0, 0, 0, 0.35);
     border-left: 1px solid var(--border-glass);
     border-right: 1px solid var(--border-glass);
@@ -103,14 +112,20 @@ html, body {
 
 @media (min-width: 1024px) {
   .app-container {
-    max-width: 580px;
+    max-width: 960px;
+  }
+}
+
+@media (min-width: 1440px) {
+  .app-container {
+    max-width: 1120px;
   }
 }
 
 /* Dynamic Island Floating Capsule */
 .dynamic-island-container {
   position: absolute;
-  top: 14px;
+  top: clamp(8px, 2vh, 16px);
   left: 50%;
   transform: translateX(-50%);
   z-index: 3000;
@@ -121,9 +136,9 @@ html, body {
 .dynamic-island {
   background: var(--island-bg);
   color: var(--island-text);
-  padding: 10px 22px;
+  padding: 8px clamp(14px, 3vw, 24px);
   border-radius: 32px;
-  font-size: 0.82rem;
+  font-size: clamp(0.75rem, 1.2vw, 0.85rem);
   font-weight: 800;
   letter-spacing: -0.2px;
   box-shadow: 0 12px 35px rgba(0, 0, 0, 0.38), inset 0 1px 1px rgba(255, 255, 255, 0.25);
