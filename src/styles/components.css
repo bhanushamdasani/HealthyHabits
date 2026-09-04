@@ -22,7 +22,7 @@
   overflow-y: auto;
   overflow-x: hidden;
   -webkit-overflow-scrolling: touch;
-  padding-bottom: clamp(60px, 12vh, 100px);
+  padding-bottom: calc(var(--bottom-nav-height, 56px) + env(safe-area-inset-bottom, 0px) + 20px);
 }
 
 .slider-page::-webkit-scrollbar {

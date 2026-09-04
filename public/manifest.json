@@ -1,20 +1,23 @@
 {
-  "name": "HealthyHabits Protocol",
-  "short_name": "Protocol",
-  "start_url": "./index.html",
+  "name": "HealthyHabits",
+  "short_name": "HealthyHabits",
+  "start_url": "/",
+  "scope": "/",
   "display": "standalone",
   "background_color": "#000000",
-  "theme_color": "#007AFF",
+  "theme_color": "#0A84FF",
   "icons": [
     {
-      "src": "./icon.png",
+      "src": "/icon.png",
       "sizes": "192x192",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any maskable"
     },
     {
-      "src": "./icon.png",
+      "src": "/icon.png",
       "sizes": "512x512",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any maskable"
     }
   ]
 }
